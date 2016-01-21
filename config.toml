@@ -1,0 +1,31 @@
+baseurl = "https://lustforge.com"
+languageCode = "en-us"
+title = "LustForge"
+name = "LustForge"
+copyright = "Joseph Lust"
+description = "what Lust hath wrought"
+theme = "ghostwriter"
+googleAnalytics = "UA-17498476-1"
+#disqusShortname = "XXX"
+
+[Author]
+    name = "Joseph Lust"
+    profile = "https://stackoverflow.com/users/564157/joseph-lust"
+
+[Params]
+    favicon = "favicon.png"
+    intro = true
+    headline = "LustForge"
+    description = "what Lust hath wrought"
+    github = "https://github.com/twistedpair"
+    linkedin = "https://www.linkedin.com/in/josephlust"
+    gplus = "https://plus.google.com/+JosephLust"
+#    twitter = "https://twitter.com/XXX"
+    stackoverflow = "https://stackoverflow.com/users/564157/joseph-lust"
+
+
+#    highlight = "atelier-forest.dark"
+#    highlight = "atelier-dune.dark"
+#    highlight = "monokai"
+    highlight = "obsidian"
+    pygmentsCodeFences = true
