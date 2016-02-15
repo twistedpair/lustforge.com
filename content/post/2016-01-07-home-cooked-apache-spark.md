@@ -1,21 +1,22 @@
 ---
 draft: true
-title: Home Cooked Apache Spark Builds
+title: Home Cooked Apache Spark
 author: Joe
 layout: post
 date: 2016-01-07
-url: /2016/01/07/home-cooked-apache-spark-builds/
+url: /2016/01/07/home-cooked-apache-spark/
 categories:
   - Scala
   - Apache Spark
 ---
 
-We use Apache Spark for various applications at [my job](https://mc10inc.com), but Spark is still relatively unstable, as evidenced by the 11K+ pull requests against the project. To maintain our developer velocity, we regularly patch show stopper bugs in the Spark source. The process is simple.
+We use Apache Spark for various applications at [my job](https://mc10inc.com), but Spark is still relatively unstable, as evidenced by the project's [11K+](https://github.com/apache/spark/pulls) pull requests. To maintain our developer velocity, we regularly patch show stopper bugs in the Spark source. The process is simple.
 
-1. Install JDK 6, which is required for PySpark (or you'll get a lengthy warning)
+1. Install JDK 6, which is required for PySpark (or you'll get a lengthy warning). Use the `oracle-java8-set-default` package to switch between Java 6 and 8, or set `JAVA_HOME`.
 
 	```bash
 	sudo apt-get install oracle-java6-installer
+	oracle-java8-set-default # Go back to Java 8 when you're done building
 	```
 
 2. Fork the [Apache Spark repo](https://github.com/apache/spark) so you can submit a Pull Request later
@@ -46,9 +47,12 @@ We use Apache Spark for various applications at [my job](https://mc10inc.com), b
 
 ## Additional Tricks
 
-Scala 2.10 is old hat. Most people develop on Scala 2.11, and 2.12 will be released in 2 months. To run Spark on Scala 2.11, you must build it yourself.
+Scala 2.10 is old hat. Most people develop on Scala 2.11, and 2.12 will be released in 2 months. To run Spark on Scala 2.11, you must build it [yourself](https://spark.apache.org/docs/latest/building-spark.html#building-for-scala-211).
 
-TODO add details
+```bash
+./dev/change-scala-version.sh 2.11
+./make-distribution.sh --name al-dente-spark --tgz # Build again
+```
 
 ### Possible Failures
 

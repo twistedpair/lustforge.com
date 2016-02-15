@@ -71,14 +71,14 @@ JProfiler has many more options than YourKit, but also is more complicated to us
 
 ### Profile Application
 
-Let's manually add the agent. Like YourKit, just add the agent to the JVM at startup. However, the default behavior of JProfiler is to wait until a JProfiler client attaches. This won't do for SBT or remote server deployments, so add the `noWait` flag for immeadiate startup. The below assumes JProfile is untar'd to `/opt/jprofiler`.
+Let's manually add the agent. Like YourKit, just add the agent to the JVM at startup. However, the default behavior of JProfiler is to wait until a JProfiler client attaches. This won't do for SBT or remote server deployments, so add the `nowait` flag for immeadiate startup. The below assumes JProfile is untar'd to `/opt/jprofiler`.
 
 ```bash    
 # run your Play app - example for localhost:9000
-sbt run -jvm-debug 9898 -J-agentpath:/opt/jprofiler/bin/linux-x64/libjprofilerti.so=noWait  -Dhttp.port=9000
+sbt run -jvm-debug 9898 -J-agentpath:/opt/jprofiler/bin/linux-x64/libjprofilerti.so=nowait  -Dhttp.port=9000
 
 # Or run your executable
-./bin/my-app -J-agentpath:/opt/jprofiler/bin/linux-x64/libjprofilerti.so=noWait
+./bin/my-app -J-agentpath:/opt/jprofiler/bin/linux-x64/libjprofilerti.so=nowait
 ```
 There are many more [start params](http://resources.ej-technologies.com/jprofiler/help/doc/sessions/remoteTable.html), remember to separate them with a comma like `libjprofilerti.so=noWait,offline,id=172`.
 
@@ -93,7 +93,17 @@ JProfiler> Retransforming 12681 class files.
 # Took 9min 32sec to get to next step...
 ```
 
+Ouch. Disable the "Classloaders" probe and this will be cleane up.
+
+```bash
+JProfiler> CPU profiling enabled
+JProfiler> Updating configuration.
+JProfiler> Retransforming 141 class files.
+JProfiler> Configuration updated.
+# Time - 5s, that's more like it
+```
+
 Pros:
 
-* Intercept database calls and timing
+* Intercept database calls/time for JDBC, Hibernate/JPA, and H2
 * Cassandra & Mongo instrumenting
