@@ -21,36 +21,17 @@ Let&#8217;s look at adding memory sensors to two core types in my application, *
 
 Below we see the new application **Hot Spot Methods**. The init of LocalDate objects takes nearly **4 minutes**. Similarly the BigDecimals inside the Money objects are consume an inordinate amount of time. This job is a database bound job, but here we see the database calls are only **0.3%** of the hot spot methods. The Dynatrace instrumentation of these memory sensors is to blame, which might be a surprise as the memory sensors are not even creating Pure Paths and we&#8217;re not taking any Selective Memory Snapshots.
 
-<div id="attachment_199" style="width: 885px" class="wp-caption aligncenter">
-  <a href="https://lustforge.com/wp-content/uploads/2014/11/localDate.png"><img class="noframe wp-image-199 size-full" src="https://lustforge.com/wp-content/uploads/2014/11/localDate.png" alt="localDate" width="875" height="294" /></a>
-  
-  <p class="wp-caption-text">
-    Initialization of common objects is consuming 99.7% of job runtime (200 of 3200 job PurePaths shown)
-  </p>
-</div>
+{{< figure src="/img/localDate.png" >}}
+Initialization of common objects is consuming 99.7% of job runtime (200 of 3200 job PurePaths shown)
 
 After the Memory Sensors are removed, we see that query execution dominates the job runtime, as expected. We also see that LocalDate instantiation has dropped from **4 minutes to 20ms** (too small to appear in Hot Spots report below). The moral of the story? The M**emory Sensors on LocalDate increased it&#8217;s initialization time 12,000 times!**
 
-<div id="attachment_200" style="width: 828px" class="wp-caption aligncenter">
-  <a href="https://lustforge.com/wp-content/uploads/2014/11/noLocalDate.png"><img class="noframe wp-image-200 size-full" src="https://lustforge.com/wp-content/uploads/2014/11/noLocalDate.png" alt="noLocalDate" width="818" height="327" /></a>
-  
-  <p class="wp-caption-text">
-    12000x faster LocalDate init w/o Memory Sensors (3200 of 3200 job PurePaths shown)
-  </p>
-</div>
+{{< figure src="/img/noLocalDate.png" >}}
+12000x faster LocalDate init w/o Memory Sensors (3200 of 3200 job PurePaths shown)
 
 The CPU and garbage collection times were also  dilated notably by the wanton application of Memory Sensors. Below we can see that GC time is magnified ~14x and CPU consumption more than doubled to 93% from 41%. Note that the Memory Sensor case below is truncated as the sensors were removed via Hot Placement during the job, otherwise it would ostensibly have taken forever to run.
 
-<div id="attachment_201" style="width: 844px" class="wp-caption aligncenter">
-  <a href="https://lustforge.com/wp-content/uploads/2014/11/gcAndCpuDifference.png"><img class="noframe wp-image-201 size-full" src="https://lustforge.com/wp-content/uploads/2014/11/gcAndCpuDifference.png" alt="gcAndCpuDifference" width="834" height="364" /></a>
-  
-  <p class="wp-caption-text">
-    Memory Sensors also double CPU consumption and GC time
-  </p>
-</div>
+{{< figure src="/img/gcAndCpuDifference.png" >}}
+Memory Sensors also double CPU consumption and GC time
 
 The moral of the story? **Always instrument the bare minimum necessary items with Dynatrace**. All measurements have overhead and perturb the code under test. **The greater the instrumentation, the greater the perturbation**. You want to be confident that the trends you discover in Dynatrace are due to the code under test, rather than an artifact of the instrumentation.
-
-&nbsp;
-
-&nbsp;

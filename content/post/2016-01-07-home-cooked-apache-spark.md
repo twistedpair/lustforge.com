@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 title: Home Cooked Apache Spark
 author: Joe
 layout: post
@@ -10,7 +10,7 @@ categories:
   - Apache Spark
 ---
 
-We use Apache Spark for various applications at [my job](https://mc10inc.com), but Spark is still relatively unstable, as evidenced by the project's [11K+](https://github.com/apache/spark/pulls) pull requests. To maintain our developer velocity, we regularly patch show stopper bugs in the Spark source. The process is simple.
+We use Apache Spark for various applications at [my job](https://mc10inc.com), but Spark is still relatively unstable, as evidenced by the project's [11K+](https://github.com/apache/spark/pulls) pull requests. To maintain developer velocity, we regularly patch show stopper bugs in the Spark source. The process is simple.
 
 1. Install JDK 6, which is required for PySpark (or you'll get a lengthy warning). Use the `oracle-java8-set-default` package to switch between Java 6 and 8, or set `JAVA_HOME`.
 
@@ -20,7 +20,7 @@ We use Apache Spark for various applications at [my job](https://mc10inc.com), b
 	```
 
 2. Fork the [Apache Spark repo](https://github.com/apache/spark) so you can submit a Pull Request later
-3. Clone it locally, check out your tag of interest
+3. Clone it locally, checking out your tag of interest
 
 	```bash
 	git clone git@github.com:mc10-inc/spark.git special-spark
@@ -28,7 +28,7 @@ We use Apache Spark for various applications at [my job](https://mc10inc.com), b
 	git checkout v1.4.1 # Tag of interest
 	JAVA_HOME="/usr/lib/jvm/java-6-oracle" # In case you've got 7/8/9 installed
 	./make-distribution.sh --name al-dente-spark --tgz
-	# On my 4 core box, total time: 23:16.918s
+	# Build time of 5:40.12s on my i7-4790K
 	```
 4. Fire up your custom spark build like any other
 
@@ -40,8 +40,9 @@ We use Apache Spark for various applications at [my job](https://mc10inc.com), b
 
     ```bash
     #Move original assembly to backup location
-    mv /<your spark path>/lib/spark-assembly-1.<spark version>-hadoop2.4.0.jar spark-assembly-backup.jar
-    cp dist/lib/spark-assembly-<spark version>-hadoop2.2.0.jar /<your spark path>/lib/
+    SPK_PATH=<your spark path>
+    mv $SPK_PATH/lib/spark-assembly-1.<spark version>-hadoop2.4.0.jar spark-assembly-backup.jar
+    cp dist/lib/spark-assembly-<spark version>-hadoop2.2.0.jar $SPK_PATH/lib/
     ./bin/spark-shell # Contact!
     ```
 

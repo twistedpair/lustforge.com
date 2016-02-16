@@ -8,7 +8,9 @@ categories:
   - Continuous Integration
 
 ---
-Let&#8217;s dispel the myth about Jenkins being the gold standard continuous integration tool. I&#8217;m sorry, TeamCity is much better. <span class="frame-outer  alignright"><span><span><span><span><img class="alignright" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpbph4bk3HtIR4pCZp40RTKDzzLKzc5HN9PtvkWd0MdtVnC3Nc" alt="" width="152" height="152" />
+Let&#8217;s dispel the myth about Jenkins being the gold standard continuous integration tool. I&#8217;m sorry, TeamCity is much better.
+
+{{< figure src="/img/tc_logo.png" >}}
   
 #### Dispelling the Jenkins CI Myth
 
