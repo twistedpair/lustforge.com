@@ -24,12 +24,10 @@ According to the doc&#8217;s you need to put a TXT record on &#8220;dzc.&#8221; 
   * dzc.foo.com TXT=&#8221;fooVal1&#8243;
   * dzc.staging.foo.com TXT=&#8221;fooVal2&#8243;
 
-Great, looks good. What? Why is it that only one SSL domain is validated and the cert issued? We&#8217;ll, it&#8217;s your fault for [following the directions][1].
+Great, looks good. What? Why is it that only one SSL domain is validated and the cert issued? We&#8217;ll, it&#8217;s your fault for [following the directions](http://support.godaddy.com/help/article/4678/creating-a-txt-record-for-ssl-validation?locale=en).
 
 The rub is that **all subdomain TXT values must be placed on the root domain**. Awesome. Does everyone in control of a subdomain have control of the root? Certainly not. Hopefully you learned this by trial and error.
 
 ### Hope it Helps
 
 I&#8217;ve jotted down these little ditties as time and time again, I have to experiment with GoDaddy settings as following them to the letter rarely works. GoDaddy, please read your own docs!
-
- [1]: http://support.godaddy.com/help/article/4678/creating-a-txt-record-for-ssl-validation?locale=en

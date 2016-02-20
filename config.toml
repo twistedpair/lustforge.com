@@ -6,7 +6,7 @@ copyright = "Joseph Lust"
 description = "what Lust hath wrought"
 theme = "ghostwriter"
 googleAnalytics = "UA-17498476-1"
-#disqusShortname = "XXX"
+disqusShortname = "lustforge"
 
 [Author]
     name = "Joseph Lust"
