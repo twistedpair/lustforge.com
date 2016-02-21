@@ -10,4 +10,6 @@ This repo has the contents of my site as I port it to Hugo. If you like the plac
 ```bash
 hugo -v -b http://lustforge-cdn.s3-website-us-east-1.amazonaws.com
 aws s3 --profile lauf --delete --acl="public-read" --exclude=.git sync public/ s3://lustforge-cdn/
+# Downloads binaries, not part of repo
+aws s3 sync --profile lauf --acl "public-read" --sse "AES256" static/downloads/ s3://lustforge-cdn/downloads/
 ```

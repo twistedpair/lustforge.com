@@ -12,9 +12,12 @@ disqusShortname = "lustforge"
     name = "Joseph Lust"
     profile = "https://stackoverflow.com/users/564157/joseph-lust"
 
+[Taxonomies]
+    tag = "tags"
+
 [Params]
     favicon = "favicon.png"
-    intro = true
+    intro = true # hide site title
     headline = "LustForge"
     description = "what Lust hath wrought"
     github = "https://github.com/twistedpair"
@@ -29,3 +32,6 @@ disqusShortname = "lustforge"
 #    highlight = "monokai"
     highlight = "obsidian"
     pygmentsCodeFences = true
+
+[Permalinks]
+    post = "/:year/:month/:day/:filename/"
