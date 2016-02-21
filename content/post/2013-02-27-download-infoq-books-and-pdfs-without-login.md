@@ -6,7 +6,7 @@ date: 2013-02-27
 url: /2013/02/27/download-infoq-books-and-pdfs-without-login/
 categories:
   - Hidden in plain Site
-  - 'Tips &amp; Tricks'
+  - 'Tips & Tricks'
 
 ---
 I just read [Good Relationships][1] by Michael Hunger. It was a great read to get up to speed on Spring Data Neo4J quickly, and also the only reference out there.

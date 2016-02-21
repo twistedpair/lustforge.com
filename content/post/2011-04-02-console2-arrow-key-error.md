@@ -6,10 +6,10 @@ date: 2011-04-02
 url: /2011/04/02/console2-arrow-key-error/
 categories:
   - Cygwin
-  - 'Tips &amp; Tricks'
+  - 'Tips & Tricks'
 tags:
   - Cygwin
-  - 'Tips &amp; Tricks'
+  - 'Tips & Tricks'
 
 ---
 
