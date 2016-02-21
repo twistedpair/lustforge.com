@@ -12,17 +12,11 @@ tags:
 ---
 Technology fails us when we least desire it. This week I needed to remote into a Win7 system and got a most unusual message:
 
-<div id="attachment_60" style="width: 520px" class="wp-caption aligncenter">
-  <span class="frame-outer  small size-full wp-image-60"><span><span><span><span><a href="http://www.lustforge.com/wp-content/uploads/2012/02/remoteServicesError.png"><img class="size-full wp-image-60   " title="The task you are trying to do can't be completed because Remote Desktop Services is currently busy. Please try again in a few minutes. Other users should still be able to log in." src="http://www.lustforge.com/wp-content/uploads/2012/02/remoteServicesError.png" alt="The task you are trying to do can't be completed because Remote Desktop Services is currently busy. Please try again in a few minutes. Other users should still be able to log in." width="415" height="112" /></a>
-  
-  <p class="wp-caption-text">
-    No, it's not 'OK'
-  </p></span></span></span></span></span>
-</div>
+{{< figure src="/img/rdp_busy.png" >}}
 
 This message is not very helpful. Evidently I can&#8217;t log in. Other people can, and puportedly I can in the future some time, but not now. No, you are not invited. Come back later.
 
-I tried _again in a few minutes_ a number of times to no effect. Googling found only small cohorts of discontented users on MS message boards with no known recourse. So here was mine:
+I tried _again in a few minutes_ a number of times to no effect. Googling found only small cohorts of discontented users on MS message boards with no known recourse. So here was mine:
 
   * Waiting will not solve this.
   * Trying again will only get you the same warning or a black screen and connection timeout.

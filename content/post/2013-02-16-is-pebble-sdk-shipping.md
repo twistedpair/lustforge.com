@@ -18,7 +18,10 @@ On [the][6] [forums][7] much musing is ongoing, but no official missives from th
 
 Thus, I present the Pebble faithful (it is faith at this point) with an easier way to see if the SDK is out there. An official, unofficial source of SDK release status. 
 
-</br></br>[www.isPebbleSDKShipping.com][9]{.bigLink}
+# [www.isPebbleSDKShipping.com](http://www.isPebbleSDKShipping.com)
+
+## Update:
+After keeping my satire site up for a few years, I’ve pulled the plug. I hope you enjoyed it.
 
  [1]: http://www.runpartner.com
  [2]: http://www.garmin.com/us/support/#/{6d19e750-030b-11dc-e9ab-000000000000}/Running/{64bfd220-03bc-11dc-786a-000000000000}
@@ -28,4 +31,4 @@ Thus, I present the Pebble faithful (it is faith at this point) with an easier w
  [6]: http://forums.getpebble.com/topics/697
  [7]: http://forums.getpebble.com/topics/1998
  [8]: http://getinpulse.us2.list-manage1.com/subscribe?u=dd6d54b0e22472d9f5004013a&id=9548e2c0aa
- [9]: http://www.isPebbleSDKShipping.com
+ 

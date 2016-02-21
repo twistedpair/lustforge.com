@@ -8,11 +8,11 @@ categories:
   - Informative
 
 ---
-Finally, a rough alpha SDK is [in the wild][1] without the hindrance of an NDA.
+Finally, a rough alpha SDK is [in the wild](http://developer.getpebble.com/) without the hindrance of an NDA.
 
-## [www.isPebbleSDKShipping.com][2]
+## [www.isPebbleSDKShipping.com](http://www.ispebblesdkshipping.com)
 
 and its API have been updated accordingly.
 
- [1]: http://developer.getpebble.com/
- [2]: http://www.ispebblesdkshipping.com
+## Update:
+After keeping my satire site up for a few years, I've pulled the plug. I hope you enjoyed it.

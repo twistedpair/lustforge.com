@@ -15,8 +15,10 @@ Just visit **CloudFront > Distribution Settings > Invalidations > Create Inva
 
 Now provide the folder and wildcard to blow away a bunch of files!
 
-> <pre>I.e. images/*</pre>
+```bash
+i.e. images/*
+```
 
-<span class="frame-outer  aligncenter size-full wp-image-77"><span><span><span><span><a href="http://www.lustforge.com/wp-content/uploads/2012/07/Selection_0311.png"><img src="http://www.lustforge.com/wp-content/uploads/2012/07/Selection_0311.png" alt="" title="Selection_031" width="415" height="386" class="aligncenter size-full wp-image-77" srcset="https://lustforge.com/wp-content/uploads/2012/07/Selection_0311-300x279.png 300w, https://lustforge.com/wp-content/uploads/2012/07/Selection_0311.png 579w" sizes="(max-width: 579px) 100vw, 579px" /></a></span></span></span></span></span>
+{{< figure src="/img/cloudfront_invalidations.png" >}}
 
 See, and you did not need to write a rate controlled script, pay a 3rd party monthly website, or enter your secret AWS credentials into some shady webapp!
