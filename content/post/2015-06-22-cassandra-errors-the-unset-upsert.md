@@ -32,4 +32,3 @@ Well&#8230; my code has many `setIfNonNull(...)` helpers. Turns out my testing d
 
 So, this cryptic message from C* should really read **&#8220;Update statement missing SET clause, you fool.&#8221;** Now if I could <a href="https://github.com/apache/cassandra/search?utf8=%E2%9C%93&q=mismatched" target="_blank">find it in the source</a>, I&#8217;d submit a PR.
 
-&nbsp;

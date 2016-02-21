@@ -4,7 +4,7 @@ title: Profiling Scala Play Applications
 author: Joe
 layout: post
 date: 2016-01-20
-url: /2016/01/20/2016-01-20-profiling-scala-play-applications/
+url: /2016/01/20/profiling-scala-play-applications/
 categories:
   - Scala
 ---

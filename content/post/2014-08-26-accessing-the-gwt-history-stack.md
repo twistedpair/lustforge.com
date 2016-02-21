@@ -35,11 +35,9 @@ public interface HistoryStack {
 }
 ```
 
-&nbsp;
 
 Now for the implementation. Oddly, since we cannot track back events, we can&#8217;t really use this as a stack, but rather are placing Places in a fixed size queue. Instead than switch to a queue, I&#8217;ve stuck with a stack, which is the classic structure for this use case. Folks might get confused if they saw a &#8220;HistoryQueue.&#8221;
 
-&nbsp;
 
 ```java
 /**
@@ -91,7 +89,6 @@ public class HistoryStackImpl implements HistoryStack, ValueChangeHandler&lt;Str
 }
 ```
 
-&nbsp;
 
 Finally we&#8217;ll tell Gin to ginject this into our application for use, starting it up when the app loads.
 
@@ -105,8 +102,6 @@ public class MyClientModule extends AbstractPresenterModule {
             .to(HistoryStackImpl.class)
             .asEagerSingleton(); // history from startup //... 
 ```
-
-&nbsp;
 
 Now that was easy. Just inject your history stack into any presenter than needs to make history bases decisions. In my case, I had a user setting editor. I wanted the &#8220;Done&#8221; button to go back to the Place the user was last on so they could continue their work there, or if they started the app on the Settings page, to take them to the home page. This hack fit the bill perfectly. I hope it does the same for you.
 

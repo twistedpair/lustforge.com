@@ -28,4 +28,3 @@ Of note, Glassdoor runs off CloudFlare. CloudFlare makes SSL trivial to enable, 
 
 Until the IT team at Glassdoor decides to spend a few dollars a to implement SSL like [everyone else](https://linkedin.com) in the industry, make sure you stay away from the site on any shared or corporate link, unless you want to let your benevolent HR department know how much you love them.
 
-&nbsp;

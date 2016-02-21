@@ -28,7 +28,6 @@ You&#8217;ll need to revert to the less secure Chrome 34 build. Generally speak
 
 Hopefully that works for you. Now you can continue developing GWT until Chrome adds more road blocks, but you should really consider moving to <a href="http://www.gwtproject.org/articles/superdevmode.html" target="_blank">SuperDevMode</a>. If you&#8217;re keen to help, please contribute to the <a href="https://github.com/sdbg/sdbg" target="_blank">SDBG Eclipse Dev Mode replacement project</a>.
 
- [1]: https://lustforge.com/wp-content/uploads/2014/06/temp.png
  [2]: http://blog.chromium.org/2013/09/saying-goodbye-to-our-old-friend-npapi.html
  [3]: http://ubuntuforums.org/showthread.php?t=2225277
  [4]: https://forums.garmin.com/showthread.php?76009-Announcement-Concerning-Garmin-Connect "Garmin Connect Plugin"

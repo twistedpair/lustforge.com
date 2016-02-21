@@ -25,4 +25,3 @@ I tried _again in a few minutes_ a number of times to no effect. Googling found 
 
 So it is a bit of Windows flatus. Restart and pretend it never happened, as MS support will tell you. Perhaps a patch will be pending in the future.
 
-&nbsp;

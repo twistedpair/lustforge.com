@@ -4,7 +4,7 @@ title: Remote Debugging Apache Spark Clusters
 author: Joe
 layout: post
 date: 2016-01-01
-url: /2016/01/01/2016-01-20-remote-debugging-apache-spark-clusters/
+url: /2016/01/01/remote-debugging-apache-spark-clusters/
 categories:
   - Scala
   - Apache Spark

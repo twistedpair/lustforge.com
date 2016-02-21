@@ -59,23 +59,18 @@ Some other things that Jenkins could improve:
 
 Give TeamCity a try. I&#8217;ve been loving it for <s>4</s> 6 years now and use it on every project. Do I work for JetBrains? Nope. Then why write this? Because everyone I talk to claims Jenkins is God&#8217;s gift to integration. It makes me think I&#8217;m must be taking crazy pills, so I&#8217;ve written this so someone out there can make a more informed CI tooling decision.
 
-&nbsp;
 
 #### Don&#8217;t Take My Word For It
 
 For all your know I&#8217;m a shill that screams at fire hydrants in the night. Read the top hits for &#8220;TeamCity vs Jenkins&#8221; and you&#8217;ll discover the same thesis.
 
-  * [TeamCity vs Jenkins: Which is the Better Continuous Integration (CI) Server for .NET Software Development?][6]
+  * [TeamCity vs Jenkins: Which is the Better Continuous Integration Server for .NET Development?][6]
   * [Moving to TeamCity from Jenkins][7]
   * [Comparing Jenkins vs TeamCity &#8211; Part 2][8]
   * [How-To: Continuous Integration with TeamCity and Behat][9]
   * [TeamCity is pretty cool, you should totally check it out][9]
 
-&nbsp;
 
-&nbsp;
-
- [1]: https://lustforge.com/wp-content/uploads/2014/08/tcJenkins.png
  [2]: http://en.wikipedia.org/wiki/Hudson_(software)#Hudson.E2.80.93Jenkins_split
  [3]: http://en.wikipedia.org/wiki/Free_and_open-source_software
  [4]: http://en.wikipedia.org/wiki/Richard_Stallman
