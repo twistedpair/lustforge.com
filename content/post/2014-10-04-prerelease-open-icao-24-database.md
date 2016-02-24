@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2014-10-04
 url: /2014/10/04/prerelease-open-icao-24-database/
-categories:
+tags:
   - ADS-B
   - Aviation
 

@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2012-10-17
 url: /2012/10/17/springs-rememberme-and-badcredentialsexception/
-categories:
+tags:
   - Java
   - Spring
 

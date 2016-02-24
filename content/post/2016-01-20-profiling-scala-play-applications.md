@@ -5,7 +5,7 @@ author: Joe
 layout: post
 date: 2016-01-20
 url: /2016/01/20/profiling-scala-play-applications/
-categories:
+tags:
   - Scala
 ---
 

@@ -5,7 +5,7 @@ author: Joe
 layout: post
 date: 2015-10-15
 url: /2015/10/15/brokeback-database-cassandra-update-runaway/
-categories:
+tags:
   - Cassandra
   - Scala
 ---

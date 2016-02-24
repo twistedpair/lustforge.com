@@ -4,8 +4,6 @@ author: Joe
 layout: post
 date: 2012-10-24
 url: /2012/10/24/ctrlaltarrow-broken-and-fixed-in-eclipse/
-categories:
-  - Eclipse
 tags:
   - Eclipse
 

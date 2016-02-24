@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2015-02-28
 url: /2015/02/28/dont-use-git-to-deploy-code/
-categories:
+tags:
   - Amazon S3
   - Continuous Integration
   - DevOps

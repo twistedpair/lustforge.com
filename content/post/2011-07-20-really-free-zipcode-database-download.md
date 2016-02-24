@@ -4,11 +4,8 @@ author: Joe
 layout: post
 date: 2011-07-20
 url: /2011/07/20/really-free-zipcode-database-download/
-categories:
-  - Geolocation
 tags:
   - Geolocation
-
 ---
 It just drives me nuts that the web is full of zipcode database downloads that are not free! It is not like the resellers did anything special to compile this information. The USPS publishes it for a fee, and then they charge you a fee for [publicly available information](https://www.usps.com/business/web-tools-apis/address-information-api.htm#_Toc410982986).
 

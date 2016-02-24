@@ -4,9 +4,6 @@ author: Joe
 layout: post
 date: 2014-07-12
 url: /2014/07/12/amtraks-secret-train-tracking-json-api/
-categories:
-  - API
-  - JSON
 tags:
   - API
   - JSON

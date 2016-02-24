@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2014-11-04
 url: /2014/11/04/dynatrace-memory-sensor-anti-patterns/
-categories:
+tags:
   - Dynatrace
   - Performance Tuning
 

@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2012-07-03
 url: /2012/07/03/gwt-war-file-size-reduction-a-k-a-gwt-weightloss/
-categories:
+tags:
   - Google Web Toolkit (GWT)
   - Maven
 

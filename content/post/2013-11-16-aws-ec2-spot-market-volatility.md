@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2013-11-16
 url: /2013/11/16/aws-ec2-spot-market-volatility/
-categories:
+tags:
   - Amazon EC2
   - AWS
 

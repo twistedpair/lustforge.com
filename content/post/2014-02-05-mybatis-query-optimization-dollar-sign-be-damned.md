@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2014-02-05
 url: /2014/02/05/mybatis-query-optimization-dollar-sign-be-damned/
-categories:
+tags:
   - Java
 
 ---

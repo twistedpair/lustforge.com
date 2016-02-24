@@ -4,11 +4,8 @@ author: Joe
 layout: post
 date: 2011-05-01
 url: /2011/05/01/update-extjs-tab-title/
-categories:
-  - ExtJs
 tags:
   - ExtJs
-
 ---
 Isn&#8217;t [ExtJs][1] the cat&#8217;s meow? I think so, but many cats have hairballs. For ExtJs, this includes missing the ability to update the title of a `TabPanel` tab title once it has been rendered. Sure, you can find the _item_ and _title_ properties for your tab post-render, but that won&#8217;t update your page. You need to crawl the DOM. I&#8217;ve created an update to do just this.
 

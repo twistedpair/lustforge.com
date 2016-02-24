@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2013-04-12
 url: /2013/04/12/pebble-sdk-shipped/
-categories:
+tags:
   - Informative
 
 ---

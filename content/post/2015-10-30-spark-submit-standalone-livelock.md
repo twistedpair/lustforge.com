@@ -5,7 +5,7 @@ author: Joe
 layout: post
 date: 2015-10-30
 url: /2015/10/30/spark-submit-standalone-livelock/
-categories:
+tags:
   - Apache Spark
   - Scala
 ---

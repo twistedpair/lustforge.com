@@ -5,7 +5,7 @@ author: Joe
 layout: post
 date: 2014-11-07
 url: /2014/11/07/10-ways-create-java-memory-leaks/
-categories:
+tags:
   - Json
   - Scala
 ---

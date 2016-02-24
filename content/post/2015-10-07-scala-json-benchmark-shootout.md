@@ -5,7 +5,7 @@ author: Joe
 layout: post
 date: 2015-10-07
 url: /2015/10/07/scala-json-benchmark-shootout/
-categories:
+tags:
   - Json
   - Scala
 ---

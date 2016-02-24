@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2013-07-27
 url: /2013/07/27/caused-by-java-lang-classnotfoundexception-org-apache-ibatis-mapping-databaseidprovider/
-categories:
+tags:
   - Java
   - Spring
 

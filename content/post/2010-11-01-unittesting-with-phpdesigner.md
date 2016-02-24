@@ -4,8 +4,6 @@ author: Joe
 layout: post
 date: 2010-11-01
 url: /2010/11/01/unittesting-with-phpdesigner/
-categories:
-  - PHP
 tags:
   - PHP
 

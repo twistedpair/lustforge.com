@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2013-08-06
 url: /2013/08/06/mockito-fails-to-inject-autowired-dependency/
-categories:
+tags:
   - Java
   - Spring
 

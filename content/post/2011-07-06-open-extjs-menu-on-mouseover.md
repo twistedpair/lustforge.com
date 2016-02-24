@@ -4,8 +4,6 @@ author: Joe
 layout: post
 date: 2011-07-06
 url: /2011/07/06/open-extjs-menu-on-mouseover/
-categories:
-  - ExtJs
 tags:
   - ExtJs
 

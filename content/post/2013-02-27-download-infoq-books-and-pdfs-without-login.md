@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2013-02-27
 url: /2013/02/27/download-infoq-books-and-pdfs-without-login/
-categories:
+tags:
   - Hidden in plain Site
   - 'Tips & Tricks'
 

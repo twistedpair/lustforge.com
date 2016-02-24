@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2014-03-16
 url: /2014/03/16/subdomain-ssl-certificate-verification-on-route-53/
-categories:
+tags:
   - Amazon S3
 
 ---

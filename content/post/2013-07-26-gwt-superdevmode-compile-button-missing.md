@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2013-07-26
 url: /2013/07/26/gwt-superdevmode-compile-button-missing/
-categories:
+tags:
   - Google Web Toolkit (GWT)
 
 ---

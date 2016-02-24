@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2014-08-26
 url: /2014/08/26/accessing-the-gwt-history-stack/
-categories:
+tags:
   - Google Gin
   - Google Web Toolkit (GWT)
 

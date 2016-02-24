@@ -5,12 +5,6 @@ author: Joe
 layout: post
 date: 2016-02-21
 url: /2016/02/21/farewell-wordpress-hello-hugo/
-categories:
-  - Go
-  - WordPress
-  - CloudFront
-  - AWS
-  - Hugo
 tags:
   - Go
   - WordPress

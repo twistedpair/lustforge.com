@@ -5,7 +5,7 @@ author: Joe
 layout: post
 date: 2016-01-01
 url: /2016/01/01/remote-debugging-apache-spark-clusters/
-categories:
+tags:
   - Scala
   - Apache Spark
 ---

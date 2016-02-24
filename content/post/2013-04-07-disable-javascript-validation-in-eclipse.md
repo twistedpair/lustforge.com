@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2013-04-07
 url: /2013/04/07/disable-javascript-validation-in-eclipse/
-categories:
+tags:
   - Eclipse
 
 ---

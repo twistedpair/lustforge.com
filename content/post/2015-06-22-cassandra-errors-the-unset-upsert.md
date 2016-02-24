@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2015-06-22
 url: /2015/06/22/cassandra-errors-the-unset-upsert/
-categories:
+tags:
   - Cassandra
 
 ---

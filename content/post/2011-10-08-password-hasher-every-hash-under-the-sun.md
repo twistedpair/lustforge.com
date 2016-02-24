@@ -4,9 +4,6 @@ author: Joe
 layout: post
 date: 2011-10-08
 url: /2011/10/08/password-hasher-every-hash-under-the-sun/
-categories:
-  - Hashcodes
-  - PHP
 tags:
   - Hashcodes
   - PHP

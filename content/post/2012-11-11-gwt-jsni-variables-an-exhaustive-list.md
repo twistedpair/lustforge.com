@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2012-11-11
 url: /2012/11/11/gwt-jsni-variables-an-exhaustive-list/
-categories:
+tags:
   - Google Web Toolkit (GWT)
   - Java
 

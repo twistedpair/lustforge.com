@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2014-08-02
 url: /2014/08/02/ringing-the-cygwin-terminal-bell/
-categories:
+tags:
   - Cygwin
 
 ---

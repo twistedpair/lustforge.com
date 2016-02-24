@@ -4,10 +4,6 @@ author: Joe
 layout: post
 date: 2012-07-15
 url: /2012/07/15/logrotate-apache-logs-to-amazon-s3/
-categories:
-  - Amazon EC2
-  - Amazon S3
-  - AWS
 tags:
   - Amazon EC2
   - Amazon S3

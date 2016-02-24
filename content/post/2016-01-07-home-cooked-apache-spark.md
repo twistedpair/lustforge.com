@@ -5,7 +5,7 @@ author: Joe
 layout: post
 date: 2016-01-07
 url: /2016/01/07/home-cooked-apache-spark/
-categories:
+tags:
   - Scala
   - Apache Spark
 ---

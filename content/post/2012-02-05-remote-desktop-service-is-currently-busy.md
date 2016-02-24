@@ -4,8 +4,6 @@ author: Joe
 layout: post
 date: 2012-02-05
 url: /2012/02/05/remote-desktop-service-is-currently-busy/
-categories:
-  - MS Flatus
 tags:
   - MS Flatus
 

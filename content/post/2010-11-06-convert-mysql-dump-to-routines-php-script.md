@@ -4,13 +4,9 @@ author: Joe
 layout: post
 date: 2010-11-06
 url: /2010/11/06/convert-mysql-dump-to-routines-php-script/
-categories:
-  - MySQL
-  - PHP
 tags:
   - MySQL
   - PHP
-
 ---
 Perhaps you are like me and&#8230; well&#8230; didn't get righteous about backuping up your MySQL routines to an SCM until your first database scare?
 

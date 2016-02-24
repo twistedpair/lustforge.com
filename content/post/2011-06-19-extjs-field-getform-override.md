@@ -4,8 +4,6 @@ author: Joe
 layout: post
 date: 2011-06-19
 url: /2011/06/19/extjs-field-getform-override/
-categories:
-  - ExtJs
 tags:
   - ExtJs
 

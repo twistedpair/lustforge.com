@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2014-10-12
 url: /2014/10/12/using-immutable-objects-with-mybatis/
-categories:
+tags:
   - iBatis
   - MyBatis
 

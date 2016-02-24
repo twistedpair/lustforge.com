@@ -5,7 +5,7 @@ author: Joe
 layout: post
 date: 2015-12-10
 url: /2015/12/10/build-anagram-api-on-amazon-s3/
-categories:
+tags:
   - AWS
   - S3
   - Lambda

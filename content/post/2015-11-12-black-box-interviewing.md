@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2015-11-12
 url: /2015/11/12/black-box-interviewing/
-categories:
+tags:
   - Uncategorized
 
 ---

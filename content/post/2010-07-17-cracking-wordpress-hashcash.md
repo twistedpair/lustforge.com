@@ -4,14 +4,10 @@ author: Joe
 layout: post
 date: 2010-07-17
 url: /2010/07/17/cracking-wordpress-hashcash/
-categories:
+tags:
   - Hashcodes
   - Hidden in plain Site
   - PHP
-tags:
-  - Hashcodes
-  - PHP
-
 ---
 As many know, [WordPress Hashcash][1] is not a [hashcash][2] at all. This is more than merely semantics. A true hashcash would provide protections to blogs from spam bots, but WPHC does no such thing. Rather WPHC merely projects an aura of protection that even the most novitiate script kiddie can crack.
 

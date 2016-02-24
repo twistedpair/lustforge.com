@@ -4,13 +4,9 @@ author: Joe
 layout: post
 date: 2012-01-29
 url: /2012/01/29/gwt-maps-api-v3-and-maven/
-categories:
-  - Google Web Toolkit (GWT)
-  - Maven
 tags:
   - Google Web Toolkit (GWT)
   - Maven
-
 ---
 
 ### Deprecated

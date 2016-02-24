@@ -4,11 +4,9 @@ author: Joe
 layout: post
 date: 2012-02-25
 url: /2012/02/25/installing-oracle-jdk-on-ubuntu-11-10/
-categories:
-  - Ubuntu
 tags:
   - Ubuntu
-
+  - Linux
 ---
 It&#8217;s a shame IBM didn&#8217;t buy Sun, since the guys at Oracle are just not much fun. Case in point, you can&#8217;t just `apt-get` the Oracle JDK/JRE. No, that would be too easy and Oracle does not want you to be their friend. Rather, they&#8217;d prefer you register with their site, accept their legal terms, and download/install everything manually because this is the _right_ way to discourage the use of Java.
 

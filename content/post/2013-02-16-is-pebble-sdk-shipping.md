@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2013-02-16
 url: /2013/02/16/is-pebble-sdk-shipping/
-categories:
+tags:
   - Pebble
 
 ---

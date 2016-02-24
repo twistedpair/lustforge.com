@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2014-11-02
 url: /2014/11/02/never-user-glassdoor-from-work/
-categories:
+tags:
   - Public Service Announcement
 
 ---

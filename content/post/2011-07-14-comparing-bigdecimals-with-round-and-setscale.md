@@ -4,8 +4,6 @@ author: Joe
 layout: post
 date: 2011-07-14
 url: /2011/07/14/comparing-bigdecimals-with-round-and-setscale/
-categories:
-  - Java
 tags:
   - Java
 

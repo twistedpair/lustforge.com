@@ -5,7 +5,7 @@ author: Joe
 layout: post
 date: 2015-11-20
 url: /2015/11/20/spark-submit-from-scala-applications/
-categories:
+tags:
   - Apache Spark
   - Scala
 ---

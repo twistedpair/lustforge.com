@@ -4,11 +4,8 @@ author: Joe
 layout: post
 date: 2012-01-29
 url: /2012/01/29/gwt-modules-missing-dtd-tag/
-categories:
-  - Google Web Toolkit (GWT)
 tags:
   - Google Web Toolkit (GWT)
-
 ---
 
 {{< figure src="/img/gwt_modules_tag_missing.png" title="GWT Module AutoSuggestion Magic" >}}

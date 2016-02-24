@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2014-06-12
 url: /2014/06/12/restoring-the-chrome-gwt-devmode-plugin/
-categories:
+tags:
   - Google Web Toolkit (GWT)
 
 ---

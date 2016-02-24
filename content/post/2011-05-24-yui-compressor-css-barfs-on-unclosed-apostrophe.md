@@ -4,11 +4,8 @@ author: Joe
 layout: post
 date: 2011-05-24
 url: /2011/05/24/yui-compressor-css-barfs-on-unclosed-apostrophe/
-categories:
-  - JavaScript
 tags:
   - JavaScript
-
 ---
 I was running my deployment script last night, which includes the [YUI compressor][1], and it went KABOOM! Not good.
 

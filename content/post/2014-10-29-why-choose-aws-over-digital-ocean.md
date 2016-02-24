@@ -4,11 +4,6 @@ author: Joe
 layout: post
 date: 2014-10-29
 url: /2014/10/29/why-choose-aws-over-digital-ocean/
-categories:
-  - AWS
-  - Cloud
-  - Digitial Ocean
-  - EC2
 tags:
   - AWS
   - Cloud
@@ -16,7 +11,7 @@ tags:
   - EC2
 ---
 
-There' sno shortage of [shills][0] for Digital Ocean VM hosting on [HackerNews][1] lately. They [extol][2] the wonder of DO and disparage AWS. I view these accumulations of calumnies with curiosity, searching for the cogent retorts from AWS mavens. Finally, I broke down and threw [$5][3] at a DO plan to see what I was missing. Turns out I'm not missing a thing.
+There's no shortage of [shills][0] for Digital Ocean VM hosting on [HackerNews][1] lately. They [extol][2] the wonder of DO and disparage AWS. I view these accumulations of calumnies with curiosity, searching for the cogent retorts from AWS mavens. Finally, I broke down and threw [$5][3] at a DO plan to see what I was missing. Turns out I'm not missing a thing.
 
 ## The Good
 - Modern CSS feel with candy buttons and very simple, limited UI

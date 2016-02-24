@@ -4,7 +4,7 @@ author: Joe
 layout: post
 date: 2014-08-21
 url: /2014/08/21/jenkins-vs-teamcity-the-better-ci-tool/
-categories:
+tags:
   - Continuous Integration
 
 ---
