@@ -1,7 +1,6 @@
-baseurl = "https://lustforge.com"
+baseurl = "https://lustforge.com/"
 languageCode = "en-us"
 title = "LustForge"
-name = "LustForge"
 copyright = "Joseph Lust"
 description = "what Lust hath wrought"
 theme = "ghostwriter"
@@ -14,6 +13,7 @@ disqusShortname = "lustforge"
 
 [Taxonomies]
     tag = "tags"
+    category = "categories"
 
 [Params]
     favicon = "favicon.png"
