@@ -20,4 +20,4 @@ Miraculously the job dropped to 3 minutes yesterday. It must be broken! Check th
 
 A dev had correctly fixed their query to use an [octothorpe](https://en.wiktionary.org/wiki/octothorpe) rather than dollar sign, since $ is an SQL inject inviting anti-pattern in MyBatis. However, $ also makes the query DML dynamic and as such MyBatis and subsequently **Oracle never cached the query and the execution plans**, instead recalculating them each time.
 
-So, yet another reason to never use `$` in MyBatis. I&#8217;ve searched for a way to disable it in MyBatis, but haven&#8217;t seen a flag yet. Shout out in the comments if you know a way. <img src="https://lustforge.com/wp-includes/images/smilies/simple-smile.png" alt=":)" class="wp-smiley" style="height: 1em; max-height: 1em;" />
+So, yet another reason to never use `$` in MyBatis. I&#8217;ve searched for a way to disable it in MyBatis, but haven&#8217;t seen a flag yet. Shout out in the comments if you know a way. 😊

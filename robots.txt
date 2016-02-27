@@ -1,0 +1,7 @@
+User-agent: *
+
+Disallow: /wp-login.php
+Disallow: /wp-cron.php
+
+Sitemap: https://lustforge.com/sitemap.xml
+
