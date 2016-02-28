@@ -6,7 +6,7 @@ date: 2011-04-02
 url: /2011/04/02/console2-arrow-key-error/
 tags:
   - Cygwin
-  - 'Tips & Tricks'
+  - 'Tips and Tricks'
 ---
 
 {{< figure src="/img/cygwin_wtf.png" >}}

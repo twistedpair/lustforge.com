@@ -6,7 +6,7 @@ date: 2011-07-02
 url: /2011/07/02/windows-downloads-without-windows-genuine-advantage/
 tags:
   - Hidden in plain Site
-  - 'Tips & Tricks'
+  - 'Tips and Tricks'
 ---
 I found myself needing to [download Virtual PC][1] from Microsoft recently to test an application. I have a bonafide copy of windows, but my enterprise anti-virus won&#8217;t let me run WGA. No problem, we&#8217;ll just snoop around the MS site.
 
