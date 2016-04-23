@@ -52,9 +52,19 @@ You can turn this into a sheel script like the one that [deploys this blog][2].
 
 ## Invalidation Costs
 
-Note the CloudFront [invalidation pricing][6]. The first 1K files invalidated per month are free, but they are `¢0.5` there after, which could rack up if you were invalidating thousands of files.
+Note the CloudFront [invalidation pricing][6]. An `InvalidationRequest` is when you ask to purge the cache for a given path. 
 
-This is why I'm only invalidating about 6 files above. Use unique asset names if they will change frequently, or [URL fingerprinting][3].
+Some examples include:
+
+- purge one file using `/blah/file.txt`
+- purge all files at a path using `/blah/*`
+- purge everything using `/*`
+
+Though these may purge from one to thousands of files, each counts as a **single invalidation request**. The first 1K monthly requests are free, but they are `¢0.5` there after, which could rack up if you were invalidating thousands of files individually, or redeploying with a commit hook frequently.
+
+While you could always invalidate the entire distribution with `/*`, this will force all 50 worldwide edge locations to reload every file for you site on the next visit ("cache miss"), defeating the purpose of your CDN. As such, it's often better to invalidate just the affected files, as long as there are not many. This is why I'm only invalidating about 6 files above.
+
+Alternatively, use unique asset names if they will change frequently, or [URL fingerprinting][3] and you won't ever need to invalidate.
 
 
  [1]: https://en.wikipedia.org/wiki/Edward_Snowden#Technology_industry
