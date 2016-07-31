@@ -1,6 +1,6 @@
 ---
 title: Pebble SDK Shipped!
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2013-04-12
 url: /2013/04/12/pebble-sdk-shipped/

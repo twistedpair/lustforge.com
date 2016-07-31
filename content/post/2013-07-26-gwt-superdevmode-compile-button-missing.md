@@ -1,6 +1,6 @@
 ---
 title: GWT SuperDevMode Compile Button Missing
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2013-07-26
 url: /2013/07/26/gwt-superdevmode-compile-button-missing/

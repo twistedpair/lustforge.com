@@ -1,6 +1,6 @@
 ---
 title: 'Convert MySQL Dump to Routines Files [PHP script]'
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2010-11-06
 url: /2010/11/06/convert-mysql-dump-to-routines-php-script/

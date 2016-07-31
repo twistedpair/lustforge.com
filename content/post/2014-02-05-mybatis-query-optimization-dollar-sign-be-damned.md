@@ -1,6 +1,6 @@
 ---
 title: 'MyBatis Query Optimization : Dollar Sign be Damned'
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2014-02-05
 url: /2014/02/05/mybatis-query-optimization-dollar-sign-be-damned/

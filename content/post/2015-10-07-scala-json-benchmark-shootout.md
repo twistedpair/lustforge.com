@@ -1,7 +1,7 @@
 ---
 draft: true
 title: Scala JSON Benchmark Shootout
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2015-10-07
 url: /2015/10/07/scala-json-benchmark-shootout/

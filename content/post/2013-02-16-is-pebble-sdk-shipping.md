@@ -1,6 +1,6 @@
 ---
 title: Is Pebble SDK Shipping?
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2013-02-16
 url: /2013/02/16/is-pebble-sdk-shipping/

@@ -1,6 +1,6 @@
 ---
 title: Download InfoQ Books and PDFs without Login
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2013-02-27
 url: /2013/02/27/download-infoq-books-and-pdfs-without-login/

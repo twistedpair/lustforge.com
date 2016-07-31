@@ -1,7 +1,7 @@
 ---
 draft: true
 title: Build an Anagram API on Amazon S3
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2015-12-10
 url: /2015/12/10/build-anagram-api-on-amazon-s3/

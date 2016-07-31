@@ -1,9 +1,11 @@
 ---
 title: "Dangers of the Unit Type Parameter"
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2016-04-12
 url: /2016/04/12/dangers-of-unit-type-parameter/
+image: /img/anti-unit.png
+summary: "Confusing misuses of Unit and the loss of type checking."
 tags:
   - Futures
   - Scala

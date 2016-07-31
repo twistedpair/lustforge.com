@@ -1,9 +1,11 @@
 ---
 title: "Modulo Operator Performance Impact"
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2016-05-08
 url: /2016/05/08/modulo-operator-performance-impact/
+image: /img/mod_exe_chart.png
+summary: "My textbooks used modulo, yet my boss told me not to. Where had I gone wrong?"
 tags:
   - Math
   - Performance
@@ -101,7 +103,6 @@ If modulo is a critical path in your code, and your divisor is a power of 2 (wit
 TODO: remainderKnuth, remainderBurnikelZiegler, in BigDecimal
 TODO: Check Knuth book for other Impl's (didn't see any)
 
-TODO: Seed blog post at relevant locations: https://stackoverflow.com/questions/35785615/is-modulo-slow-in-java
 first 3 Google hits, none mention the cost of the operation. Sadness.
 -->
 

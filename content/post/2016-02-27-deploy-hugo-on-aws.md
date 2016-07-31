@@ -1,6 +1,6 @@
 ---
 title: "AWS Hugo Hosting, HowTo"
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2016-02-27
 url: /2016/02/27/hosting-hugo-on-aws/

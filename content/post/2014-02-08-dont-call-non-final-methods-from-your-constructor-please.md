@@ -1,6 +1,6 @@
 ---
 title: Don’t call non-final methods from your constructor, please.
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2014-02-08
 url: /2014/02/08/dont-call-non-final-methods-from-your-constructor-please/

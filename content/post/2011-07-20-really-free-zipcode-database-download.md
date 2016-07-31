@@ -1,6 +1,6 @@
 ---
 title: (Really) Free Zipcode Database Download
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2011-07-20
 url: /2011/07/20/really-free-zipcode-database-download/

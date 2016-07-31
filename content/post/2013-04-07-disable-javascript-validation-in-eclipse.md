@@ -1,6 +1,6 @@
 ---
 title: Disable JavaScript validation in Eclipse
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2013-04-07
 url: /2013/04/07/disable-javascript-validation-in-eclipse/

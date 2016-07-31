@@ -20,6 +20,7 @@ disqusShortname = "lustforge"
     intro = true # hide site title
     headline = "LustForge"
     description = "what Lust hath wrought"
+    organization = "LustForge.com"
     github = "https://github.com/twistedpair"
     linkedin = "https://www.linkedin.com/in/josephlust"
     gplus = "https://plus.google.com/+JosephLust"

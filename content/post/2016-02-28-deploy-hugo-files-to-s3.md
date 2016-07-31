@@ -1,6 +1,6 @@
 ---
 title: "Deploy Hugo Files to S3"
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2016-02-28
 url: /2016/02/28/deploy-hugo-files-to-s3/

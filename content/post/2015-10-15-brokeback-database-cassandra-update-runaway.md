@@ -1,7 +1,7 @@
 ---
 draft: true
 title: "Brokeback Database: Cassandra and Update Runaway"
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2015-10-15
 url: /2015/10/15/brokeback-database-cassandra-update-runaway/

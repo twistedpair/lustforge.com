@@ -1,7 +1,7 @@
 ---
 draft: false
 title: About the Lust
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2016-02-21
 url: /about/

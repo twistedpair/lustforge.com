@@ -1,6 +1,6 @@
 ---
 title: GWT Module’s Missing DTD Tag
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2012-01-29
 url: /2012/01/29/gwt-modules-missing-dtd-tag/

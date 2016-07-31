@@ -1,6 +1,6 @@
 ---
 title: “Add a Browser” – GWT Eclipse Plugin
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2012-06-02
 url: /2012/06/02/add-a-browser-gwt-eclipse-plugin/

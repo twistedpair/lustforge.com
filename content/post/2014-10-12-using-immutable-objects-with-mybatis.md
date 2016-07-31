@@ -1,6 +1,6 @@
 ---
 title: Using Immutable Objects with MyBatis
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2014-10-12
 url: /2014/10/12/using-immutable-objects-with-mybatis/

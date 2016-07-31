@@ -1,6 +1,6 @@
 ---
 title: Restoring the Chrome GWT DevMode Plugin
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2014-06-12
 url: /2014/06/12/restoring-the-chrome-gwt-devmode-plugin/

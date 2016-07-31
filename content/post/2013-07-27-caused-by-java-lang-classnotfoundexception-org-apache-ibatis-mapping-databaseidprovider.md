@@ -1,6 +1,6 @@
 ---
 title: 'Caused by: java.lang.ClassNotFoundException: org.apache.ibatis.mapping.DatabaseIdProvider'
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2013-07-27
 url: /2013/07/27/caused-by-java-lang-classnotfoundexception-org-apache-ibatis-mapping-databaseidprovider/

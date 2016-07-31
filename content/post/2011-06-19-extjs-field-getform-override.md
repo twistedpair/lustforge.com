@@ -1,6 +1,6 @@
 ---
 title: ExtJs Field getForm() Override
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2011-06-19
 url: /2011/06/19/extjs-field-getform-override/

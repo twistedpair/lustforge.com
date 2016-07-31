@@ -1,6 +1,6 @@
 ---
 title: GWT war file Size Reduction – a.k.a GWT Weightloss
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2012-07-03
 url: /2012/07/03/gwt-war-file-size-reduction-a-k-a-gwt-weightloss/

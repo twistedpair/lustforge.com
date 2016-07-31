@@ -1,6 +1,6 @@
 ---
 title: Easy Bulk CloudFront Invalidations vis AWS Console
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2012-07-20
 url: /2012/07/20/easy-bulk-cloudfront-invalidations-vis-aws-console/

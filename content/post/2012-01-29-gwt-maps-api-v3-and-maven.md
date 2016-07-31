@@ -1,6 +1,6 @@
 ---
 title: GWT Maps API v3 and Maven
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2012-01-29
 url: /2012/01/29/gwt-maps-api-v3-and-maven/

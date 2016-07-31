@@ -1,7 +1,7 @@
 ---
 draft: true
 title: Profiling Scala Play Applications
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2016-01-20
 url: /2016/01/20/profiling-scala-play-applications/

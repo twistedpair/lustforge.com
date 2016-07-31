@@ -1,6 +1,6 @@
 ---
 title: Why I Chose AWS Over Digital Ocean
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2014-10-29
 url: /2014/10/29/why-choose-aws-over-digital-ocean/

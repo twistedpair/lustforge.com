@@ -1,6 +1,6 @@
 ---
 title: Console2 Arrow Keys Madness
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2011-04-02
 url: /2011/04/02/console2-arrow-key-error/
