@@ -4,7 +4,7 @@ author: Joseph Lust
 layout: post
 date: 2016-05-08
 url: /2016/05/08/modulo-operator-performance-impact/
-image: /img/mod_exe_chart.png
+image: /img/mod_perf_chart.png
 summary: "My textbooks used modulo, yet my boss told me not to. Where had I gone wrong?"
 tags:
   - Math
