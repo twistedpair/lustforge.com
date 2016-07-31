@@ -1,6 +1,6 @@
 ---
 title: Jenkins vs. Teamcity – The Better CI Tool
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2014-08-21
 url: /2014/08/21/jenkins-vs-teamcity-the-better-ci-tool/

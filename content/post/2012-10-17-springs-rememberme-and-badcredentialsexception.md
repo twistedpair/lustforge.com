@@ -1,6 +1,6 @@
 ---
 title: Spring’s RememberMe and BadCredentialsException
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2012-10-17
 url: /2012/10/17/springs-rememberme-and-badcredentialsexception/

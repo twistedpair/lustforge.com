@@ -1,6 +1,6 @@
 ---
 title: Mockito Fails to Inject Autowired Dependency
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2013-08-06
 url: /2013/08/06/mockito-fails-to-inject-autowired-dependency/

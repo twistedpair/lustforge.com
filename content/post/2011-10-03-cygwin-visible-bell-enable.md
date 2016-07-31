@@ -1,6 +1,6 @@
 ---
 title: Cygwin Visible Bell Enable
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2011-10-03
 url: /2011/10/03/cygwin-visible-bell-enable/

@@ -1,6 +1,6 @@
 ---
 title: Dynatrace Memory Sensor Anti-Patterns
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2014-11-04
 url: /2014/11/04/dynatrace-memory-sensor-anti-patterns/

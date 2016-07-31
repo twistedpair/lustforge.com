@@ -1,6 +1,6 @@
 ---
 title: Never Use Glassdoor From Work
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2014-11-02
 url: /2014/11/02/never-user-glassdoor-from-work/

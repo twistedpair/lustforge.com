@@ -1,7 +1,7 @@
 ---
 draft: true
 title: Spark-Submit from Scala Applications
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2015-11-20
 url: /2015/11/20/spark-submit-from-scala-applications/

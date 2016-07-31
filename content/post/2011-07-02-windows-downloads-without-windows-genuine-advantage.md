@@ -1,6 +1,6 @@
 ---
 title: Windows Downloads without Windows Genuine Advantage
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2011-07-02
 url: /2011/07/02/windows-downloads-without-windows-genuine-advantage/

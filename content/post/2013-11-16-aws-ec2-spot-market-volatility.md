@@ -1,6 +1,6 @@
 ---
 title: AWS EC2 Spot Market Volatility
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2013-11-16
 url: /2013/11/16/aws-ec2-spot-market-volatility/

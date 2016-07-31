@@ -1,6 +1,6 @@
 ---
 title: Comparing BigDecimals with Round and SetScale
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2011-07-14
 url: /2011/07/14/comparing-bigdecimals-with-round-and-setscale/

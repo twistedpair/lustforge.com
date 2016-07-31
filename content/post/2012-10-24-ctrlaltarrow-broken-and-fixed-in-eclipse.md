@@ -1,6 +1,6 @@
 ---
 title: Ctrl+Alt+Arrow Broken (and fixed) in Eclipse
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2012-10-24
 url: /2012/10/24/ctrlaltarrow-broken-and-fixed-in-eclipse/

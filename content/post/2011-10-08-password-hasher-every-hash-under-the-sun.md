@@ -1,6 +1,6 @@
 ---
 title: 'Password Hasher : Every Hash Under the Sun'
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2011-10-08
 url: /2011/10/08/password-hasher-every-hash-under-the-sun/

@@ -1,7 +1,7 @@
 ---
 draft: false
 title: Home Cooked Apache Spark
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2016-01-07
 url: /2016/01/07/home-cooked-apache-spark/

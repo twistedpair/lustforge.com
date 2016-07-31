@@ -1,7 +1,7 @@
 ---
 draft: false
 title: Remote Debugging Apache Spark Clusters
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2016-01-01
 url: /2016/01/01/remote-debugging-apache-spark-clusters/

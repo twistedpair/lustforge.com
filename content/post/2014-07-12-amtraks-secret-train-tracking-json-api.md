@@ -1,6 +1,6 @@
 ---
 title: Amtrak's Secret Train Tracking JSON API
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2014-07-12
 url: /2014/07/12/amtraks-secret-train-tracking-json-api/

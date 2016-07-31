@@ -1,7 +1,7 @@
 ---
 draft: false
 title: Farewell WordPress, Hello Hugo! 
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2016-02-21
 url: /2016/02/21/farewell-wordpress-hello-hugo/

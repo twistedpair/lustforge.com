@@ -1,6 +1,6 @@
 ---
 title: LogRotate Apache Logs to Amazon S3
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2012-07-15
 url: /2012/07/15/logrotate-apache-logs-to-amazon-s3/

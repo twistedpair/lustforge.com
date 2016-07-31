@@ -1,6 +1,6 @@
 ---
 title: Update ExtJs TabPanel Tab Title
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2011-05-01
 url: /2011/05/01/update-extjs-tab-title/

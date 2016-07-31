@@ -1,6 +1,6 @@
 ---
 title: Installing Oracle JDK on Ubuntu 11.10
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2012-02-25
 url: /2012/02/25/installing-oracle-jdk-on-ubuntu-11-10/

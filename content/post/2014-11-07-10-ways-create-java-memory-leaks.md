@@ -1,7 +1,7 @@
 ---
 draft: true
 title: 10 Ways to Create Java Memory Leaks
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2014-11-07
 url: /2014/11/07/10-ways-create-java-memory-leaks/

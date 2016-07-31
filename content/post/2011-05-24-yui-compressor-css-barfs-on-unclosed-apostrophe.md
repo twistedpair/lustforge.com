@@ -1,6 +1,6 @@
 ---
 title: YUI Compressor CSS Barfs on Unclosed Apostrophe
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2011-05-24
 url: /2011/05/24/yui-compressor-css-barfs-on-unclosed-apostrophe/

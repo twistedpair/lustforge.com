@@ -1,7 +1,7 @@
 ---
 draft: false
 title: About the Lust
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2016-02-21
 url: /about/
@@ -10,7 +10,7 @@ tags:
 
 Joe Lust (*homo Lusticus*) is a adult male human commonly found in the northern latitudes of the Americas. He is `177cm` nose to tail and varies from `70` to `73kg` with seasonal foraging. Generally social, he may be approached in most environments. He is  especially renowned for a tendency toward prolonged periods of computer coding. He may also engage in distance runs of up to `32km` for no apparent mating or nutritional benefit.
 
-Sightings most commonly occur along the Charles River Basin or other wooded paths. In the Spring of 2016 field researchers hope to fit him with a radio tracking collar to better understand migratory habits and feeding grounds.
+Sightings most commonly occur along the Charles River Basin or other wooded paths. Continued research is required to better understand his migratory habits and feeding grounds.
 
 
  [1]: https://aws.amazon.com/cloudfront/

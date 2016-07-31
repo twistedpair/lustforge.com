@@ -1,6 +1,6 @@
 ---
 title: Remote Desktop Service is currently Busy
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2012-02-05
 url: /2012/02/05/remote-desktop-service-is-currently-busy/

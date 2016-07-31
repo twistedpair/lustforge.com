@@ -1,6 +1,6 @@
 ---
 title: Cracking WordPress Hashcash
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2010-07-17
 url: /2010/07/17/cracking-wordpress-hashcash/

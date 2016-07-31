@@ -1,6 +1,6 @@
 ---
 title: Unittesting with PhpDesigner and SimpleTest
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2010-11-01
 url: /2010/11/01/unittesting-with-phpdesigner/

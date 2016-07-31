@@ -1,6 +1,6 @@
 ---
 title: 'Custom CloudWatch Metric Tutorial: FreeMemory and Cron'
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2012-07-22
 url: /2012/07/22/custom-cloudwatch-metric-tutorial-freememory-and-cron/

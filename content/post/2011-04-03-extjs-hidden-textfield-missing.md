@@ -1,6 +1,6 @@
 ---
 title: Extjs Hidden Textfield Missing
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2011-04-03
 url: /2011/04/03/extjs-hidden-textfield-missing/

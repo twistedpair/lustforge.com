@@ -1,6 +1,6 @@
 ---
 title: Subdomain SSL Certificate Verification on Route 53
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2014-03-16
 url: /2014/03/16/subdomain-ssl-certificate-verification-on-route-53/

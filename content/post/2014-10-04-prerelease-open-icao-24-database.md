@@ -1,6 +1,6 @@
 ---
 title: 'PreRelease: Open ICAO 24 Database'
-author: Joe
+author: Joseph Lust
 layout: post
 date: 2014-10-04
 url: /2014/10/04/prerelease-open-icao-24-database/
