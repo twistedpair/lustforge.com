@@ -26,7 +26,7 @@ disqusShortname = "lustforge"
     gplus = "https://plus.google.com/+JosephLust"
 #    twitter = "https://twitter.com/XXX"
     stackoverflow = "https://stackoverflow.com/users/564157/joseph-lust"
-    rss = false
+    rss = true
 
 #    highlight = "atelier-forest.dark"
 #    highlight = "atelier-dune.dark"
