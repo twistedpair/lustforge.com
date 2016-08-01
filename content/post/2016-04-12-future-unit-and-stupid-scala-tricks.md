@@ -14,7 +14,7 @@ tags:
 I ran into the following Scala pitfall when refactoring some code recently.
 
 ## The problem
-[Futures][1] sometimes execute in expected order, other times not. Testing with `Await.result(f)` didn't block. The world was no longer deterministic. Why? Unit.
+[Futures][0] sometimes execute in expected order, other times not. Testing with `Await.result(f)` didn't block. The world was no longer deterministic. Why? Unit.
 
 ## The code
 
@@ -59,7 +59,7 @@ This gets tricky with type parameters. If you returned `Future[Future[Unit]]`, y
 
 ## Compiler Don't Care `bout Unit
 
-Thus, we see that by returning the Unit type, we're really returning Void, and lose any type checking of the return type at all. As such, the compiler doesn't give a damn what we return.  Any `Future` executed in said yield will probably be invoked, but not as this flatmapping chain of futures, and not in the order you'd expect. 
+Thus, we see that by returning the Unit type, we're really returning Void, and lose any type checking of the return type at all. As such, the compiler doesn't give a damn[^1] what we return.  Any `Future` executed in said yield will probably be invoked, but not as this flatmapping chain of futures, and not in the order you'd expect. 
 
 `doSideEffect(...)` is invoked, and it's Future created, but said Future isn't tied to this sequence of Futures. Thus, the Future returned by `doWork()` won't wait for it, returning `Unit` immeadiately.
 
@@ -143,10 +143,11 @@ def myProcedure(n:Int):Unit = {n * n; Unit; ()}  // post-compiled
 
 Developers may explicitly return `Unit`, but really they are returning the *Unit type*, not the singleton Unit reference, `()`. The reference to the actual type is being discarded.
 
- [1]: http://docs.scala-lang.org/overviews/core/futures.html#futures
+
+ [^1]: Set the `-Ywarn-value-discard` compiler flag to fail builds on Value Discarding
+
+ [0]: http://docs.scala-lang.org/overviews/core/futures.html#futures
  [2]: https://en.wikipedia.org/wiki/Unit_type
  [3]: http://www.scala-lang.org/files/archive/nightly/docs/library/index.html#scala.Unit$
  [4]: https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings
  [5]: http://www.scala-lang.org/docu/files/ScalaReference.pdf
- 
- 
