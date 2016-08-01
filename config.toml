@@ -19,6 +19,7 @@ disqusShortname = "lustforge"
     favicon = "favicon.png"
     intro = true # hide site title
     headline = "LustForge"
+    defaultPostImage = "/img/lustforge_key_default.png"
     description = "what Lust hath wrought"
     organization = "LustForge.com"
     github = "https://github.com/twistedpair"
