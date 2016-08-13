@@ -4,7 +4,7 @@ author: Joseph Lust
 layout: post
 date: 2016-05-08
 url: /2016/05/08/modulo-operator-performance-impact/
-image: /img/mod_perf_chart.png
+image: /img/modulo_benchmark_chart.png
 summary: "My textbooks used modulo, yet my boss told me not to. Where had I gone wrong?"
 tags:
   - Math
@@ -32,7 +32,7 @@ Computers are binary by nature, so using powers of two provide lots of tricks. T
 
 For example, if I want to do `61 % 8`, to know which of an `Array[Byte]` to grab a value from, we can think of it in binary as [logical conjunction][14] of the dividend with the  mask of all bits lower than the divisor. For powers of 2, that's just n-1. The bit operations are illustrated below, using 32 bit integers.
 
-{{< figure src="/img/bit_diagram.svg" caption="Note: Applicable only to Natural Integers" >}}
+[{{< figure src="/img/bit_diagram.svg" caption="Note: Applicable only to Natural Integers" >}}](/img/bit_diagram.svg)
 
 We can code this simply as:
 
@@ -67,13 +67,13 @@ Comparing the byte code of classic modulo, and our faster version, we see they a
        4: ireturn
 ```
 
-A simple benchmark (see the [gist][16]) shows what we expect, doing one millions passes of each.
+A simple benchmark[^1] \(see the [gist][16]\) on bare metal[^2] shows what we expect, doing one billion passes of each.
 
 - Power 8 trick is the fastest
 - `irem` implementation is nearly as fast
 - `fmod` implementation is 3x slower
 
-{{< figure src="/img/mod_exe_chart.svg">}}
+[{{< figure src="/img/modulo_benchmark_chart.svg">}}](/img/modulo_benchmark_chart.svg)
 
 <!---
 t = [1.589,1.954,7.987]
@@ -106,8 +106,11 @@ TODO: Check Knuth book for other Impl's (didn't see any)
 first 3 Google hits, none mention the cost of the operation. Sadness.
 -->
 
- [1]: http://www.cafeaulait.org/course/week2/15.html
- [2]: http://www.javaranch.com/drive/modulo.html
+ [^1]: Benchmarked with a [simple iterator][19], and [ScalaMeter][18], and [JMH][17]. JMH provided the most consistent approach, and uses the most advanced methods to warmup and prevent garbage collections. Performed on an untilized, bare metal machine with N=1 billion (1K runs of 1M iterations). JVM memory preallocated at startup (`-Xmx=2G -Xms=2G`)
+ [^2]: HotSpot 1.8.0_91, Ubuntu 15.04, i7-4790K, 32GB PC3 19200 ram, SSD
+
+ [0]: http://www.cafeaulait.org/course/week2/15.html
+ [8]: http://www.javaranch.com/drive/modulo.html
  [3]: http://www.dreamincode.net/forums/topic/273783-the-use-of-the-modulo-operator/
  [4]: http://dhruba.name/2011/07/12/performance-pattern-modulo-and-powers-of-two/
  [5]: https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.17.3
@@ -120,6 +123,6 @@ first 3 Google hits, none mention the cost of the operation. Sadness.
  [14]: https://en.wikipedia.org/wiki/Logical_conjunction
  [15]: https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html#jvms-6.5.irem
  [16]: https://gist.github.com/twistedpair/58414ee3237544eaf54a787a59f656c6
-  
- 
- 
+ [17]: http://openjdk.java.net/projects/code-tools/jmh/ 
+ [18]: https://scalameter.github.io/
+ [19]: https://gist.github.com/twistedpair/58414ee3237544eaf54a787a59f656c6

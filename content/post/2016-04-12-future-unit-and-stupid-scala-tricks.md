@@ -71,13 +71,13 @@ An alternative to the above example, using a sealed algebra for return state, wo
 
 ```scala
 sealed trait Result
-case class Good() extends Result
-case class Bad() extends Result
+object Good extends Result
+object Bad extends Result
 
 def makeFut1():Future[Int] = Future.successful( 1 + 1) 
 def makeFut2():Future[String] = Future.successful( "foo" + "bar" )
 def doSideEffectB(a:Int,b:String):Future[Result] 
-  = Future { println(s"[$a] [$b]"); Good() }
+  = Future { println(s"[$a] [$b]"); Good }
 
 def doWork():Future[Result] = {
     for {
@@ -101,7 +101,7 @@ Horay for types!
 
 ## (Appendix) Unit Type and Void
 
-[Unit][3] is a [Unit Type][2] from Type Theory, meaning it's a universal singleton instance referenced by `()`, the zero tuple. Every `()` in your code points to the same Unit instance. Because Unit is isomorphic with all other Scala `AnyVal` types, any of them can be converted to Unit as required for return signatures to match. Further, any *value type*, e.g. type with concrete values, can be converted.
+[Unit][3] is a [Unit Type][6] from Type Theory, meaning it's a universal singleton instance referenced by `()`, the zero tuple. Every `()` in your code points to the same Unit instance. Because of Unit's isomorphism with all other Scala value types, they can be converted to Unit as required for return signatures to match. Any *value type*[^2] can be converted.
 
 Let's decompile the following functions to see what Scala does to Unit returns:
 
@@ -144,10 +144,11 @@ def myProcedure(n:Int):Unit = {n * n; Unit; ()}  // post-compiled
 Developers may explicitly return `Unit`, but really they are returning the *Unit type*, not the singleton Unit reference, `()`. The reference to the actual type is being discarded.
 
 
+ [^2]: value type T , `scala.Nothing <: T <: scala.Any`
  [^1]: Set the `-Ywarn-value-discard` compiler flag to fail builds on Value Discarding
 
  [0]: http://docs.scala-lang.org/overviews/core/futures.html#futures
- [2]: https://en.wikipedia.org/wiki/Unit_type
+ [6]: https://en.wikipedia.org/wiki/Unit_type
  [3]: http://www.scala-lang.org/files/archive/nightly/docs/library/index.html#scala.Unit$
  [4]: https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings
  [5]: http://www.scala-lang.org/docu/files/ScalaReference.pdf
