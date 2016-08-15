@@ -3,7 +3,7 @@ title: "Login With Broken AWS MFA Device"
 author: Joseph Lust
 layout: post
 date: 2016-06-14
-url: /2016/06/14/broken-aws-mfa-device/
+url: /2016/06/14/login-broken-aws-mfa-device/
 image: /img/broken_iphone.png
 summary: "Your dog just broke your iPhone. How do you login to AWS without your MFA token?"
 tags:

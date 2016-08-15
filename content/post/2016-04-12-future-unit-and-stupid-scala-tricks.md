@@ -101,7 +101,7 @@ Horay for types!
 
 ## (Appendix) Unit Type and Void
 
-[Unit][3] is a [Unit Type][6] from Type Theory, meaning it's a universal singleton instance referenced by `()`, the zero tuple. Every `()` in your code points to the same Unit instance. Because of Unit's isomorphism with all other Scala value types, they can be converted to Unit as required for return signatures to match. Any *value type*[^2] can be converted.
+[Unit][3] is a [Unit Type][6] from Type Theory, meaning it's a universal singleton instance referenced by `()`, the zero tuple. Every `()` in your code points to the same Unit instance. Since all Scala value types can be converted to Unit, the compiler may change them to Unit as required for return signatures to match. Any *value type*[^2] can be converted.
 
 Let's decompile the following functions to see what Scala does to Unit returns:
 

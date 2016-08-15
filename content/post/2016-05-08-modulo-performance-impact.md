@@ -15,9 +15,9 @@ tags:
 I was surprised when someone told me not to use the [modulo operator][7] in high performance code. My textbooks used modulo (`%`) and various high performance implementations [say to use modulo][10]. Where had I gone wrong?
 
 ## The Bad
-If you look at the JDK's `mod()` implementation, you'll see that it's indeed `O(n)` [for IEE754 floats][12], and `O(1)` [for doubles][13]. Note, the Java Spec only defines modulo [for floating point numbers][5].
+If you look at the JDK's `mod()` implementation, you'll see that it's indeed `O(n)` [for IEE754 floats][12], and `O(1)` [for doubles][13]. Note, the Java Spec defines modulo for integers and also [for negative floating point numbers][5].
 
-There are tricks for modulo with integers, but Java (as always) has made it interesting with support for negative floats.
+Luckily, there are tricks for modulo with integers.
 
 ## High Performance Modulo
 
@@ -67,7 +67,7 @@ Comparing the byte code of classic modulo, and our faster version, we see they a
        4: ireturn
 ```
 
-A simple benchmark[^1] \(see the [gist][16]\) on bare metal[^2] shows what we expect, doing one billion passes of each.
+A simple benchmark[^1] on bare metal[^2] shows what we expect, doing one billion passes of each.
 
 - Power 8 trick is the fastest
 - `irem` implementation is nearly as fast
@@ -106,7 +106,7 @@ TODO: Check Knuth book for other Impl's (didn't see any)
 first 3 Google hits, none mention the cost of the operation. Sadness.
 -->
 
- [^1]: Benchmarked with a [simple iterator][19], and [ScalaMeter][18], and [JMH][17]. JMH provided the most consistent approach, and uses the most advanced methods to warmup and prevent garbage collections. Performed on an untilized, bare metal machine with N=1 billion (1K runs of 1M iterations). JVM memory preallocated at startup (`-Xmx=2G -Xms=2G`)
+ [^1]: Benchmarked with a [simple iterator][19], and [ScalaMeter][18], and [JMH][17] (see [repo][20]). JMH provided the most consistent approach, and uses the most advanced methods to warmup and prevent garbage collections. Performed on an untilized, bare metal machine with N=1 billion (1K runs of 1M iterations). JVM memory preallocated at startup (`-Xmx=2G -Xms=2G`)
  [^2]: HotSpot 1.8.0_91, Ubuntu 15.04, i7-4790K, 32GB PC3 19200 ram, SSD
 
  [0]: http://www.cafeaulait.org/course/week2/15.html
@@ -126,3 +126,4 @@ first 3 Google hits, none mention the cost of the operation. Sadness.
  [17]: http://openjdk.java.net/projects/code-tools/jmh/ 
  [18]: https://scalameter.github.io/
  [19]: https://gist.github.com/twistedpair/58414ee3237544eaf54a787a59f656c6
+ [20]: https://github.com/twistedpair/benchmark-jvm-modulo
