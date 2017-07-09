@@ -16,6 +16,7 @@ disqusShortname = "lustforge"
     category = "categories"
 
 [Params]
+    copyrightStartYear = "2009"
     favicon = "favicon.png"
     intro = true # hide site title
     headline = "LustForge"
@@ -25,7 +26,7 @@ disqusShortname = "lustforge"
     github = "https://github.com/twistedpair"
     linkedin = "https://www.linkedin.com/in/josephlust"
     gplus = "https://plus.google.com/+JosephLust"
-#    twitter = "https://twitter.com/XXX"
+    twitter = "https://twitter.com/lustyjoel"
     stackoverflow = "https://stackoverflow.com/users/564157/joseph-lust"
     rss = true
 

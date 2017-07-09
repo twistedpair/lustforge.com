@@ -3,6 +3,10 @@
 *.a
 *.so
 
+# IDEDA
+*.iml
+.idea/
+
 # Folders
 _obj
 _test
