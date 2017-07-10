@@ -7,6 +7,8 @@ This repo has the contents of my site as I port it to Hugo. If you like the plac
 
 # Deployment
 
+See [deploy_site.sh](deploy_site.sh) or the below example.
+
 ```bash
 hugo -v 
 
@@ -23,7 +25,3 @@ aws s3 sync --profile lauf --acl "public-read" --sse "AES256"  static/downloads/
 ```
 
 
-
-
-
---expires Sat, 27 Jun 2015 23:59:59 GMT
