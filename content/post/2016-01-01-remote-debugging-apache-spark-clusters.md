@@ -26,7 +26,7 @@ Simply update the launch args wherever you start Spark like so. Note: `SPARK_JAV
 Open an SSH tunnel to your remote cluster machine, mapping `localhost:4000` to `spark-master.foo.com:5000`, assuming the cluster is at `spark-master.foo.com`, listening on port `5000`. 
 
 ```bash
-ssh -L localhost:4000:spark-master.foo.com:5000  you@spark-master.foo.com
+ssh -L localhost:5000:spark-master.foo.com:4000  you@spark-master.foo.com
 ```
 
 Now Eclipse will think you're just debugging a local Spark process.
