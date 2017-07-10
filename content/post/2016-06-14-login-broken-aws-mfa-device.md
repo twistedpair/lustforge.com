@@ -12,7 +12,7 @@ tags:
 ---
 
 # Oh, Fudge
-Your dog just broken your iPhone[^1] and the master token for your AWS root account is locked up in the safe at work. Your boss needs an emergency update to your prod infrastucture. How do you login to your MFA protected AWS account?
+Your dog just broken your iPhone[^1] and the master token for your AWS root account is locked up in the safe at work. Your boss needs an emergency update to your prod infrastructure. How do you login to your MFA protected AWS account?
 
 # AWS CLI To the Rescue
 No worries, you've got this covered in 15 seconds.
