@@ -5,6 +5,7 @@ author: Joseph Lust
 layout: post
 date: 2016-02-21
 url: /2016/02/21/farewell-wordpress-hello-hugo/
+summary: Ditch the slow WordPress platform for high speed, static Hugo sites
 tags:
   - Go
   - WordPress

@@ -4,11 +4,13 @@ author: Joseph Lust
 layout: post
 date: 2016-02-27
 url: /2016/02/27/hosting-hugo-on-aws/
+summary: Easily Host your Hugo static website on CloudFront with AWS CLI
 tags:
   - Go
   - CloudFront
   - AWS
   - Hugo
+  - S3
 ---
 
 Running your [Hugo][5] static blog site is easy and cheap, but there are a few snags I had to solve when I deployed mine. Follow these instruction to host your Hugo blog on AWS [S3][4] and [Cloudfront][1].

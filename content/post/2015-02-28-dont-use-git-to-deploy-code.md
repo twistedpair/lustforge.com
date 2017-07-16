@@ -4,6 +4,7 @@ author: Joseph Lust
 layout: post
 date: 2015-02-28
 url: /2015/02/28/dont-use-git-to-deploy-code/
+image: /img/github_down.png
 tags:
   - Amazon S3
   - Continuous Integration

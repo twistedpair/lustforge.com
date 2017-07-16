@@ -4,11 +4,16 @@ author: Joseph Lust
 layout: post
 date: 2014-08-21
 url: /2014/08/21/jenkins-vs-teamcity-the-better-ci-tool/
+summary: Top 4 reasons Not to use Jenkins for CI 
+image: /img/tc_logo.png
 tags:
   - Continuous Integration
+  - teamcity
+  - ci
+  - jenkins
 
 ---
-Let&#8217;s dispel the myth about Jenkins being the gold standard continuous integration tool. I&#8217;m sorry, TeamCity is much better.
+Let's dispel the myth about Jenkins being the gold standard continuous integration tool. I'm sorry, TeamCity is much better.
 
 {{< figure src="/img/tc_logo.png" >}}
   
@@ -16,7 +21,7 @@ Let&#8217;s dispel the myth about Jenkins being the gold standard continuous int
 
 I started using Jenkins when it was called Hudson, before the [Oracle naming spat][2]. Recently, I downloaded and installed it again and was shocked to see that little appears to have changed in so many years. What&#8217;s in a UI? Not much if you&#8217;re technical, but geeze, Jenkins still has the aura of an app knocked together during an all night hackathon in 1997 .
 
-Let&#8217;s knock the legs from under this myth.
+Let's knock the legs from under this myth.
 
 #### 1. Jenkins is Open Source
 
@@ -32,7 +37,7 @@ They&#8217;ll not mention you can use the TeamCity CI server and three (3) build
 
 #### 3. We&#8217;re an OSS Project, We Can&#8217;t Afford Paid Anything
 
-I&#8217;m a huge fan of open source projects. I contribute to several. And I frequently spar over what CI tool to use. _CloudBees_, _BuildHive_, _Travis_ or your own Jenkins Instance? Fatuously such groups write off TeamCity since it would cost cheddar they don&#8217;t have. But that would completely ignore the fact that JetBrains gives away everything for [FREE to open source projects][5].
+I'm a huge fan of open source projects. I contribute to several. And I frequently spar over what CI tool to use. _CloudBees_, _BuildHive_, _Travis_ or your own Jenkins Instance? Fatuously such groups write off TeamCity since it would cost cheddar they don&#8217;t have. But that would completely ignore the fact that JetBrains gives away everything for [FREE to open source projects][5].
 
 #### 4. But There&#8217;s a Plugin For That!
 
@@ -57,12 +62,12 @@ Some other things that Jenkins could improve:
 
 #### Conclusions and Disclaimers
 
-Give TeamCity a try. I&#8217;ve been loving it for <s>4</s> 6 years now and use it on every project. Do I work for JetBrains? Nope. Then why write this? Because everyone I talk to claims Jenkins is God&#8217;s gift to integration. It makes me think I&#8217;m must be taking crazy pills, so I&#8217;ve written this so someone out there can make a more informed CI tooling decision.
+Give TeamCity a try. I&#8217;ve been loving it for <s>4</s> 6 years now and use it on every project. Do I work for JetBrains? Nope. Then why write this? Because everyone I talk to claims Jenkins is God&#8217;s gift to integration. It makes me think I'm must be taking crazy pills, so I&#8217;ve written this so someone out there can make a more informed CI tooling decision.
 
 
 #### Don&#8217;t Take My Word For It
 
-For all your know I&#8217;m a shill that screams at fire hydrants in the night. Read the top hits for &#8220;TeamCity vs Jenkins&#8221; and you&#8217;ll discover the same thesis.
+For all your know I'm a shill that screams at fire hydrants in the night. Read the top hits for &#8220;TeamCity vs Jenkins&#8221; and you&#8217;ll discover the same thesis.
 
   * [TeamCity vs Jenkins: Which is the Better Continuous Integration Server for .NET Development?][6]
   * [Moving to TeamCity from Jenkins][7]

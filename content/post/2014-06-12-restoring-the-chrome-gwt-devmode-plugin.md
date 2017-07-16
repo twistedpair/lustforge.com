@@ -4,6 +4,7 @@ author: Joseph Lust
 layout: post
 date: 2014-06-12
 url: /2014/06/12/restoring-the-chrome-gwt-devmode-plugin/
+image: /img/noNappi.png
 tags:
   - Google Web Toolkit (GWT)
 

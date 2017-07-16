@@ -4,6 +4,7 @@ author: Joseph Lust
 layout: post
 date: 2016-02-28
 url: /2016/02/28/deploy-hugo-files-to-s3/
+summary: Easily deploy your Hugo static website on S3 with AWS CLI
 tags:
   - Go
   - CloudFront
