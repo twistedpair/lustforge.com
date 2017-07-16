@@ -3,9 +3,9 @@ title: "Swagger Jenkins Validation"
 author: Joseph Lust
 layout: post
 date: 2017-06-17
-url: /2016/06/17/swagger-jenkins-validation/
+url: /2017/06/17/swagger-jenkins-validation/
 image: /img/swagger_jenkins_post_image.png
-summary: "Three quick tips to wrangle giant Swagger files in Jenkins"
+summary: "Validate complex Swagger files with Jenkins automatically"
 tags:
   - swagger
   - python
