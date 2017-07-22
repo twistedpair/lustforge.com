@@ -4,7 +4,7 @@ author: Joseph Lust
 layout: post
 date: 2016-07-08
 url: /2016/07/08/aws-cli-password-reset/
-image: /img/aws_access_denied.png
+image: /img/aws_cli_access_denied.png
 summary: "Your AWS login expired. Time to call the sysamdin, or can you solo this one?"
 tags:
   - AWS
@@ -40,7 +40,7 @@ We got a problem here. Your choices are:
 
 # Allow Users to Reset Passwords
 
-If you're a sysadmin, set the following IAM policy to make user password reset self service.
+If you're a sysadmin, set the following IAM policy to enable self service user password reset.
 
 ```json
 {
