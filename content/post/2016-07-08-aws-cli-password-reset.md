@@ -7,8 +7,8 @@ url: /2016/07/08/aws-cli-password-reset/
 image: /img/aws_cli_access_denied.png
 summary: "Your AWS login expired. Time to call the sysamdin, or can you solo this one?"
 tags:
-  - AWS
-  - IAM
+  - aws
+  - iam
   - awscli
 ---
 
