@@ -5,6 +5,23 @@ I've been blogging on WordPress for 8 years now, unfortunately. I've found Wordp
 
 This repo has the contents of my site as I port it to Hugo. If you like the place, feel free to use the code as an exemplar, however, the blog content is &copy; Joseph Lust 2016.
 
+# Local Building
+
+```bash
+git clone git@github.com:twistedpair/lustforge.com.git
+# We fixed some of the Hugo themes
+git submodule init
+git submodule update --recursive
+```
+
+# Local live development
+
+Startup the live Hugo server
+
+```bash
+hugo server -D -w
+```
+
 # Deployment
 
 See [deploy_site.sh](deploy_site.sh) or the below example.
