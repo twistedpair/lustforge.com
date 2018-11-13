@@ -14,7 +14,7 @@ For example, download a big file, untar it, and let me know when you&#8217;re d
 
 
 ```bash
-wget fatFile.tar.gz; tar -zxvf fatFile.tar.gz; echo -e "\a";
+wget fatFile.tar.gz; tar -xf fatFile.tar.gz; echo -e "\a";
 ```
 
 So, be sure to `\a` to ring the bell from now on:
