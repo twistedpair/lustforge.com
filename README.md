@@ -5,13 +5,14 @@ I've been blogging on WordPress for 8 years now, unfortunately. I've found Wordp
 
 This repo has the contents of my site as I port it to Hugo. If you like the place, feel free to use the code as an exemplar, however, the blog content is &copy; Joseph Lust 2016.
 
+This site is hosted on [GitHub Pages](https://pages.github.com/).
+
 # Local Building
 
 ```bash
 git clone git@github.com:twistedpair/lustforge.com.git
 # We fixed some of the Hugo themes
-git submodule init
-git submodule update --recursive
+git submodule update --init --recursive
 ```
 
 # Local live development
@@ -24,21 +25,11 @@ hugo server -D -w
 
 # Deployment
 
-See [deploy_site.sh](deploy_site.sh) or the below example.
+This site uses [GitHub Actions](https://github.com/actions) to deploy. Just merge to `master` and it will be deployed to [GitHub Pages](https://pages.github.com/).
 
-```bash
-hugo -v 
+Deployment workflow can be found [here](.github/workflows/build-deploy-site.yml)
 
-# Copy over pages - not static js/img/css/downloads
-aws s3 sync --profile lauf --acl "public-read" --sse "AES256" public/ s3://lustforge-cdn/ --exclude 'img' --exclude 'js' --exclude 'downloads' --exclude 'css'
-
-# Ensure static files are set to cache forever - cache for a month --cache-control "max-age=2592000"
-aws s3 sync --profile lauf --acl "public-read" --sse "AES256" public/img/ s3://lustforge-cdn/img/
-aws s3 sync --profile lauf --acl "public-read" --sse "AES256" public/css/ s3://lustforge-cdn/css/
-aws s3 sync --profile lauf --acl "public-read" --sse "AES256" public/js/ s3://lustforge-cdn/js/
-
-# Downloads binaries, not part of repo - cache at edge for a year --cache-control "max-age=31536000"
-aws s3 sync --profile lauf --acl "public-read" --sse "AES256"  static/downloads/ s3://lustforge-cdn/downloads/
-```
-
-
+To use this workflow, you'll need to add the following secrets to your cloning repo:
+- AWS_ACCESS_KEY_ID (key for invalidating Cloud Front caches)
+- AWS_SECRET_ACCESS_KEY
+- ACTIONS_DEPLOY_KEY (repo deployer key with write permission)
