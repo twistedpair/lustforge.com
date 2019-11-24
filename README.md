@@ -30,6 +30,4 @@ This site uses [GitHub Actions](https://github.com/actions) to deploy. Just merg
 Deployment workflow can be found [here](.github/workflows/build-deploy-site.yml)
 
 To use this workflow, you'll need to add the following secrets to your cloning repo:
-- AWS_ACCESS_KEY_ID (key for invalidating Cloud Front caches)
-- AWS_SECRET_ACCESS_KEY
 - ACTIONS_DEPLOY_KEY (repo deployer key with write permission)
