@@ -18,7 +18,7 @@ on:
         uses: peaceiris/actions-hugo@v2.3.0
         with:
           hugo-version: '0.59.1'
-            extended: true
+          extended: true
 
       - name: Build Site
-          run: hugo --minify -v -d docs/
+        run: hugo --minify -v -d docs/
