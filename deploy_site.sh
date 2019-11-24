@@ -20,6 +20,5 @@ fi
 aws cloudfront create-invalidation --distribution-id ${DISTRIBUTION_ID} --paths /index.html /
 
 # commit and push
-git add docs/
-git commit -m "Publish github pages"
-git push origin HEAD
+git config --global user.email "publisher@lust.dev"
+git config --global user.name "Blog Publisher"
