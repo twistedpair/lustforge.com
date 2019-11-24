@@ -6,19 +6,19 @@ on:
       - master
       - enable-auto-deploy-action # TODO remove
 
-  jobs:
-    build-deploy:
-      runs-on: ubuntu-18.04
-      steps:
-      - uses: actions/checkout@master
-        with:
-          submodules: true
+jobs:
+  build-deploy:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@master
+      with:
+        submodules: true
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2.3.0
-        with:
-          hugo-version: '0.59.1'
-          extended: true
+    - name: Setup Hugo
+      uses: peaceiris/actions-hugo@v2.3.0
+      with:
+        hugo-version: '0.59.1'
+        extended: true
 
-      - name: Build Site
-        run: hugo --minify -v -d docs/
+    - name: Build Site
+      run: hugo --minify -v -d docs/
