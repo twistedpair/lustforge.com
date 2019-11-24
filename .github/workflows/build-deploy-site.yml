@@ -20,5 +20,5 @@ on:
           hugo-version: '0.59.1'
             extended: true
 
-      - name: Build
-        run: hugo --minify -v -d docs/
+      - name: Build Site
+          run: hugo --minify -v -d docs/
