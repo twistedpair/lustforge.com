@@ -10,10 +10,9 @@ jobs:
   build-deploy:
     runs-on: ubuntu-18.04
     steps:
-    # Can't get the default GH Actions checkout action + submodules:true to work
-    - uses: textbook/git-checkout-submodule-action@master
-      with:
-        args: 'git submodule update --init --recursive'
+    - uses: actions/checkout@master
+        with:
+          submodules: true
 
     - name: Setup Hugo
       uses: peaceiris/actions-hugo@v2.3.0
