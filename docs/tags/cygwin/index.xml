@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cygwin on lust.dev</title>
+    <link>https://lust.dev/tags/cygwin/</link>
+    <description>Recent content in Cygwin on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Sat, 02 Aug 2014 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/cygwin/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Ringing the Cygwin Terminal Bell</title>
+      <link>https://lust.dev/2014/08/02/ringing-the-cygwin-terminal-bell/</link>
+      <pubDate>Sat, 02 Aug 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2014/08/02/ringing-the-cygwin-terminal-bell/</guid>
+      <description>&lt;p&gt;Let&amp;#8217;s say you&amp;#8217;ve sadly been running several processes in a row. They take time, so you catch up on your blog reading while they run, but have to keep checking back on the terminal to see if they&amp;#8217;re done. Wouldn&amp;#8217;t it be nice to know when a command is complete? Easy, just have it &lt;strong&gt;ring the Cygwin Terminal Bell&lt;/strong&gt;!&lt;/p&gt;
+
+&lt;p&gt;For example, download a big file, untar it, and let me know when you&amp;#8217;re done:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;wget fatFile.tar.gz; tar -xf fatFile.tar.gz; echo -e &amp;quot;\a&amp;quot;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;So, be sure to &lt;code&gt;\a&lt;/code&gt; to ring the bell from now on:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;echo -e &amp;quot;\a&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Cygwin Visible Bell Enable</title>
+      <link>https://lust.dev/2011/10/03/cygwin-visible-bell-enable/</link>
+      <pubDate>Mon, 03 Oct 2011 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2011/10/03/cygwin-visible-bell-enable/</guid>
+      <description>&lt;p&gt;Cygwin is amazing for those of us stuck on Windows. The bell is not always so grand. I prefer a visible bell (like in &lt;a href=&#34;http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html&#34;&gt;Putty&lt;/a&gt;) rather than a &amp;#8220;ding!&amp;#8221; when I&amp;#8217;ve got my music going.&lt;/p&gt;
+
+&lt;p&gt;To enable the visible bell add the following to &lt;code&gt;~/.bashrc&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;set bell-style visible
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ah, that&amp;rsquo;s much better! Thanks again Cygwin!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Console2 Arrow Keys Madness</title>
+      <link>https://lust.dev/2011/04/02/console2-arrow-key-error/</link>
+      <pubDate>Sat, 02 Apr 2011 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2011/04/02/console2-arrow-key-error/</guid>
+      <description>
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/cygwin_wtf.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;I&amp;#8217;m writing to tell you how to fix this error since it just drove me mad for 20 minutes.&lt;/p&gt;
+
+&lt;p&gt;If you are an avid user of &lt;a href=&#34;http://sourceforge.net/projects/console/&#34;&gt;Console2&lt;/a&gt;, which any Windows user should be, you might notice one day that your &lt;strong&gt;arrow keys scroll up and down, rather than select the most recent command&lt;/strong&gt;. Why the heck would that happen? It does not happen in the Microsoft cmd window, but it will in &lt;a href=&#34;http://www.cygwin.com/install.html&#34;&gt;Cygwin&lt;/a&gt; and Cmd under Console2.&lt;/p&gt;
+
+&lt;p&gt;You see, you&amp;#8217;ve left on the &lt;strong&gt;SCROLL LOCK&lt;/strong&gt;, that anachronistic key that we never understand. No other terminal on your machine will act weird, but][1] will. Just unclick it (wherever they&amp;#8217;ve hidden it on your keyboard) and sanity will return. Ah, I feel better already.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

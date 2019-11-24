@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Futures on lust.dev</title>
+    <link>https://lust.dev/tags/futures/</link>
+    <description>Recent content in Futures on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Tue, 12 Apr 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/futures/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Dangers of the Unit Type Parameter</title>
+      <link>https://lust.dev/2016/04/12/dangers-of-unit-type-parameter/</link>
+      <pubDate>Tue, 12 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/04/12/dangers-of-unit-type-parameter/</guid>
+      <description>
+
+&lt;p&gt;I ran into the following Scala pitfall when refactoring some code recently.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-problem:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;The problem&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://docs.scala-lang.org/overviews/core/futures.html#futures&#34;&gt;Futures&lt;/a&gt; sometimes execute in expected order, other times not. Testing with &lt;code&gt;Await.result(f)&lt;/code&gt; didn&amp;rsquo;t block. The world was no longer deterministic. Why? Unit.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-code:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;The code&lt;/h2&gt;
+
+&lt;p&gt;This was the code before:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def makeFut1():Future[Int] = Future.successful( 1 + 1) 
+def makeFut2():Future[String] = Future.successful( &amp;quot;foo&amp;quot; + &amp;quot;bar&amp;quot; )
+def doSideEffect(a:Int,b:String):Unit = println(s&amp;quot;[$a] [$b]&amp;quot;)
+
+def doWork():Future[Unit] = 
+  for {
+    futA &amp;lt;- makeFut1()
+    futB &amp;lt;- makeFut2()
+  } yield doSideEffect(futA,futB)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Alas synchronous &lt;code&gt;doSideEffect(...)&lt;/code&gt; method was refactored to be async, becoming:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def doSideEffect(a:Int,b:String):Unit = Future { println(s&amp;quot;[$a] [$b]&amp;quot;) }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;What broke? Nothing. Scala compiled and ran it just fine. But, WFT? We&amp;rsquo;re yielding a &lt;code&gt;Future[Unit]&lt;/code&gt; not a &lt;code&gt;Unit&lt;/code&gt;, shouldn&amp;rsquo;t that make &lt;code&gt;doWork()&lt;/code&gt; return a &lt;code&gt;Future[Future[Unit]]&lt;/code&gt; and fail type checking?&lt;/p&gt;
+
+&lt;h2 id=&#34;unit-and-value-discarding:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;Unit and Value Discarding&lt;/h2&gt;
+
+&lt;p&gt;In short, the &lt;a href=&#34;http://www.scala-lang.org/docu/files/ScalaReference.pdf&#34;&gt;Scala Spec&lt;/a&gt; section 6.26.1 says,&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;If e has some value type and the expected type is Unit, e is converted
+to the expected type by embedding it in the term { e; () }.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The following code would be transformed accordingly:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def intUnit(n:Int):Unit = n*2        // pre-compile
+def intUnit(n:Int):Unit = {n*2; ()}  // post-compile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This gets tricky with type parameters. If you returned &lt;code&gt;Future[Future[Unit]]&lt;/code&gt;, you&amp;rsquo;re really returning &lt;code&gt;Future[Unit]&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;compiler-don-t-care-bout-unit:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;Compiler Don&amp;rsquo;t Care `bout Unit&lt;/h2&gt;
+
+&lt;p&gt;Thus, we see that by returning the Unit type, we&amp;rsquo;re really returning Void, and lose any type checking of the return type at all. As such, the compiler doesn&amp;rsquo;t give a damn&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:0f7ca2f56d5a07b83a78e2aa186b1719:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:0f7ca2f56d5a07b83a78e2aa186b1719:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; what we return.  Any &lt;code&gt;Future&lt;/code&gt; executed in said yield will probably be invoked, but not as this flatmapping chain of futures, and not in the order you&amp;rsquo;d expect.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;doSideEffect(...)&lt;/code&gt; is invoked, and it&amp;rsquo;s Future created, but said Future isn&amp;rsquo;t tied to this sequence of Futures. Thus, the Future returned by &lt;code&gt;doWork()&lt;/code&gt; won&amp;rsquo;t wait for it, returning &lt;code&gt;Unit&lt;/code&gt; immeadiately.&lt;/p&gt;
+
+&lt;h2 id=&#34;don-t-return-unit:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;Don&amp;rsquo;t Return Unit&lt;/h2&gt;
+
+&lt;p&gt;Only use return type Unit for Void functions (a.k.a. Procedures). Using Unit to parameterize a type effectively negates type checking on that type, and loses the guarantees you&amp;rsquo;ve come to expect from the type system and compiler.&lt;/p&gt;
+
+&lt;p&gt;An alternative to the above example, using a sealed algebra for return state, would be:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;sealed trait Result
+object Good extends Result
+object Bad extends Result
+
+def makeFut1():Future[Int] = Future.successful( 1 + 1) 
+def makeFut2():Future[String] = Future.successful( &amp;quot;foo&amp;quot; + &amp;quot;bar&amp;quot; )
+def doSideEffectB(a:Int,b:String):Future[Result] 
+  = Future { println(s&amp;quot;[$a] [$b]&amp;quot;); Good }
+
+def doWork():Future[Result] = {
+    for {
+        futA &amp;lt;- makeFut1()
+        futB &amp;lt;- makeFut2()
+    } yield doSideEffectB(futA,futB)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And failed to compile, as we&amp;rsquo;d hope!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Sample.scala:55: error: type mismatch;
+ found   : scala.concurrent.Future[Result]
+ required: Result
+        } yield doSideEffectB(futA,futB)
+                             ^
+one error found
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Horay for types!&lt;/p&gt;
+
+&lt;h2 id=&#34;appendix-unit-type-and-void:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;(Appendix) Unit Type and Void&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.scala-lang.org/files/archive/nightly/docs/library/index.html#scala.Unit$&#34;&gt;Unit&lt;/a&gt; is a &lt;a href=&#34;https://en.wikipedia.org/wiki/Unit_type&#34;&gt;Unit Type&lt;/a&gt; from Type Theory, meaning it&amp;rsquo;s a universal singleton instance referenced by &lt;code&gt;()&lt;/code&gt;, the zero tuple. Every &lt;code&gt;()&lt;/code&gt; in your code points to the same Unit instance. Since all Scala value types can be converted to Unit, the compiler may change them to Unit as required for return signatures to match. Any &lt;em&gt;value type&lt;/em&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:0f7ca2f56d5a07b83a78e2aa186b1719:2&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:0f7ca2f56d5a07b83a78e2aa186b1719:2&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; can be converted.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s decompile the following functions to see what Scala does to Unit returns:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def intInt(n:Int):Int = n*2
+def intUnit(n:Int):Unit = n*2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;  public int intInt(int);
+    Code:
+       0: iconst_2 // Load integer 2
+       1: iload_1  // Load another int
+       2: imul     // Multiply ints 
+       3: ireturn  // return product
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;  public void intUnit(int);
+    Code:
+       0: iconst_2 // Load integer 2
+       1: iload_1  // Load another int
+       2: imul     // Multiply ints 
+       3: pop      // Discard value
+       4: return   // Return VOID
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;a href=&#34;https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings&#34;&gt;byte code&lt;/a&gt; shows Java does the math in both cases, but the Unit return &lt;strong&gt;discards all values and returns Void.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;appendix-incorrect-unit-use:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;(Appendix) Incorrect Unit Use&lt;/h2&gt;
+
+&lt;p&gt;Because Unit is converted from any other &lt;em&gt;value type&lt;/em&gt;, &lt;code&gt;Unit&lt;/code&gt; can be converted to &lt;code&gt;()&lt;/code&gt;. That is, Unit can be converted from a type to an instance by the complier, sort of. This can lead to confusion in code.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def myProcedure(n:Int):Unit = {n * n; Unit}      // pre-compiled
+def myProcedure(n:Int):Unit = {n * n; Unit; ()}  // post-compiled
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Developers may explicitly return &lt;code&gt;Unit&lt;/code&gt;, but really they are returning the &lt;em&gt;Unit type&lt;/em&gt;, not the singleton Unit reference, &lt;code&gt;()&lt;/code&gt;. The reference to the actual type is being discarded.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:0f7ca2f56d5a07b83a78e2aa186b1719:1&#34;&gt;Set the &lt;code&gt;-Ywarn-value-discard&lt;/code&gt; compiler flag to fail builds on Value Discarding
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:0f7ca2f56d5a07b83a78e2aa186b1719:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:0f7ca2f56d5a07b83a78e2aa186b1719:2&#34;&gt;value type T , &lt;code&gt;scala.Nothing &amp;lt;: T &amp;lt;: scala.Any&lt;/code&gt;
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:0f7ca2f56d5a07b83a78e2aa186b1719:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Extjs on lust.dev</title>
+    <link>https://lust.dev/tags/extjs/</link>
+    <description>Recent content in Extjs on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Wed, 06 Jul 2011 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/extjs/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Open ExtJs Menu on Mouseover</title>
+      <link>https://lust.dev/2011/07/06/open-extjs-menu-on-mouseover/</link>
+      <pubDate>Wed, 06 Jul 2011 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2011/07/06/open-extjs-menu-on-mouseover/</guid>
+      <description>&lt;p&gt;Would you believe there is no way to open an ExtJs toolbar menu when you hover over the corresponding button? This functionality is all over the ExtJs &lt;a href=&#34;https://www.sencha.com&#34;&gt;homepage&lt;/a&gt;, but not in their framework. Boo! Nope, nothing without pulling the buttons out of the toolbar (see &lt;a title=&#34;ExtJs Forum Topic&#34; href=&#34;http://www.sencha.com/forum/showthread.php?69931-toolbar-menu-open-on-hover&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;), which is a no go for existing applications.&lt;/p&gt;
+
+&lt;p&gt;So, I present you with the &lt;strong&gt;HoverButton&lt;/strong&gt;. It is just like the standard button, but hides after &lt;code&gt;250ms&lt;/code&gt; of mouseout from the button or the opened menu. Just use the &lt;code&gt;xtype&lt;/code&gt; of &lt;strong&gt;hoverButton&lt;/strong&gt; where you used &lt;strong&gt;button&lt;/strong&gt; before. That was easy!&lt;/p&gt;
+
+&lt;p&gt;To achieve this, listeners check for mouseover/out of the button and set a &lt;a href=&#34;http://www.objis.com/formationextjs/lib/extjs-4.0.0/docs/api/Ext.util.DelayedTask.html&#34;&gt;Ext.util.DelayedTask&lt;/a&gt;, and if the user moves to the menulist, the close is delayed until they leave. Pretty simple. Enjoy.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;/**
+ * Add autoShow on mouseover option to buttons with menus
+ * @copyright LustForge.com 2011
+ * @author J.Lust
+ * @version ExtJs 3.3.4
+ */
+Ext.HoverButton = Ext.extend( Ext.Button, {
+
+    // hide task properties and helpers
+    hideTask : null,
+    hideTaskMs : 250, // timeout in ms
+    hideTaskFn : function() {
+        if( this.hideTask !== null ) {
+            this.hideTask.cancel();
+        }
+        this.hideTask = new Ext.util.DelayedTask(this.hideMenu,this);
+        this.hideTask.delay( this.hideTaskMs );
+    },
+
+    // extend init props
+    initComponent : function (  ) {
+
+        // add hide/show, if this is a button with menu
+        var config = {}, menuConfig = {};
+        if( Ext.isDefined(this.initialConfig.menu) ) {
+            config = {
+                listeners : {
+                    menutriggerover : {
+                        fn: function(b) {
+                            //console.log(&#39;menutriggerOver&#39;);
+                            b.showMenu();
+                        },
+                        scope:this
+                    },
+                    menutriggerout : {
+                        fn: function(b) {
+                            //console.log(&#39;menutriggerOut&#39;);
+                            this.hideTaskFn();
+                        },
+                        scope:this
+                    }
+                }
+            };
+            // add listeners to see if user is over extended menu list
+            menuConfig = {
+                listeners : {
+                    // if mousing over menu list, disable timeout
+                    mouseover : {
+                        fn: function(b) {
+                            // cancel hide if they went away and came back
+                            if( this.hideTask !== null ) {
+                                //console.log(&#39;menu mouseOver&#39;);
+                                this.hideTask.cancel();
+                                this.hideTask = null;
+                            }
+                        },
+                        scope:this
+                    },
+                    // on mousing out of menu list, resume timeout
+                    mouseout: {
+                        fn: function(b) {
+                            //console.log(&#39;menu mouseOut&#39;);
+                            this.hideTaskFn();
+                        },
+                        scope:this
+                    }
+                }
+            };
+
+            Ext.apply( this.menu, menuConfig );
+        }
+
+        // apply config
+        Ext.apply(this, Ext.apply(this.initialConfig, config));
+        // call parent
+        Ext.HoverButton.superclass.initComponent.apply(this,arguments);
+    }
+});
+Ext.reg(&#39;hoverButton&#39;, Ext.HoverButton );
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ExtJs Field getForm() Override</title>
+      <link>https://lust.dev/2011/06/19/extjs-field-getform-override/</link>
+      <pubDate>Sun, 19 Jun 2011 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2011/06/19/extjs-field-getform-override/</guid>
+      <description>&lt;p&gt;When using the DOM directly, if you have the element reference to an &lt;code&gt;&amp;lt;INPUT&amp;gt;&lt;/code&gt; object, you can reference its parent via &lt;code&gt;el.form&lt;/code&gt;. However, in ExtJs, &lt;strong&gt;there is no such accessor for the form of field&lt;/strong&gt;. The following ExtJs override adds the &lt;code&gt;getForm()&lt;/code&gt; method to a field which will search upward through the ExtDOM until it finds a parent form, or hits a recursion depth of 10.&lt;/p&gt;
+
+&lt;p&gt;Example usage:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;// Example useage
+var myField = Ext.getCmp(&#39;myField&#39;);
+var form = myField.getForm();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Override code: Include this before your form.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;/*
+* DOM gives &amp;lt;INPUT&amp;gt; a &#39;form&#39; property pointing to the parent
+* however ExtJS does not do this for fields. Override to add it.
+* USE: this.getForm() to get form of a field
+* NOTE: maximum search depth of 10 to prevent run away bubble up search
+*/
+Ext.override(Ext.form.Field, {
+    form : null, // cache so we don&#39;t perform many lookups
+    getForm: function() {
+        if( this.form===null) {
+            var scope = this, maxDepth=10, n=0;
+            for( ; n&amp;lt;maxDepth &amp;amp;&amp;amp; Ext.isDefined(scope.ownerCt); n++) {
+                scope=scope.ownerCt; // drill higher
+                //console.log( n+&amp;quot;:&amp;quot;+scope.ownerCt.id); // debug output
+                if( Ext.isDefined(scope.getForm) ) {
+                    this.form = scope.getForm();
+                    break;
+                }
+            }
+        }
+        return this.form;
+    }
+});
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Update ExtJs TabPanel Tab Title</title>
+      <link>https://lust.dev/2011/05/01/update-extjs-tab-title/</link>
+      <pubDate>Sun, 01 May 2011 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2011/05/01/update-extjs-tab-title/</guid>
+      <description>&lt;p&gt;Isn&amp;#8217;t &lt;a href=&#34;https://www.sencha.com/products/extjs/&#34;&gt;ExtJs&lt;/a&gt; the cat&amp;#8217;s meow? I think so, but many cats have hairballs. For ExtJs, this includes missing the ability to update the title of a &lt;code&gt;TabPanel&lt;/code&gt; tab title once it has been rendered. Sure, you can find the &lt;em&gt;item&lt;/em&gt; and &lt;em&gt;title&lt;/em&gt; properties for your tab post-render, but that won&amp;#8217;t update your page. You need to crawl the DOM. I&amp;#8217;ve created an update to do just this.&lt;/p&gt;
+
+&lt;p&gt;Just paste the below override in your code and you can then call the &lt;code&gt;setTabTitle(tabNo,newTitle)&lt;/code&gt; method to update a given tab title. You&amp;#8217;ll need to know the index of your tab in the tab panel.&lt;/p&gt;
+
+&lt;p&gt;For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;this.ownerCt.setTabTitle(0,&#39;New Title!&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The override code:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;/**
+ * Overrides the Ext.TabPanel to add .setTabTitle() function
+ * @author Lust
+ *
+ */
+Ext.override(Ext.TabPanel, {
+ /**
+ * Set the title of a specific tab
+ */
+ setTabTitle: function( tabNo, newTitle ) {
+     // make sure we have a number and tab exists
+     if( tabNo&amp;gt;=0 &amp;amp;&amp;amp; !Ext.isEmpty( this.getTabEl(tabNo))) {
+        var tabEl = this.getTabEl(tabNo); // walk down dom, update title span
+         Ext.getDom(tabEl).down(&#39;.x-tab-strip-text&#39;).innerHTML = newTitle;
+     }
+   }
+ });
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Note: Those using ExtJs 3.3.1+, see Anup&amp;rsquo;s comment on some tweaks.&lt;/strong&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Extjs Hidden Textfield Missing</title>
+      <link>https://lust.dev/2011/04/03/extjs-hidden-textfield-missing/</link>
+      <pubDate>Sun, 03 Apr 2011 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2011/04/03/extjs-hidden-textfield-missing/</guid>
+      <description>&lt;p&gt;I love &lt;a href=&#34;https://www.sencha.com/products/extjs/&#34;&gt;ExtJS&lt;/a&gt;, but some days it just does not love me back.&lt;/p&gt;
+
+&lt;p&gt;For instance, if you have a hidden textfield, and you &lt;strong&gt;don&amp;rsquo;t set the width property, it won&amp;rsquo;t be added to your form&lt;/strong&gt;. Sure, you say, why would you need the width for a hidden input? Well, ExtJS thinks you might call &lt;code&gt;myHiddenTextfield.show()&lt;/code&gt; some day, so it still needs to put it in there with a width. No width, no love.&lt;/p&gt;
+
+&lt;p&gt;If you are having this error, it will result in &lt;code&gt;form.findField(myHiddenTextfield)&lt;/code&gt; returning &lt;code&gt;null&lt;/code&gt;, and you getting an error if you attempt to set the non-existent field.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: ExtJS admonishes the use of hidden fields, saying that the more advanced controls for AJAX/JSONP and POST/GET mean you don&amp;#8217;t need them, but in some cases, it is just nice to have all your eggs in one basket, and not across multiple objects and scopes.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Math on lust.dev</title>
+    <link>https://lust.dev/tags/math/</link>
+    <description>Recent content in Math on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Sun, 08 May 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/math/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Modulo Operator Performance Impact</title>
+      <link>https://lust.dev/2016/05/08/modulo-operator-performance-impact/</link>
+      <pubDate>Sun, 08 May 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/05/08/modulo-operator-performance-impact/</guid>
+      <description>
+
+&lt;p&gt;I was surprised when someone told me not to use the &lt;a href=&#34;https://en.wikipedia.org/wiki/Modulo_operation&#34;&gt;modulo operator&lt;/a&gt; in high performance code. My textbooks used modulo (&lt;code&gt;%&lt;/code&gt;) and various high performance implementations &lt;a href=&#34;https://dzone.com/articles/hashmap-performance&#34;&gt;say to use modulo&lt;/a&gt;. Where had I gone wrong?&lt;/p&gt;
+
+&lt;h2 id=&#34;the-bad:4328c785535fae6da643b5f4d6375870&#34;&gt;The Bad&lt;/h2&gt;
+
+&lt;p&gt;If you look at the JDK&amp;rsquo;s &lt;code&gt;mod()&lt;/code&gt; implementation, you&amp;rsquo;ll see that it&amp;rsquo;s indeed &lt;code&gt;O(n)&lt;/code&gt; &lt;a href=&#34;https://github.com/openjdk-mirror/jdk7u-jdk/blob/f4d80957e89a19a29bb9f9807d2a28351ed7f7df/src/share/native/java/lang/fdlibm/src/e_fmod.c#L42&#34;&gt;for IEE754 floats&lt;/a&gt;, and &lt;code&gt;O(1)&lt;/code&gt; &lt;a href=&#34;https://github.com/openjdk-mirror/jdk7u-jdk/blob/f4d80957e89a19a29bb9f9807d2a28351ed7f7df/src/share/native/java/lang/fdlibm/src/s_modf.c#L46&#34;&gt;for doubles&lt;/a&gt;. Note, the Java Spec defines modulo for integers and also &lt;a href=&#34;https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.17.3&#34;&gt;for negative floating point numbers&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Luckily, there are tricks for modulo with integers.&lt;/p&gt;
+
+&lt;h2 id=&#34;high-performance-modulo:4328c785535fae6da643b5f4d6375870&#34;&gt;High Performance Modulo&lt;/h2&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the trick; &lt;strong&gt;don&amp;rsquo;t use floats&lt;/strong&gt;. Floats are a pain for numerous reason, but let&amp;rsquo;s assume you&amp;rsquo;re wise enough to use a primitive integer type (int or long) to feed you &lt;code&gt;mod()&lt;/code&gt; code, such as your hashmap implementation. There are many neat &lt;a href=&#34;http://graphics.stanford.edu/~seander/bithacks.html#ModulusDivisionEasy&#34;&gt;bit twiddling tricks&lt;/a&gt; to quickly conjure &lt;code&gt;mod(int,int)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;powers-of-two:4328c785535fae6da643b5f4d6375870&#34;&gt;Powers of Two&lt;/h3&gt;
+
+&lt;p&gt;Computers are binary by nature, so using powers of two provide lots of tricks. These can compute &lt;code&gt;mod(int, somePowerOf2)&lt;/code&gt; in only a &lt;em&gt;single machine instruction&lt;/em&gt;! Here&amp;rsquo;s how.&lt;/p&gt;
+
+&lt;!-- %[link to LustBox algos][1] --&gt;
+
+&lt;p&gt;For example, if I want to do &lt;code&gt;61 % 8&lt;/code&gt;, to know which of an &lt;code&gt;Array[Byte]&lt;/code&gt; to grab a value from, we can think of it in binary as &lt;a href=&#34;https://en.wikipedia.org/wiki/Logical_conjunction&#34;&gt;logical conjunction&lt;/a&gt; of the dividend with the  mask of all bits lower than the divisor. For powers of 2, that&amp;rsquo;s just n-1. The bit operations are illustrated below, using 32 bit integers.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://lust.dev/img/bit_diagram.svg&#34;&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/bit_diagram.svg&#34; alt=&#34;Note: Applicable only to Natural Integers&#34; /&gt;
+    
+    
+    &lt;figcaption&gt;
+        &lt;p&gt;
+        Note: Applicable only to Natural Integers
+        
+            
+        
+        &lt;/p&gt; 
+    &lt;/figcaption&gt;
+    
+&lt;/figure&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;We can code this simply as:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def modPow2(n:Int, p2: Int) = n &amp;amp; (p2-1)
+
+def isPow2(n:Int):Boolean = ((n-1) &amp;amp; n ) == 0
+
+def modFast(n:Int, b: Int) = if (isPow2(b)) modPow2(n,b) else n % b
+
+// The old way
+def modOld(n:Int, b:Int) = n % b
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;performance-comparsion:4328c785535fae6da643b5f4d6375870&#34;&gt;Performance Comparsion&lt;/h2&gt;
+
+&lt;p&gt;Comparing the byte code of classic modulo, and our faster version, we see they are both &lt;strong&gt;4 lines of byte code&lt;/strong&gt;. However, classic &lt;code&gt;%&lt;/code&gt; calls the byte code operation &lt;a href=&#34;https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html#jvms-6.5.irem&#34;&gt;&lt;code&gt;irem&lt;/code&gt;&lt;/a&gt; which itself calls a native routine, so it&amp;rsquo;s far more complicated and won&amp;rsquo;t run in constant time.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;  public int modOld(int, int);
+    Code:
+       0: iload_1
+       1: iload_2
+       2: irem
+       3: ireturn
+
+  public int modPow2(int, int); // with 8-1 inlined
+    Code:
+       0: iload_1
+       1: bipush        7
+       3: iand
+       4: ireturn
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A simple benchmark&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:4328c785535fae6da643b5f4d6375870:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:4328c785535fae6da643b5f4d6375870:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; on bare metal&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:4328c785535fae6da643b5f4d6375870:2&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:4328c785535fae6da643b5f4d6375870:2&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; shows what we expect, doing one billion passes of each.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Power 8 trick is the fastest&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;irem&lt;/code&gt; implementation is nearly as fast&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fmod&lt;/code&gt; implementation is 3x slower&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://lust.dev/img/modulo_benchmark_chart.svg&#34;&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/modulo_benchmark_chart.svg&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;!---
+t = [1.589,1.954,7.987]
+bar(t)
+set(ax,&#39;XTickLabel&#39;, {&#34;n &amp; b-1&#34;,&#34;n % b (int)&#34;,&#34;n % b (double)&#34;})
+title(&#34;Comparision of Modulo Execution Times&#34;)
+ylabel(&#39;Mean Time (ns)&#39;)
+xlabel(&#34;Modulo Methods&#34;)
+t(2)/t(1)
+--&gt;
+
+&lt;h2 id=&#34;conclusions:4328c785535fae6da643b5f4d6375870&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Modulo isn&amp;rsquo;t a major performance hog&lt;/li&gt;
+&lt;li&gt;Avoid Double modulo operations if possible (can you use int&amp;rsquo;s?)&lt;/li&gt;
+&lt;li&gt;The reference Java modulo implementation is fast&lt;/li&gt;
+&lt;li&gt;For &lt;code&gt;mod(a,2^n)&lt;/code&gt; operations, &lt;code&gt;modPow2&lt;/code&gt; is ~23% faster than stock moduolo&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If modulo is a critical path in your code, and your divisor is a power of 2 (with Natural dividends), use this trick. Otherwise, the stock JVM implementation should serve you well.&lt;/p&gt;
+
+&lt;!---
+
+### floating
+### Common Ints
+
+TODO: remainderKnuth, remainderBurnikelZiegler, in BigDecimal
+TODO: Check Knuth book for other Impl&#39;s (didn&#39;t see any)
+
+first 3 Google hits, none mention the cost of the operation. Sadness.
+--&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:4328c785535fae6da643b5f4d6375870:1&#34;&gt;Benchmarked with a &lt;a href=&#34;https://gist.github.com/twistedpair/58414ee3237544eaf54a787a59f656c6&#34;&gt;simple iterator&lt;/a&gt;, and &lt;a href=&#34;https://scalameter.github.io/&#34;&gt;ScalaMeter&lt;/a&gt;, and &lt;a href=&#34;http://openjdk.java.net/projects/code-tools/jmh/&#34;&gt;JMH&lt;/a&gt; (see &lt;a href=&#34;https://github.com/twistedpair/benchmark-jvm-modulo&#34;&gt;repo&lt;/a&gt;). JMH provided the most consistent approach, and uses the most advanced methods to warmup and prevent garbage collections. Performed on an untilized, bare metal machine with N=1 billion (1K runs of 1M iterations). JVM memory preallocated at startup (&lt;code&gt;-Xmx=2G -Xms=2G&lt;/code&gt;)
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:4328c785535fae6da643b5f4d6375870:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:4328c785535fae6da643b5f4d6375870:2&#34;&gt;HotSpot 1.8.0_91, Ubuntu 15.04, i7-4790K, 32GB PC3 19200 ram, SSD
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:4328c785535fae6da643b5f4d6375870:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

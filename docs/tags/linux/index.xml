@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux on lust.dev</title>
+    <link>https://lust.dev/tags/linux/</link>
+    <description>Recent content in Linux on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Sat, 25 Feb 2012 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Installing Oracle JDK on Ubuntu 11.10</title>
+      <link>https://lust.dev/2012/02/25/installing-oracle-jdk-on-ubuntu-11-10/</link>
+      <pubDate>Sat, 25 Feb 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/02/25/installing-oracle-jdk-on-ubuntu-11-10/</guid>
+      <description>
+
+&lt;p&gt;It&amp;#8217;s a shame IBM didn&amp;#8217;t buy Sun, since the guys at Oracle are just not much fun. Case in point, you can&amp;#8217;t just &lt;code&gt;apt-get&lt;/code&gt; the Oracle JDK/JRE. No, that would be too easy and Oracle does not want you to be their friend. Rather, they&amp;#8217;d prefer you register with their site, accept their legal terms, and download/install everything manually because this is the &lt;em&gt;right&lt;/em&gt; way to discourage the use of Java.&lt;/p&gt;
+
+&lt;h3 id=&#34;here-8217-s-how:f4376bb7c56fee3292ef6671a1aaa3bf&#34;&gt;Here&amp;#8217;s how:&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Download the JRE/JDK files (the &lt;strong&gt;.bin&lt;/strong&gt; files, &lt;strong&gt;not .rpm&lt;/strong&gt; files) from &lt;a href=&#34;http://www.oracle.com/technetwork/java/javase/downloads/index.html&#34;&gt;Oracle&amp;rsquo;s site&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Sign up, become their friend, accept their licenses.&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Follow the below commands (note: change version to match your download)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cd /usr/lib/jvm/
+sudo cp ~/Downloads/*.bin .
+sudo chmod a+x *.bin
+sudo unzip *.bin
+
+
+sudo ./jdk-6u30-linux-x64.bin
+sudo ./jre-6u30-linux-x64.bin
+
+
+sudo update-alternatives –install “/usr/bin/java” “java” “/usr/lib/jvm/jre1.6.0_30/bin/java” 1
+sudo update-alternatives –set java /usr/lib/jvm/jre1.6.0_30/bin/java 1
+
+
+sudo update-alternatives –install “/usr/lib/jvm” “javac” “/usr/lib/jvm/jdk1.6.0_30/bin/javac” 1
+sudo update-alternatives –set java /usr/lib/jvm/jre1.6.0_30/bin/java
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Confirm that the new JRE/JDK are the default versions&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;java -version
+javac -version
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Cleanup&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;. /etc/profile
+sudo rm *.bin
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Sure, you may ask what is wrong with OpenJDK, which does have a nice auto installer? Simply, for many enterprise Java bits, it just does not fly, and if Oracle had their way, it would not exist. Again, too bad Oracle is &lt;a href=&#34;http://blogs.adobe.com/open/2010/08/oracle-closed-minds-and-open-source.html&#34;&gt;working to kill Java&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;update-3-feb-2015:f4376bb7c56fee3292ef6671a1aaa3bf&#34;&gt;Update: 3 Feb 2015&lt;/h2&gt;
+
+&lt;p&gt;It&amp;rsquo;s far easier now due to the &lt;code&gt;WebUpd8Team&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo apt-get purge openjdk*
+sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

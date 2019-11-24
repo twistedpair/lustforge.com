@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Api on lust.dev</title>
+    <link>https://lust.dev/tags/api/</link>
+    <description>Recent content in Api on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Sat, 12 Jul 2014 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/api/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Amtrak&#39;s Secret Train Tracking JSON API</title>
+      <link>https://lust.dev/2014/07/12/amtraks-secret-train-tracking-json-api/</link>
+      <pubDate>Sat, 12 Jul 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2014/07/12/amtraks-secret-train-tracking-json-api/</guid>
+      <description>&lt;p&gt;It&amp;rsquo;s not often that a government operated agency does something cool or modern, but I noticed today that Amtrak was breaking the mold.&lt;/p&gt;
+
+&lt;p&gt;Riding to the NE Regional to NYC, I noticed that the Amtrak tracking page kept updating, even when internet connectivity failed on the WIFI. Odd&amp;hellip; does that mean that the servers are &lt;em&gt;on the train&lt;/em&gt;?&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;joe@tp:~$ tracepath www.amtrakconnect.com
+ 1?: [LOCALHOST]                    pmtu 1500
+ 1: 10.80.104.1                     8.641ms
+ 1: 10.80.104.1                     16.690ms
+ 2: 10.80.104.1                     6.179ms pmtu 1350
+ 2: www.amtrakconnect.com          5.424ms reached
+    Resume: pmtu 1350 hops 2 back 2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Interesting. The call is coming from inside the train! Let&amp;rsquo;s look at the webpage and see if we can find the API.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/amtrak_connect.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Found it. Now let&amp;rsquo;s cut out the middle man and track our progress to Penn Station via Bash.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;joe@tp:~$ curl -s http://www.amtrakconnect.com/gps_provider_prod.php | jq &#39;.&#39;
+{
+    &amp;quot;err&amp;quot;:false,
+    &amp;quot;lat&amp;quot;: &amp;quot;43.657510&amp;quot;,
+    &amp;quot;lon&amp;quot;: &amp;quot;-70.282448&amp;quot;,
+}
+
+joe@tp:~$ curl -s http://www.amtrakconnect.com/gps_provider_prod.php | jq &#39;.&#39;
+{
+    &amp;quot;err&amp;quot;:false,
+    &amp;quot;lat&amp;quot;: &amp;quot;43.677390&amp;quot;,
+    &amp;quot;lon&amp;quot;: &amp;quot;-70.286580&amp;quot;,
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Looks like we&amp;rsquo;re moving! But crap&amp;hellip; I hope the entire navigation system isn&amp;rsquo;t written in PHP.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Google Web Toolkit Gwt on lust.dev</title>
+    <link>https://lust.dev/tags/google-web-toolkit-gwt/</link>
+    <description>Recent content in Google Web Toolkit Gwt on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Tue, 26 Aug 2014 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/google-web-toolkit-gwt/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Accessing the GWT History Stack</title>
+      <link>https://lust.dev/2014/08/26/accessing-the-gwt-history-stack/</link>
+      <pubDate>Tue, 26 Aug 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2014/08/26/accessing-the-gwt-history-stack/</guid>
+      <description>&lt;p&gt;GWT (Google Web Toolkit) does not supply a direct way to know where users have been within your application. However, you can use a simple listener and stack to record and access history events.&lt;/p&gt;
+
+&lt;p&gt;The key is the GWT History object. You can listen to its change event to know the user has gone to another Place. The restriction is &lt;a href=&#34;https://groups.google.com/forum/?fromgroups=#!topic/google-web-toolkit/ypofMT1wsXo&#34; target=&#34;_blank&#34;&gt;we don&amp;#8217;t know when the user has gone &lt;strong&gt;back&lt;/strong&gt;&lt;/a&gt;. This is an inherent state detection problem in the stateless HTTP web. Ideally, it should not matter to your application how a user arrived at the given Place.&lt;/p&gt;
+
+&lt;p&gt;We&amp;#8217;ll start with an interface to define our new class&amp;#8217; contracts. There is a 16 step limit since we don&amp;#8217;t want to keep filling memory with history locations. I&amp;#8217;ve added a method to get the last 16 and to get the last place as well.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;/**
+ * Stack that tracks browser history interactions
+ */
+public interface HistoryStack { 
+
+    /**
+    * Get up to the last 16 history events. 0 index is the last visited.
+    * @return
+    */
+    String[] getStack(); 
+
+    /**
+    * Return the last event, if any. Is not the current place, but current -1
+    * @return NULL if no history
+    */
+    String getLast();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now for the implementation. Oddly, since we cannot track back events, we can&amp;#8217;t really use this as a stack, but rather are placing Places in a fixed size queue. Instead than switch to a queue, I&amp;#8217;ve stuck with a stack, which is the classic structure for this use case. Folks might get confused if they saw a &amp;#8220;HistoryQueue.&amp;#8221;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;/**
+ * Create a stack that updates as we navigate, tracking history
+ */
+@Singleton
+public class HistoryStackImpl implements HistoryStack, ValueChangeHandler&amp;amp;lt;String&amp;amp;gt; { 
+
+    private static final int MAX_LENGTH = 16;
+
+    private final Stack&amp;amp;lt;String&amp;amp;gt; stack = new Stack&amp;amp;lt;String&amp;amp;gt;(); 
+
+    // Instantiate via Gin  
+    protected HistoryStackImpl() { 
+        History.addValueChangeHandler(this);
+    } 
+
+    @Override 
+    public void onValueChange(ValueChangeEvent&amp;amp;lt;String&amp;amp;gt; event) {
+        
+        // only store max elements
+        if(stack.size() &amp;amp;gt; MAX_LENGTH) {
+                stack.remove(0);
+        }
+        stack.push(event.getValue()); 
+    }
+
+    @Override
+    public String[] getStack() {
+        // reverse stack so first entry of array is last visited
+        // return defensive copy
+        final String[] arr = new String[stack.size()];
+        int i=0;
+        for(int n=stack.size()-1; n&amp;amp;gt;=0; n--) {
+                arr[i] = stack.get(n);
+                i++;
+        }
+        return arr;
+    }
+
+    @Override
+    public String getLast() {
+        // null no prior location
+        if(stack.size()&amp;amp;lt;2) {
+                return null;
+        }
+        return stack.get(stack.size()-2);
+    } 
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally we&amp;#8217;ll tell Gin to ginject this into our application for use, starting it up when the app loads.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;public class MyClientModule extends AbstractPresenterModule {
+
+    @Override
+    protected void configure() {
+
+        bind(HistoryStack.class)
+            .to(HistoryStackImpl.class)
+            .asEagerSingleton(); // history from startup //... 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that was easy. Just inject your history stack into any presenter than needs to make history bases decisions. In my case, I had a user setting editor. I wanted the &amp;#8220;Done&amp;#8221; button to go back to the Place the user was last on so they could continue their work there, or if they started the app on the Settings page, to take them to the home page. This hack fit the bill perfectly. I hope it does the same for you.&lt;/p&gt;
+
+&lt;p&gt;P.S. I must give credit to &lt;strong&gt;dindeman&lt;/strong&gt; for the &lt;a href=&#34;https://groups.google.com/forum/?fromgroups=#!searchin/gwt-platform/history$20stack/gwt-platform/RT8BT_aLA2k/G0dtCEnW2SYJ&#34; target=&#34;_blank&#34;&gt;initial revision&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Restoring the Chrome GWT DevMode Plugin</title>
+      <link>https://lust.dev/2014/06/12/restoring-the-chrome-gwt-devmode-plugin/</link>
+      <pubDate>Thu, 12 Jun 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2014/06/12/restoring-the-chrome-gwt-devmode-plugin/</guid>
+      <description>
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/noNappi.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Did your DevMode Chrome extension stop working recently? Welcome to the party. The powers of divine wisdom on the Google Chrome team &lt;a href=&#34;http://blog.chromium.org/2013/09/saying-goodbye-to-our-old-friend-npapi.html&#34;&gt;decided that NPAPI was a superannuated&lt;/a&gt; security hole and must die. The fact that they proposed no clear alternative solution has led many a plugin (Java, GWT DevMode, Linux Garmin Connect, VDPAU, GNOME Shell Integration, VMware VSphere Client, Nemid) to &lt;a href=&#34;http://ubuntuforums.org/showthread.php?t=2225277&#34;&gt;wither&lt;/a&gt; and &lt;a href=&#34;https://forums.garmin.com/showthread.php?76009-Announcement-Concerning-Garmin-Connect&#34; title=&#34;Garmin Connect Plugin&#34;&gt;die&lt;/a&gt;. But what about Flash!? Well, to keep important plugins from being impacted, they&amp;#8217;ve been whitelisted, but for the rest of us who depend on the Chrome DevMode Plugin&amp;#8230; too bad.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;The timing is unfortunate, but the number of Linux users that require NPAPI plugins that aren&amp;#8217;t Flash is just too small to justify this effort.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&amp;#8211;&lt;a href=&#34;https://groups.google.com/a/chromium.org/forum/#!msg/chromium-dev/xEbgvWE7wMk/D_07G2lftacJ&#34; target=&#34;_blank&#34;&gt;Matt Giuca&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;To boot, the aforementioned plugins &amp;#8220;could be rewritten&amp;#8221; from scratch in javascript, just for Chrome, using the &lt;a href=&#34;http://www.chromium.org/developers/npapi-deprecation&#34;&gt;various new API&amp;#8217;s&lt;/a&gt;, but it will be a swift death blow for many an OSS plugin where no one has the time to completely rewrite the project. Will a phoenix rise from the ashes? Certainly. It will be an opportunity for many to reinvent the wheel using toothpicks. However, in the mean time, many of us will be without wheels, especially in the Google Web Toolkit dev community.&lt;/p&gt;
+
+&lt;h3 id=&#34;retrograde-gwt-plugin-install:09bebde44e5b67252b138fbc8243a3ba&#34;&gt;Retrograde GWT Plugin Install&lt;/h3&gt;
+
+&lt;p&gt;You&amp;#8217;ll need to revert to the less secure Chrome 34 build. Generally speaking, &lt;em&gt;it&amp;rsquo;s a bad idea&lt;/em&gt;, so be careful with this. Don&amp;#8217;t do things requiring security on it. Sadly, the Chrome team has left us little choice, while also saying you shouldn&amp;#8217;t do the above 😉 .&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;http://sourceforge.net/projects/portableapps/files/Google%20Chrome%20Portable/Additional%20Versions/&#34; target=&#34;_blank&#34;&gt;Download&lt;/a&gt; and install the Chrome 34 Portable Installer (has no updater)&lt;/li&gt;
+&lt;li&gt;Reenable drag and drop &lt;a href=&#34;http://stackoverflow.com/questions/23399644/chrome-install-extensioncrx-manually-doesnt-work-anymore&#34; target=&#34;_blank&#34;&gt;install of disabled .crx extensions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Install &lt;a href=&#34;https://chrome.google.com/webstore/detail/gwt-developer-plugin/jpjpnpmbddbjkfaccnmhnkdgjideieim&#34; target=&#34;_blank&#34;&gt;GWT Chrome extension&lt;/a&gt; from the Chrome Web Store&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Hopefully that works for you. Now you can continue developing GWT until Chrome adds more road blocks, but you should really consider moving to &lt;a href=&#34;http://www.gwtproject.org/articles/superdevmode.html&#34; target=&#34;_blank&#34;&gt;SuperDevMode&lt;/a&gt;. If you&amp;#8217;re keen to help, please contribute to the &lt;a href=&#34;https://github.com/sdbg/sdbg&#34; target=&#34;_blank&#34;&gt;SDBG Eclipse Dev Mode replacement project&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>GWT SuperDevMode Compile Button Missing</title>
+      <link>https://lust.dev/2013/07/26/gwt-superdevmode-compile-button-missing/</link>
+      <pubDate>Fri, 26 Jul 2013 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2013/07/26/gwt-superdevmode-compile-button-missing/</guid>
+      <description>&lt;p&gt;So you are trying out SuperDevMode on your GWT project, but you&amp;#8217;re getting the bookmarklet popup without a compile button? Boo.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/gwt_dev_mode_copmile_button.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;If you&amp;#8217;re like me, can&amp;#8217;t sleep and decided to attempt SuperDevMode at 5:10AM, then you might &lt;strong&gt;not&lt;/strong&gt; have read the &lt;a href=&#34;http://www.gwtproject.org/articles/superdevmode.html&#34;&gt;official documentation&lt;/a&gt; that well. Luckily there is a more &lt;a href=&#34;http://stackoverflow.com/questions/11356714/getting-started-with-the-superdevmode?answertab=votes#tab-top&#34;&gt;detailed write&lt;/a&gt; up that will admonish your insomnia addled pate. You see, you&amp;#8217;ve almost made it, but &lt;strong&gt;forgotten to enable SupperDevMode in your project&amp;#8217;s module.gwt.xml&lt;/strong&gt; file. Just add the below and you&amp;#8217;ll be off to the races.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt; &amp;lt;!-- For local work, use Super Dev Mode --&amp;gt;
+ &amp;lt;set-configuration-property name=&amp;quot;devModeRedirectEnabled&amp;quot; value=&amp;quot;true&amp;quot;/&amp;gt;
+ &amp;lt;set-property name=&amp;quot;compiler.useSourceMaps&amp;quot; value=&amp;quot;true&amp;quot; /&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ah, that&amp;#8217;s more like it!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>GWT JSNI Variables – An Exhaustive List</title>
+      <link>https://lust.dev/2012/11/11/gwt-jsni-variables-an-exhaustive-list/</link>
+      <pubDate>Sun, 11 Nov 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/11/11/gwt-jsni-variables-an-exhaustive-list/</guid>
+      <description>
+
+&lt;p&gt;As anyone using the &lt;a href=&#34;https://developers.google.com/web-toolkit/doc/latest/DevGuideCodingBasicsJSNI&#34;&gt;Google Web Toolkit JSNI&lt;/a&gt; knows, there are certain reserved variables, or &amp;#8220;dollar words,&amp;#8221; exposed by the GWT runtime. While you may be familiar with &lt;code&gt;$wnd&lt;/code&gt; and &lt;code&gt;$doc&lt;/code&gt;, there are more undocumented words. See the exhaustive (as of GWT &lt;code&gt;2.5.0&lt;/code&gt;) list below taken from &lt;a href=&#34;http://code.google.com/p/google-web-toolkit/source/browse/trunk/dev/core/src/com/google/gwt/dev/js/ast/JsRootScope.java?r=9287&#34;&gt;source&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;wnd:12347b800901b14948e615972c727567&#34;&gt;$wnd&lt;/h3&gt;
+
+&lt;p&gt;Reference to the root browser window GWT widgets are being rendered to. Note that when called from the iframe linker, GWT code runs in an iframe, not the root browser window, so calling window will reference the wrong window.&lt;/p&gt;
+
+&lt;h3 id=&#34;doc:12347b800901b14948e615972c727567&#34;&gt;$doc&lt;/h3&gt;
+
+&lt;p&gt;Same as above, but referencing the document, not window. Same as &lt;code&gt;$wnd.document&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;gwt-version:12347b800901b14948e615972c727567&#34;&gt;$gwt_version&lt;/h3&gt;
+
+&lt;p&gt;The X.Y.Z version of GWT this code was compiled with. Because Google uses the GWT trunk in their apps, they will return &lt;code&gt;0.0.999&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;modulename:12347b800901b14948e615972c727567&#34;&gt;$moduleName&lt;/h3&gt;
+
+&lt;p&gt;The name of the compiled GWT module. Note, you may have assumed this was obfuscated. It’s not.&lt;/p&gt;
+
+&lt;h3 id=&#34;modulebase:12347b800901b14948e615972c727567&#34;&gt;$moduleBase&lt;/h3&gt;
+
+&lt;p&gt;The root URL for this module’s entrypoint.&lt;/p&gt;
+
+&lt;h3 id=&#34;strongname:12347b800901b14948e615972c727567&#34;&gt;$strongName&lt;/h3&gt;
+
+&lt;p&gt;The MD5 hash for this module.&lt;/p&gt;
+
+&lt;h3 id=&#34;hosted:12347b800901b14948e615972c727567&#34;&gt;$hosted&lt;/h3&gt;
+
+&lt;p&gt;Url and port of code server in hosted mode. i.e. &lt;code&gt;127.0.0.1:9997&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;hostedhtml-version:12347b800901b14948e615972c727567&#34;&gt;$hostedHtml Version&lt;/h3&gt;
+
+&lt;p&gt;Version of hosted HTML page (hosted.html) in use. This is the page that shows error traces in browser in hosted mode.&lt;/p&gt;
+
+&lt;h3 id=&#34;sessionid:12347b800901b14948e615972c727567&#34;&gt;$sessionId&lt;/h3&gt;
+
+&lt;p&gt;Used when collecting stats in hosted mode. Same value as &lt;code&gt;window.__gwt_SessionID&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;stats:12347b800901b14948e615972c727567&#34;&gt;$stats()&lt;/h3&gt;
+
+&lt;p&gt;Undocumented. Used to collect stats in hosted mode.&lt;/p&gt;
+
+&lt;h3 id=&#34;entry:12347b800901b14948e615972c727567&#34;&gt;$entry()&lt;/h3&gt;
+
+&lt;p&gt;Method that makes code reentry safe. This should wrap GWT code that will be called  from outside of GWT via Javascript calls you wish to expose from your GWT application. See docs for more.&lt;/p&gt;
+
+&lt;h3 id=&#34;stack-stackdepth-location:12347b800901b14948e615972c727567&#34;&gt;$stack, $stackDepth, $location&lt;/h3&gt;
+
+&lt;p&gt;Undocumented. Trace information used by JsStackEmulator.&lt;/p&gt;
+
+&lt;h2 id=&#34;example-of-accessing-gwt-version:12347b800901b14948e615972c727567&#34;&gt;Example of accessing GWT Version&lt;/h2&gt;
+
+&lt;p&gt;To determine the running version of a GWT application, you can use JSNI to return that version.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;// easily get the GWT version
+public static native String getGwtVersion() /*-{
+    return $gwt_version;
+}-*/;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;From outside the application you can walk the DOM of the page to find the iframe containing the running GWT code and access the version like below.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;var gwtVersion = null;
+var frames = document.getElementsByTagName(&#39;iframe&#39;);
+for (var i=0; i&amp;lt;frames.length; i++) {
+    // prevent security access errors
+    try {
+        if(frames[i].contentWindow.$gwt_version) {
+            gwtVersion = frames[i].contentWindow.$gwt_version;
+            break;
+        }
+    }
+    catch(e) {}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is the mechanism I used to detect GWT apps in the &lt;a href=&#34;https://chrome.google.com/webstore/detail/library-detector/cgaocdmhkmfnkdkbnckgmpopcbpaaejo&#34;&gt;Library Detector Chrome Extension&lt;/a&gt; (&lt;a href=&#34;https://github.com/twistedpair/Library-Detector-for-Chrome&#34;&gt;Github&lt;/a&gt;). Note the wrapping in a &lt;code&gt;try/catch&lt;/code&gt;. This is because some iframes are cross domain and will throw a security exception if you try to access them.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>GWT war file Size Reduction – a.k.a GWT Weightloss</title>
+      <link>https://lust.dev/2012/07/03/gwt-war-file-size-reduction-a-k-a-gwt-weightloss/</link>
+      <pubDate>Tue, 03 Jul 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/07/03/gwt-war-file-size-reduction-a-k-a-gwt-weightloss/</guid>
+      <description>
+
+&lt;p&gt;GWT is great, but the size and number of files compiled can slowly creep upward. In a large project, this can mean your &lt;code&gt;war&lt;/code&gt; file contains thousands of unneeded files. On environments like AppEngine, where the size of your war is limited, this introduces an upper bound on the application size.&lt;/p&gt;
+
+&lt;p&gt;Don&amp;#8217;t worry, you can easily slim that war down.&lt;/p&gt;
+
+&lt;h3 id=&#34;the-stowaways:ebed58af2d057af71a4873944b21a278&#34;&gt;The Stowaways&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;.gwt-tmp/&lt;/code&gt; - used in the compile process, we don&amp;#8217;t need them anymore&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;_.junit_symbolMaps/&lt;/code&gt; - used by junit, not needed in production&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;WEB-INF/classes/com/yourPkg/&lt;/code&gt; - compiled java classes, but client runs JS&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div&gt;
+  But, you don&amp;#8217;t want to ax the entire `WEB-INF/` folder since it contains .rpc manifests. Hold on to these or RPC&amp;#8217;s will be bollixed.
+&lt;/div&gt;
+
+&lt;h3 id=&#34;maven-to-the-rescue:ebed58af2d057af71a4873944b21a278&#34;&gt;Maven to the rescue&lt;/h3&gt;
+
+&lt;p&gt;The following line used when packaging your war using the &lt;strong&gt;maven-antrun-plugin&lt;/strong&gt; does the trick, or you can just do it by hand or your scripting framework of choice.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;plugin&amp;gt;
+    &amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;maven-antrun-plugin&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;1.6&amp;lt;/version&amp;gt;
+    &amp;lt;executions&amp;gt;
+        &amp;lt;execution&amp;gt;
+            &amp;lt;id&amp;gt;package-configuration&amp;lt;/id&amp;gt;
+            &amp;lt;phase&amp;gt;generate-resources&amp;lt;/phase&amp;gt;
+            &amp;lt;configuration&amp;gt;
+                &amp;lt;tasks&amp;gt;
+                    &amp;lt;echo message=&amp;quot;Copying GWT resources into WAR file&amp;quot; /&amp;gt;
+                    &amp;lt;copy todir=&amp;quot;${project.build.directory}/${project.warOutputName}&amp;quot;&amp;gt;
+                        &amp;lt;fileset dir=&amp;quot;../gwt/target/yourModuleName&amp;quot;&amp;gt;
+                            &amp;lt;exclude name=&amp;quot;**/.gwt-tmp/**&amp;quot; /&amp;gt;
+                            &amp;lt;exclude name=&amp;quot;**/*junit_symbolMaps/**&amp;quot; /&amp;gt;
+                             &amp;lt;!-- Just want JS files, not classes, rpc --&amp;gt;
+                            &amp;lt;exclude name=&amp;quot;**/WEB-INF/classes/com/yourPkg/**&amp;quot; /&amp;gt;
+                        &amp;lt;/fileset&amp;gt;
+                    &amp;lt;/copy&amp;gt;
+                &amp;lt;/tasks&amp;gt;
+            &amp;lt;/configuration&amp;gt;
+            &amp;lt;goals&amp;gt;
+                &amp;lt;goal&amp;gt;run&amp;lt;/goal&amp;gt;
+            &amp;lt;/goals&amp;gt;
+        &amp;lt;/execution&amp;gt;
+    &amp;lt;/executions&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;case-study:ebed58af2d057af71a4873944b21a278&#34;&gt;Case Study&lt;/h3&gt;
+
+&lt;p&gt;On my project, we took the number of GWT &lt;strong&gt;files in the war from 2800 to 400&lt;/strong&gt;. If we made better use of &lt;a href=&#34;https://developers.google.com/web-toolkit/doc/latest/DevGuideClientBundle#CssResource&#34;&gt;CSSResource&lt;/a&gt;, &lt;a href=&#34;https://developers.google.com/web-toolkit/doc/latest/DevGuideClientBundle#ImageResource&#34;&gt;ImageResource&lt;/a&gt;, and &lt;a href=&#34;https://developers.google.com/web-toolkit/doc/latest/DevGuideClientBundle#DataResource&#34;&gt;DataResource&lt;/a&gt;, it would be more like 150 files in the war.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Saved 2400 files from war file&lt;/li&gt;
+&lt;li&gt;Saved 50% on war file size&lt;/li&gt;
+&lt;li&gt;Sped up compilation by 90 seconds&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>“Add a Browser” – GWT Eclipse Plugin</title>
+      <link>https://lust.dev/2012/06/02/add-a-browser-gwt-eclipse-plugin/</link>
+      <pubDate>Sat, 02 Jun 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/06/02/add-a-browser-gwt-eclipse-plugin/</guid>
+      <description>
+
+&lt;p&gt;Ever get annoyed that you need to &amp;#8220;Add a Browser&amp;#8221; to the GWT Eclipse Plugin&amp;#8217;s launch panel every use to launch Google Chrome or Mozilla Firefox? I think I&amp;#8217;ve done this about a hundred times over the last year, so I figured out how to fix it and now this answer will be on Google to help everyone else.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-problem:ea2dc9896dd09b729948b9b0e841de67&#34;&gt;The Problem&lt;/h2&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/gwt_browser.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;You close Eclipse and those browsers you added have been forgotten the next time you want to run a GWT Web Application. And so, you add then yet again&amp;#8230;&lt;/p&gt;
+
+&lt;h2 id=&#34;the-solution:ea2dc9896dd09b729948b9b0e841de67&#34;&gt;The Solution&lt;/h2&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/gwt_browser_2.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;ul&gt;
+&lt;li&gt;In Eclipse, select &lt;strong&gt;Window &amp;gt; Preferences &amp;gt; General &amp;gt; Web Browser &lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;New&lt;/strong&gt; and add your sought after browser&lt;/li&gt;
+&lt;li&gt;Done!&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Now the browser&amp;#8217;s will be available when you launch a GWT Web Application.&lt;/p&gt;
+
+&lt;p&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/gwt_browser_3.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>GWT Maps API v3 and Maven</title>
+      <link>https://lust.dev/2012/01/29/gwt-maps-api-v3-and-maven/</link>
+      <pubDate>Sun, 29 Jan 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/01/29/gwt-maps-api-v3-and-maven/</guid>
+      <description>
+
+&lt;h3 id=&#34;deprecated:788057619e1afc861a3694ae552ddea7&#34;&gt;Deprecated&lt;/h3&gt;
+
+&lt;p&gt;This post was for building the pre-alpha version of the&lt;a href=&#34;https://github.com/branflake2267/GWT-Maps-V3-Api&#34;&gt;GWT-Maps-V3-API&lt;/a&gt;. However, it&amp;#8217;s now fully Mavenized and hosted on &lt;a href=&#34;https://github.com/branflake2267/GWT-Maps-V3-Api&#34;&gt;GitHib&lt;/a&gt;. Please check it out from there and simply build it.&lt;/p&gt;
+
+&lt;h3 id=&#34;original-post:788057619e1afc861a3694ae552ddea7&#34;&gt;Original Post&lt;/h3&gt;
+
+&lt;p&gt;I&amp;#8217;ve been a great fan of &lt;a href=&#34;https://plus.google.com/u/1/111739836936169749229/posts&#34;&gt;Brandon Donnelson&amp;#8217;s&lt;/a&gt; ongoing &lt;a href=&#34;http://code.google.com/p/gwt-maps-api/&#34;&gt;gwt-maps-api&lt;/a&gt; project. However, I also love the simplicity Maven brings to my projects and life as a whole. The following is how to build the &lt;em&gt;gwt-maps-api&lt;/em&gt; project using Maven (m2e) and Eclipse (Indigo). Note that since the project is still prebeta, the below are subject to change. Post a comment if you have an issue or suggestion.&lt;/p&gt;
+
+&lt;h2 id=&#34;assumptions:788057619e1afc861a3694ae552ddea7&#34;&gt;Assumptions:&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Eclipse Indigo installed w/ Maven integration.&lt;/li&gt;
+&lt;li&gt;GWT Eclipse plugin installed (for Indigo 3.7).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Google how to do these tasks if unsure. They should be straight forward.&lt;/p&gt;
+
+&lt;h2 id=&#34;checkout-the-project:788057619e1afc861a3694ae552ddea7&#34;&gt;Checkout the project&lt;/h2&gt;
+
+&lt;p&gt;Using Tortoise or your subversion client of choice, check out&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://gwt-maps-api.googlecode.com/svn/trunk/Apis_Google_Maps/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;import-to-eclipse:788057619e1afc861a3694ae552ddea7&#34;&gt;Import to Eclipse&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;From the Eclipse Project Explorer: &lt;strong&gt;Right Click &amp;gt; Import&amp;#8230; &amp;gt; General &amp;gt; Existing Projects into Workspace.&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Browse&lt;/strong&gt; and find the location you checked the source out to under &lt;strong&gt;Selected root directory.&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Finish&lt;/strong&gt; on the Import Wizard.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;prune-missing-dependencies:788057619e1afc861a3694ae552ddea7&#34;&gt;Prune Missing Dependencies&lt;/h2&gt;
+
+&lt;p&gt;First let&amp;#8217;s get rid of the hardcoded references to missing external libraries in the project since these are making Eclipse give your error messages.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Right Click&lt;/strong&gt; your project on the &lt;strong&gt;Projects Explorer &amp;gt; Build Path &amp;gt; Configure Build Path&amp;#8230;&lt;/strong&gt; .&lt;/li&gt;
+&lt;li&gt;Remove the links to other projects under &lt;strong&gt;Projects&lt;/strong&gt; tab.&lt;/li&gt;
+&lt;li&gt;Remove links to external &lt;em&gt;ajaxloader&lt;/em&gt;, &lt;em&gt;gwt-user&lt;/em&gt;, &lt;em&gt;gwt-dev&lt;/em&gt;, and &lt;em&gt;validation-api&lt;/em&gt; jars under the &lt;strong&gt;Libraries&lt;/strong&gt; tab.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;mavenize-the-project:788057619e1afc861a3694ae552ddea7&#34;&gt;Mavenize the Project&lt;/h3&gt;
+
+&lt;p&gt;The project is not currently under Maven dependency control. How sad :(. Let&amp;#8217;s fix that.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Right Click&lt;/strong&gt; on the project in the Project Explorer and click &lt;strong&gt;Maven2 &amp;gt; Enable Dependency Management&lt;/strong&gt; (and &lt;strong&gt;Finish&lt;/strong&gt;, ignore config options). Now Maven will try to resolve dependencies.&lt;/li&gt;
+&lt;li&gt;You&amp;#8217;ll need to give it a POM  file to tell it the dependencies and configure the build process. Replace the contents of &lt;strong&gt;pom.xml&lt;/strong&gt; in your project root with the below xml and save. Maven will now download and configure the dependencies.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;project xmlns=&amp;quot;http://maven.apache.org/POM/4.0.0&amp;quot; xmlns:xsi=&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;
+ xsi:schemaLocation=&amp;quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&amp;quot;&amp;gt;
+
+    &amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+
+    &amp;lt;scm&amp;gt;
+        &amp;lt;url&amp;gt;http://gwt-maps-api.googlecode.com/svn&amp;lt;/url&amp;gt;
+        &amp;lt;connection&amp;gt;scm:svn:http://gwt-maps-api.googlecode.com/svn/trunk/&amp;lt;/connection&amp;gt;
+        &amp;lt;developerConnection&amp;gt;scm:svn:http://gwt-maps-api.googlecode.com/svn/trunk/&amp;lt;/developerConnection&amp;gt;
+    &amp;lt;/scm&amp;gt;
+
+    &amp;lt;!-- Artifact details that people will use search for this project --&amp;gt;
+    &amp;lt;groupId&amp;gt;com.google.gwt.maps&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;gwt-maps-api-v3&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;1.0.0-SNAPSHOT&amp;lt;/version&amp;gt;
+    &amp;lt;name&amp;gt;Google Web Toolkit Maps API V3&amp;lt;/name&amp;gt;
+    &amp;lt;url&amp;gt;http://code.google.com/p/gwt-maps-api/&amp;lt;/url&amp;gt;
+
+    &amp;lt;!-- Example license --&amp;gt;
+    &amp;lt;licenses&amp;gt;
+        &amp;lt;license&amp;gt;
+            &amp;lt;!-- &amp;lt;name&amp;gt;LGPLv3&amp;lt;/name&amp;gt; &amp;lt;url&amp;gt;http://www.gnu.org/licenses/lgpl-3.0.txt&amp;lt;/url&amp;gt; --&amp;gt;
+        &amp;lt;/license&amp;gt;
+    &amp;lt;/licenses&amp;gt;
+
+    &amp;lt;!-- Dev info --&amp;gt;
+    &amp;lt;developers&amp;gt;
+        &amp;lt;developer&amp;gt;
+            &amp;lt;name&amp;gt;Brandon Donnelson&amp;lt;/name&amp;gt;
+            &amp;lt;email&amp;gt;branflake2267@gmail.com&amp;lt;/email&amp;gt;
+            &amp;lt;organization&amp;gt;Gone Vertical LLC&amp;lt;/organization&amp;gt;
+            &amp;lt;url&amp;gt;http://gonevertical.com/&amp;lt;/url&amp;gt;
+        &amp;lt;/developer&amp;gt;
+    &amp;lt;/developers&amp;gt;
+
+    &amp;lt;properties&amp;gt;
+        &amp;lt;!-- Java props --&amp;gt;
+        &amp;lt;javaVersion&amp;gt;1.6&amp;lt;/javaVersion&amp;gt;
+        &amp;lt;no.unittests&amp;gt;false&amp;lt;/no.unittests&amp;gt;
+        &amp;lt;webappDirectory&amp;gt;${project.build.directory}/${project.build.finalName}&amp;lt;/webappDirectory&amp;gt;
+        &amp;lt;project.build.sourceEncoding&amp;gt;UTF-8&amp;lt;/project.build.sourceEncoding&amp;gt;
+
+        &amp;lt;!-- GWT props --&amp;gt;
+        &amp;lt;gwt.version&amp;gt;2.4.0&amp;lt;/gwt.version&amp;gt;
+        &amp;lt;gwt.extraJvmArgs&amp;gt;-Xmx1024m -Xss8m&amp;lt;/gwt.extraJvmArgs&amp;gt;
+        &amp;lt;gwt.test.skip&amp;gt;false&amp;lt;/gwt.test.skip&amp;gt;
+    &amp;lt;/properties&amp;gt;
+
+    &amp;lt;!-- Actual build instructions and sequences --&amp;gt;
+    &amp;lt;build&amp;gt;
+
+        &amp;lt;!-- Generate compiled stuff in the folder used for developing mode --&amp;gt;
+        &amp;lt;!--&amp;lt;outputDirectory&amp;gt;${project.build.directory}/war/WEB-INF/classes&amp;lt;/outputDirectory&amp;gt; --&amp;gt;
+        &amp;lt;outputDirectory&amp;gt;${basedir}/war/WEB-INF/classes&amp;lt;/outputDirectory&amp;gt;
+        &amp;lt;testOutputDirectory&amp;gt;${basedir}/target/test-classes&amp;lt;/testOutputDirectory&amp;gt;
+
+        &amp;lt;!-- Build this code --&amp;gt;
+        &amp;lt;sourceDirectory&amp;gt;src&amp;lt;/sourceDirectory&amp;gt;
+        &amp;lt;testSourceDirectory&amp;gt;test&amp;lt;/testSourceDirectory&amp;gt;
+
+        &amp;lt;!-- Plugins needed for building --&amp;gt;
+        &amp;lt;plugins&amp;gt;
+            &amp;lt;!-- Build and package module as GWT jar w/ .gwt inside --&amp;gt;
+            &amp;lt;plugin&amp;gt;
+                &amp;lt;groupId&amp;gt;org.codehaus.mojo&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;gwt-maven-plugin&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;2.4.0&amp;lt;/version&amp;gt;
+                &amp;lt;executions&amp;gt;
+                    &amp;lt;execution&amp;gt;
+                        &amp;lt;goals&amp;gt;
+                            &amp;lt;goal&amp;gt;resources&amp;lt;/goal&amp;gt;
+                        &amp;lt;/goals&amp;gt;
+                    &amp;lt;/execution&amp;gt;
+                &amp;lt;/executions&amp;gt;
+                &amp;lt;configuration&amp;gt;
+                    &amp;lt;module&amp;gt;com.google.gwt.maps.Apis_Google_Maps&amp;lt;/module&amp;gt;
+                &amp;lt;/configuration&amp;gt;
+            &amp;lt;/plugin&amp;gt;
+            &amp;lt;!-- Build using java 1.6. GWT requires at least Java 1.5 --&amp;gt;
+            &amp;lt;plugin&amp;gt;
+                &amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;maven-compiler-plugin&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;2.3.2&amp;lt;/version&amp;gt;
+
+                &amp;lt;configuration&amp;gt;
+                    &amp;lt;source&amp;gt;${javaVersion}&amp;lt;/source&amp;gt;
+                    &amp;lt;target&amp;gt;${javaVersion}&amp;lt;/target&amp;gt;
+                &amp;lt;/configuration&amp;gt;
+            &amp;lt;/plugin&amp;gt;
+            &amp;lt;!-- Deploy source code in the repository --&amp;gt;
+            &amp;lt;plugin&amp;gt;
+                &amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;maven-source-plugin&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;2.1.2&amp;lt;/version&amp;gt;
+
+                &amp;lt;executions&amp;gt;
+                    &amp;lt;execution&amp;gt;
+                        &amp;lt;goals&amp;gt;
+                            &amp;lt;goal&amp;gt;jar&amp;lt;/goal&amp;gt;
+                        &amp;lt;/goals&amp;gt;
+                    &amp;lt;/execution&amp;gt;
+                &amp;lt;/executions&amp;gt;
+            &amp;lt;/plugin&amp;gt;
+            &amp;lt;!-- Deploy javadoc in the repository --&amp;gt;
+            &amp;lt;plugin&amp;gt;
+                &amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;maven-javadoc-plugin&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;2.8&amp;lt;/version&amp;gt;
+
+                &amp;lt;executions&amp;gt;
+                    &amp;lt;execution&amp;gt;
+                        &amp;lt;id&amp;gt;attach-javadocs&amp;lt;/id&amp;gt;
+                        &amp;lt;goals&amp;gt;
+                            &amp;lt;goal&amp;gt;jar&amp;lt;/goal&amp;gt;
+                        &amp;lt;/goals&amp;gt;
+                    &amp;lt;/execution&amp;gt;
+                &amp;lt;/executions&amp;gt;
+            &amp;lt;/plugin&amp;gt;
+        &amp;lt;/plugins&amp;gt;
+
+    &amp;lt;/build&amp;gt;
+
+    &amp;lt;!-- External project dependencies --&amp;gt;
+    &amp;lt;dependencies&amp;gt;
+
+        &amp;lt;!-- Other Google --&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.google.gwt.google-apis&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;gwt-ajaxloader&amp;lt;/artifactId&amp;gt;
+            &amp;lt;version&amp;gt;1.1.0&amp;lt;/version&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;!-- Just the necessary GWT bits --&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.google.gwt&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;gwt-user&amp;lt;/artifactId&amp;gt;
+            &amp;lt;version&amp;gt;${gwt.version}&amp;lt;/version&amp;gt;
+            &amp;lt;scope&amp;gt;provided&amp;lt;/scope&amp;gt; &amp;lt;!-- don&#39;t copy to jar --&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.google.gwt&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;gwt-dev&amp;lt;/artifactId&amp;gt;
+            &amp;lt;version&amp;gt;${gwt.version}&amp;lt;/version&amp;gt; &amp;lt;!-- don&#39;t copy to jar --&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;!-- Testing --&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;junit&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;junit&amp;lt;/artifactId&amp;gt;
+            &amp;lt;version&amp;gt;4.7&amp;lt;/version&amp;gt;
+            &amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt; &amp;lt;!-- don&#39;t copy to jar --&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+    &amp;lt;/dependencies&amp;gt;
+
+&amp;lt;/project&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;make-project-a-gwt-project:788057619e1afc861a3694ae552ddea7&#34;&gt;Make Project a GWT Project&lt;/h2&gt;
+
+&lt;p&gt;This will enable the GWT Eclipse plugin functionality for this project.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Right Click&lt;/strong&gt; project from &lt;strong&gt;Project Explorer &amp;gt; Google &amp;gt; Google Web Toolkit Settings&amp;#8230;&lt;/strong&gt; .&lt;/li&gt;
+&lt;li&gt;Check (or uncheck and recheck) &lt;strong&gt;Use Google Web Toolkit&lt;/strong&gt; checkbox. It should be using the second radio button &lt;strong&gt;Use specific SDK&lt;/strong&gt; which is the maven GWT  jar.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;build-and-install-project:788057619e1afc861a3694ae552ddea7&#34;&gt;Build and Install Project&lt;/h2&gt;
+
+&lt;p&gt;Now we&amp;#8217;ll build the project and package it into a GWT Library.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Right Click&lt;/strong&gt; project from &lt;strong&gt;Project Explorer &amp;gt; Run as &amp;gt; Run Configurations&amp;#8230;&lt;/strong&gt; .&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Right Click&lt;/strong&gt; on &lt;strong&gt;Maven Build&lt;/strong&gt; and click &lt;strong&gt;New&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Under &lt;strong&gt;Name&lt;/strong&gt; give your this configuration a name like &amp;#8220;&lt;em&gt;Build gwt-maps-api Library.&lt;/em&gt;&amp;#8220;&lt;/li&gt;
+&lt;li&gt;Under &lt;strong&gt;Base Directory&lt;/strong&gt; click &lt;strong&gt;Browse Worldspace&amp;#8230;&lt;/strong&gt; and select the current project.&lt;/li&gt;
+&lt;li&gt;Under &lt;strong&gt;Goals&lt;/strong&gt; enter &lt;em&gt;clean compile package install&lt;/em&gt;. This will clean out the project, compile it, package it into a jar and install it in your local Maven repo.&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Apply&lt;/strong&gt; and click &lt;strong&gt;Run&lt;/strong&gt;. Now you should see a bunch of output ending in &lt;em&gt;BUILD SUCCESS.&lt;/em&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Horay!&lt;/p&gt;
+
+&lt;p&gt;You&amp;#8217;ve now built the API and can use it. To stay up today, update your project via Subversion and just rebuild it! That was easy.&lt;/p&gt;
+
+&lt;h2 id=&#34;using-the-library-in-your-project:788057619e1afc861a3694ae552ddea7&#34;&gt;Using the Library in your Project&lt;/h2&gt;
+
+&lt;p&gt;For your new map API consuming GWT project, either add the above jar file into your &lt;strong&gt;Build Path&lt;/strong&gt; as an &lt;strong&gt;External JAR&lt;/strong&gt; or add the following dependency if it is a Maven project (easier, Maven rocks!).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;dependency&amp;gt;
+ &amp;lt;groupId&amp;gt;com.google.gwt.maps&amp;lt;/groupId&amp;gt;
+ &amp;lt;artifactId&amp;gt;gwt-maps-api-v3&amp;lt;/artifactId&amp;gt;
+ &amp;lt;version&amp;gt;1.0.0-SNAPSHOT&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now just inheirt this in your module that uses it. In the &lt;em&gt;yourModule.gwt.xml&lt;/em&gt; add:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;...
+  &amp;lt;!-- Load the gwt maps api --&amp;gt;
+  &amp;lt;inherits name=&#39;com.google.gwt.maps.Apis_Google_Maps&#39;/&amp;gt;
+...
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>GWT Module’s Missing DTD Tag</title>
+      <link>https://lust.dev/2012/01/29/gwt-modules-missing-dtd-tag/</link>
+      <pubDate>Sun, 29 Jan 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/01/29/gwt-modules-missing-dtd-tag/</guid>
+      <description>
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/gwt_modules_tag_missing.png&#34; /&gt;
+    
+    
+    &lt;figcaption&gt;
+        &lt;h4&gt;GWT Module AutoSuggestion Magic&lt;/h4&gt;
+        
+    &lt;/figcaption&gt;
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;DTD&amp;#8217;s are great. They let IDE&amp;#8217;s like Eclipse know what is and is not valid XML. And, when you&amp;#8217;re unsure or inquisitive, you can just &lt;code&gt;ALT+ENTER&lt;/code&gt; and learn every available tag. That is amazing. Alas, &lt;strong&gt;it seems that Google and GWT continue to ignore this standard&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;However, you can add these tags yourself and get the IDE auto-validation auto-suggestion features. Just change the top of your module.get.xml &lt;strong&gt;to the following&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;
+&amp;lt;!DOCTYPE module SYSTEM &amp;quot;http://google-web-toolkit.googlecode.com/svn/releases/2.1/distro-source/core/src/gwt-module.dtd&amp;quot;&amp;gt;
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You probably noticed that is the &lt;strong&gt;DTD for GWT 2.1&lt;/strong&gt; and we&amp;#8217;re currently at GWT &lt;code&gt;2.&lt;/code&gt;4. Beyond &lt;code&gt;2.1&lt;/code&gt;, they don&amp;#8217;t seem to have DTD&amp;#8217;s available. Let me know if you find them and I&amp;#8217;ll update this entry.&lt;/p&gt;
+
+&lt;p&gt;Note this was initially brought up in GWT 1.6 by Kazik Pogoda &lt;a title=&#34;Kazik Pogoda&#39;s Post&#34; href=&#34;http://blog.xemantic.com/2008/09/gwt-module-dtd.html&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;missing-jdoconfig-schema:b9a87f869b2ef59e1d7024f493339177&#34;&gt;Missing jdoconfig Schema&lt;/h3&gt;
+
+&lt;p&gt;Yep, this one is missing too. Come on GWT, does anyone read the Eclipse errors before rolling out a &amp;#8220;&lt;em&gt;New Web Application&lt;/em&gt;&amp;#8221; GWT Wizard?&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;
+&amp;lt;jdoconfig xmlns=&amp;quot;http://java.sun.com/xml/ns/jdo/jdoconfig&amp;quot;
+    xmlns:xsi=&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;
+    xsi:schemaLocation=&amp;quot;http://java.sun.com/xml/ns/jdo/jdoconfig http://java.sun.com/xml/ns/jdo/jdoconfig_3_0.xsd&amp;quot;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;additional-missing-gwt-gae-dtd-8217-s-and-xsd-8217-s:b9a87f869b2ef59e1d7024f493339177&#34;&gt;Additional Missing GWT/GAE DTD&amp;#8217;s and XSD&amp;#8217;s&lt;/h3&gt;
+
+&lt;p&gt;You&amp;#8217;ll also find that other missing DTD/XSD&amp;#8217;s. Google says they are in the SDK docs if you want them. However, all of these that I&amp;#8217;ve tried with Eclipse have been rejected for having invalid formatting issues (i.e. tags with missing attributes). Here they are if you want to fix them up.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a title=&#34;appengine-web.xsd&#34; href=&#34;http://googleappengine.googlecode.com/svn-history/r83/trunk/java/docs/appengine-web.dtd&#34; target=&#34;_blank&#34;&gt;Most recent appengine-web.dtd&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a title=&#34;appengine-web.xsd&#34; href=&#34;http://googleappengine.googlecode.com/svn-history/r58/trunk/java/docs/appengine-web.xsd&#34; target=&#34;_blank&#34;&gt;Most recent appengine-web.xsd&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

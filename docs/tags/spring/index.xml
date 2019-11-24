@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Spring on lust.dev</title>
+    <link>https://lust.dev/tags/spring/</link>
+    <description>Recent content in Spring on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Tue, 06 Aug 2013 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/spring/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Mockito Fails to Inject Autowired Dependency</title>
+      <link>https://lust.dev/2013/08/06/mockito-fails-to-inject-autowired-dependency/</link>
+      <pubDate>Tue, 06 Aug 2013 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2013/08/06/mockito-fails-to-inject-autowired-dependency/</guid>
+      <description>&lt;p&gt;If you must test Spring beans and you&amp;#8217;ve used &lt;code&gt;@autowired&lt;/code&gt; in them, then &lt;strong&gt;you&amp;#8217;ll need to use Mockito&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;EasyMock&lt;/strong&gt; is &lt;em&gt;easy&lt;/em&gt; for &lt;em&gt;easy things&lt;/em&gt;, but breaks down in this more complex situation. No worries, just let Mockito inject those DI dependencies for you. Ugh oh&amp;#8230; they are not injecting. But you&amp;#8217;ve read their docs and &lt;em&gt;they should inject!&lt;/em&gt; Sadness.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#8217;s set the stage. Enter our sample class stage left.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;public final SampleImpl {
+
+    @autowired
+    private Foo someFoo;
+
+    private Bar someBar;
+
+    public SampleImpl(final Bar someBar) {
+        this.someBar=someBar;
+    }
+
+    public final void doSomething() {
+        someFoo.doSomething();
+        someBar.doSomthing();
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here is a typical test for it, that will fail because &lt;code&gt;someFoo&lt;/code&gt; is &lt;code&gt;NULL&lt;/code&gt; as it was never injected.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;public class FooClassTest {
+
+    @Mock
+    private Foo mockFoo;
+
+    @Mock
+    private Bar mockBar;
+
+    @InjectMocks
+    private SampleImpl sampleImpl;
+
+    @Before
+    public void initMocks() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void testFooImpl() {
+        // setup
+        when(mockFoo.doSomething()).thenReturn(&amp;quot;foo works!&amp;quot;);
+        when(mockBar.doSomething()).thenReturn(&amp;quot;bar works!&amp;quot;);
+
+        // test
+        sampleImpl.doSomething();
+
+        // verify
+        verify(mockFoo).doSomething();
+        verify(mockBar).doSomething();
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now change this line of the test and you&amp;#8217;re back in business.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;    @Before
+    public void initMocks() {
+        // must instantiate and then initiate since not using no arg constructor
+        sampleImpl = new SampleImpl(mockBar);
+        MockitoAnnotations.initMocks(this);
+    }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As far as I can tell, if you&amp;#8217;re not using a no-arg constructor, Mockito, which would normally instantiate the class to be injected with mocks, and then inject them, assumes you want constructor injection only and ignores the remaining &lt;code&gt;@autowired&lt;/code&gt; dependencies.&lt;/p&gt;
+
+&lt;p&gt;Hope that helps someone. 😉&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Caused by: java.lang.ClassNotFoundException: org.apache.ibatis.mapping.DatabaseIdProvider</title>
+      <link>https://lust.dev/2013/07/27/caused-by-java-lang-classnotfoundexception-org-apache-ibatis-mapping-databaseidprovider/</link>
+      <pubDate>Sat, 27 Jul 2013 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2013/07/27/caused-by-java-lang-classnotfoundexception-org-apache-ibatis-mapping-databaseidprovider/</guid>
+      <description>&lt;p&gt;Perhaps you&amp;#8217;ve had this trace recently while trying to get myBatis working on Spring:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt; Caused by: java.lang.ClassNotFoundException: org.apache.ibatis.mapping.DatabaseIdProvider
+ at java.net.URLClassLoader$1.run(URLClassLoader.java:217)
+ at java.security.AccessController.doPrivileged(Native Method)
+ at java.net.URLClassLoader.findClass(URLClassLoader.java:205)
+ at java.lang.ClassLoader.loadClass(ClassLoader.java:321)
+ at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:294)
+ at java.lang.ClassLoader.loadClass(ClassLoader.java:266)
+ ... 57 more
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It is the bane of open source. You can&amp;#8217;t always depend on quality releases. Don&amp;#8217;t worry, you followed the tutorial correctly. Let&amp;#8217;s take a look at the package&amp;#8217;s history in Maven Central.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/ibatis_mapping_maven_central.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;Maybe something is not quite right with &lt;code&gt;1.2.0&lt;/code&gt;? Let&amp;#8217;s try using &lt;strong&gt;1.1.1&lt;/strong&gt; instead.&lt;/p&gt;
+
+&lt;p&gt;Bingo! That did it. Just stay away from &lt;code&gt;1.2.0&lt;/code&gt;. Hope that helped someone.&lt;/p&gt;
+
+&lt;p&gt;But what else could we do to use the newer build? Just use the new dependency, which the project&amp;#8217;s site sadly has incorrectly listed.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;dependency&amp;gt;
+ &amp;lt;groupId&amp;gt;org.mybatis&amp;lt;/groupId&amp;gt;
+ &amp;lt;artifactId&amp;gt;mybatis&amp;lt;/artifactId&amp;gt;
+ &amp;lt;version&amp;gt;3.2.2&amp;lt;/version&amp;gt;
+ &amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Spring’s RememberMe and BadCredentialsException</title>
+      <link>https://lust.dev/2012/10/17/springs-rememberme-and-badcredentialsexception/</link>
+      <pubDate>Wed, 17 Oct 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/10/17/springs-rememberme-and-badcredentialsexception/</guid>
+      <description>
+
+&lt;p&gt;Spring is pretty swell, but the documentation is never what you need. It would be like reading an anatomy book about every organ in the body, but never being shown a picture of all of them together, and then trying to conduct a surgery.&lt;/p&gt;
+
+&lt;p&gt;I was assembling Spring Security for a rewrite of &lt;a href=&#34;http://www.runpartner.com&#34;&gt;RunPartner.com&lt;/a&gt; and read the &lt;a title=&#34;Read more&#34; href=&#34;http://static.springsource.org/spring-security/site/docs/3.0.x/reference/remember-me.html&#34; target=&#34;_blank&#34;&gt;RememberMe chapter of Spring Security&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;http&amp;gt;
+    ...
+    &amp;lt;remember-me key=&amp;quot;myAppKey&amp;quot;/&amp;gt;
+&amp;lt;/http&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Since I needed a database backed implementation, I liked the next example.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;bean id=&amp;quot;rememberMeFilter&amp;quot; class=
+ &amp;quot;org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter&amp;quot;&amp;gt;
+  &amp;lt;property name=&amp;quot;rememberMeServices&amp;quot; ref=&amp;quot;rememberMeServices&amp;quot;/&amp;gt;
+  &amp;lt;property name=&amp;quot;authenticationManager&amp;quot; ref=&amp;quot;theAuthenticationManager&amp;quot; /&amp;gt;
+&amp;lt;/bean&amp;gt;
+
+&amp;lt;bean id=&amp;quot;rememberMeServices&amp;quot; class=
+ &amp;quot;org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices&amp;quot;&amp;gt;
+  &amp;lt;property name=&amp;quot;userDetailsService&amp;quot; ref=&amp;quot;myUserDetailsService&amp;quot;/&amp;gt;
+  &amp;lt;property name=&amp;quot;key&amp;quot; value=&amp;quot;springRocks&amp;quot;/&amp;gt;
+&amp;lt;/bean&amp;gt;
+
+&amp;lt;bean id=&amp;quot;rememberMeAuthenticationProvider&amp;quot; class=
+ &amp;quot;org.springframework.security.authentication.rememberme.RememberMeAuthenticationProvider&amp;quot;&amp;gt;
+  &amp;lt;property name=&amp;quot;key&amp;quot; value=&amp;quot;springRocks&amp;quot;/&amp;gt;
+&amp;lt;/bean&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;But there is a lot of cruft there you don&amp;#8217;t need, and I wanted a different cookie TTL and cookie name. So I used the below, which &lt;em&gt;seemed&lt;/em&gt; to work.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;http&amp;gt;
+    ...
+    &amp;lt;remember-me services-ref=&amp;quot;rememberMeServices&amp;quot;/&amp;gt;
+&amp;lt;/http&amp;gt;
+&amp;lt;!-- Handles auto login from remember me token --&amp;gt;
+&amp;lt;beans:bean id=&amp;quot;rememberMeServices&amp;quot;
+    class=&amp;quot;org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices&amp;quot;&amp;gt;
+    &amp;lt;beans:property name=&amp;quot;userDetailsService&amp;quot; ref=&amp;quot;userService&amp;quot; /&amp;gt;
+    &amp;lt;beans:property name=&amp;quot;key&amp;quot; value=&amp;quot;secretKey&amp;quot; /&amp;gt;
+    &amp;lt;beans:property name=&amp;quot;cookieName&amp;quot; value=&amp;quot;customRememberName&amp;quot; /&amp;gt;
+    &amp;lt;beans:property name=&amp;quot;tokenValiditySeconds&amp;quot; value=&amp;quot;604800&amp;quot; /&amp;gt;
+&amp;lt;/beans:bean&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Yet an enigma ensued. No stack traces would enlighten me, but when I tried deleting the &lt;code&gt;JSESSIONID&lt;/code&gt; to trigger auto login, I kept being returned to the login page. After setting many breakpoints, and walking through the spring code, I discovered that &lt;em&gt;there were two keys being set&lt;/em&gt; and the curious &lt;strong&gt;BadCredentialsException&lt;/strong&gt; exception being thrown and caught, silently. Shhh. A quick Google search and &lt;a href=&#34;http://forum.springsource.org/showthread.php?76606-might-Remember-Me-bug-for-rememver-user-and-concurrent-session/page2&#34; target=&#34;_blank&#34;&gt;forum post&lt;/a&gt; were not helpful.&lt;/p&gt;
+
+&lt;p&gt;This is the trouble with &lt;strong&gt;automagical&lt;/strong&gt; areas of Spring. If they don&amp;#8217;t work out of the box, you&amp;#8217;d better be shovel ready to analyze some sources. The offending comparison takes place in the following method of &lt;em&gt;org.springframework.security.authentication.RememberMeAuthenticationProvider&lt;/em&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    if (!supports(authentication.getClass())) {
+        return null;
+    }
+
+    if (this.key.hashCode() != ((RememberMeAuthenticationToken) authentication).getKeyHash()) {
+        throw new BadCredentialsException(messages.getMessage(&amp;quot;RememberMeAuthenticationProvider.incorrectKey&amp;quot;,
+                &amp;quot;The presented RememberMeAuthenticationToken does not contain the expected key&amp;quot;));
+    }
+
+    return authentication;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;the-fix:1cce388aa1c10d749c4e5bda1311af91&#34;&gt;The Fix&lt;/h1&gt;
+
+&lt;p&gt;The Spring RememberMe docs don&amp;#8217;t tell you, but you must set the key in both the TokenBasedRememberMeServices bean and in the tag.&lt;/p&gt;
+
+&lt;p&gt;Make sure you define the same key in both places. Update the first tag to be as below to work with my code segment:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;http&amp;gt;
+    ...
+    &amp;lt;remember-me services-ref=&amp;quot;rememberMeServices&amp;quot; key=&amp;quot;secretKey&amp;quot;/&amp;gt;
+&amp;lt;/http&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That was easy, but not as easy as a complete, realistic, production RememberMe example on the Spring docs would have been. 😊&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

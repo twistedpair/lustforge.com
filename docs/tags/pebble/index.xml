@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pebble on lust.dev</title>
+    <link>https://lust.dev/tags/pebble/</link>
+    <description>Recent content in Pebble on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Sat, 16 Feb 2013 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/pebble/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Is Pebble SDK Shipping?</title>
+      <link>https://lust.dev/2013/02/16/is-pebble-sdk-shipping/</link>
+      <pubDate>Sat, 16 Feb 2013 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2013/02/16/is-pebble-sdk-shipping/</guid>
+      <description>
+
+&lt;p&gt;Since learning about the Pebble almost a year ago, I knew it would be awesome.&lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;m a runner and maintainer of &lt;a href=&#34;http://www.runpartner.com&#34;&gt;RunPartner&lt;/a&gt;. Stats about runs are important to me. For years I used various &lt;a href=&#34;http://www.garmin.com/us/support/#/{6d19e750-030b-11dc-e9ab-000000000000}/Running/{64bfd220-03bc-11dc-786a-000000000000}&#34;&gt;Forerunner watches&lt;/a&gt;. But, Pebble would be better. I&amp;#8217;ve written SDK&amp;#8217;s for websites to work with the Garmin watches (&lt;a href=&#34;https://github.com/lauflabs/gwt-garmin-api&#34;&gt;github&lt;/a&gt;) but I couldn&amp;#8217;t change the code on the Forerunner with any neat new ideas. As a software engineer, this is irksome. Yet, the Pebble promises the ability to create my own running watch AND to release it online to anyone to use. Awesome.&lt;/p&gt;
+
+&lt;p&gt;After much delay and ballyhooing the watch &lt;a href=&#34;http://www.kickstarter.com/projects/597507018/pebble-e-paper-watch-for-iphone-and-android/posts/391088&#34;&gt;shipped on January 23rd&lt;/a&gt; this year. But where is the SDK? The SDK we were promised. The SDK that I plunked down $150 long ago for because of the myriad promises and claims that it would be available. No. No SDK for you. Well, some SDK for some folks, but an &lt;a href=&#34;http://news.ycombinator.com/item?id=5218928&#34;&gt;NDA&lt;/a&gt; for them.&lt;/p&gt;
+
+&lt;p&gt;On &lt;a href=&#34;http://forums.getpebble.com/topics/697&#34;&gt;the&lt;/a&gt; &lt;a href=&#34;http://forums.getpebble.com/topics/1998&#34;&gt;forums&lt;/a&gt; much musing is ongoing, but no official missives from the Pebble officials since the single, solitary &lt;a href=&#34;http://getinpulse.us2.list-manage1.com/subscribe?u=dd6d54b0e22472d9f5004013a&amp;amp;id=9548e2c0aa&#34;&gt;Dev Mailing List&lt;/a&gt; email in October. Radio silence.&lt;/p&gt;
+
+&lt;p&gt;Thus, I present the Pebble faithful (it is faith at this point) with an easier way to see if the SDK is out there. An official, unofficial source of SDK release status.&lt;/p&gt;
+
+&lt;h1 id=&#34;www-ispebblesdkshipping-com-http-www-ispebblesdkshipping-com:25722ecdc178bac6bf68c7230d3b9e5a&#34;&gt;&lt;a href=&#34;http://www.isPebbleSDKShipping.com&#34;&gt;www.isPebbleSDKShipping.com&lt;/a&gt;&lt;/h1&gt;
+
+&lt;h2 id=&#34;update:25722ecdc178bac6bf68c7230d3b9e5a&#34;&gt;Update:&lt;/h2&gt;
+
+&lt;p&gt;After keeping my satire site up for a few years, I’ve pulled the plug. I hope you enjoyed it.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

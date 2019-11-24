@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Don’t use Git to Deploy Code &middot; Joseph Lust</title>
+        <meta name="description" content="what Lust hath wrought">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="generator" content="Hugo 0.16-DEV" />
+        <meta name="robots" content="index,follow">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="https://lust.dev/favicon.png">
+        <link rel="stylesheet" href="https://lust.dev/css/normalize.css">
+	<link rel="stylesheet" href="https://lust.dev/css/highlight/obsidian.css">
+        <link rel="stylesheet" href="https://lust.dev/css/style.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        
+        
+
+            
+            <meta property="og:type"   content="article" />
+            <meta property="og:url"    content="https://lust.dev/2015/02/28/dont-use-git-to-deploy-code/" />
+            <meta property="og:title"  content="Don’t use Git to Deploy Code" />
+
+            <meta name="twitter:domain" value="lustforge.com" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" value="Don’t use Git to Deploy Code" />
+            
+
+            
+            <meta name="twitter:url" value="https://lust.dev/2015/02/28/dont-use-git-to-deploy-code/"/>
+
+            
+            <meta property="og:image"  content="https://lust.dev/img/github_down.png">
+            <meta property="twitter:image"  content="https://lust.dev/img/github_down.png">
+            
+        
+        
+    </head>
+    <body>
+        
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-17498476-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+        <div id="wrapper">
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-title-wrapper">
+                        
+                            <h1 class="site-title">
+                                <a title="lust.dev" href="https://lust.dev/">lust.dev</a>
+                            </h1>
+                        
+			
+                        	<a class="button-square" href="https://lust.dev/index.xml"><i title="RSS Feed" class="fa fa-rss"></i></a>
+			
+                        
+                            <a class="button-square button-social hint--top" data-hint="Twitter" title="Twitter" href="https://twitter.com/lustcoder">
+                                <i class="fa fa-twitter"></i>
+                            </a>
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/twistedpair">
+                                <i class="fa fa-github-alt"></i>
+                            </a>
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Stack Overflow" title="Stack Overflow" href="https://stackoverflow.com/users/564157/joseph-lust">
+                                <i class="fa fa-stack-overflow"></i>
+                            </a>
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://www.linkedin.com/in/josephlust">
+                                <i class="fa fa-linkedin"></i>
+                            </a>
+                        
+                        
+			
+			<h1 class="site-title" style="margin-left:10px;">
+                            <a class="site-title" data-hint="Lust" title="Meet the groundskeeper" href="https://lust.dev/about/">J. Lust &#8250;</a>
+                        </h1>
+                    </div>
+
+                    <ul class="site-nav">
+                        
+                    </ul>
+                </div>
+            </header>
+
+            <div id="container">
+
+
+<div class="container">
+    <article class="post-container">
+        <header class="post-header">
+    <h1 class="post-title">Don’t use Git to Deploy Code</h1>
+    
+</header>
+
+        
+<div class="post-content clearfix">
+
+        
+    
+    
+    <script type="application/ld+json">
+    {
+        "@context" : "http://schema.org",
+        "@type" : "BlogPosting",
+        "articleSection" : "post",
+        "name" : "Don’t use Git to Deploy Code",
+        "headline" : "Don’t use Git to Deploy Code",
+        "description" : "Just don\x26#8217;t. If you can\x26#8217;t reason why, please stop developing code critical to your business. When it works, it works Git is great. Push here, pull there. It works so well that you might be fatuously convinced it\x26#8217;s the perfect tool to deploy production code. Even worse, it might appear to work well at this task, further reinforcing your choice However, the Achilles Heel of any DVCS is your origin provider.",
+        "inLanguage" : "en-US",
+        "author" : "Joseph Lust",
+        "creator" : "Joseph Lust",
+        "accountablePerson" : "Joseph Lust",
+        "copyrightHolder" : "Joseph Lust",
+        "copyrightYear" : "2015",
+        "datePublished" : "",
+        "publisher": "LustForge.com",
+        "logo": "https:\/\/lust.dev\/favicon.png",
+        "url" : "https:\/\/lust.dev\/2015\/02\/28\/dont-use-git-to-deploy-code\/",
+        "wordCount" : "1020",
+        "image" : "https:\/\/lust.dev\/img\/github_down.png",
+        "keywords" : [ "Amazon S3, Continuous Integration, DevOps" ]
+    }
+    </script>
+    
+    
+
+
+<div itemscope itemtype="http://schema.org/BlogPosting" style="display:none;">
+     <meta itemprop="mainEntityOfPage" content="https://lust.dev/2015/02/28/dont-use-git-to-deploy-code/" />
+     <meta itemprop="inLanguage" content="en-US" />
+     <h1 itemprop="headline">Don’t use Git to Deploy Code</h1>
+     <meta itemprop="name" content="Don’t use Git to Deploy Code" />
+     <meta itemprop="description" content="" />
+     <meta itemprop="wordCount" content="1020" />
+     <meta itemprop="keywords" content="Amazon S3,Continuous Integration,DevOps" />
+     
+     <meta itemprop="copyrightYear" content="2015" />
+    <div itemprop="copyrightHolder" itemscope itemtype="http://schema.org/Person">
+        <meta itemprop="name" content="Joseph Lust">
+    </div>
+    
+    
+     <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+         <img  itemprop="url" src="https://lust.dev/img/github_down.png" alt="thumbnail">
+         <meta itemprop="width" content="220" >
+         <meta itemprop="height" content="220" >
+    </div>
+    
+    <meta itemprop="datePublished" content="2015-02-28">
+    <meta itemprop="dateModified" content="2015-02-28">
+    <a itemprop="mainEntityOfPage" href="/ArticleLink"></a>
+    <div itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <meta itemprop="name" content="Joseph Lust">
+    </div>
+    <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LustForge.com">
+      <a itemprop="url" href="/"> 
+      <span itemprop="logo" itemscope itemtype="http://schema.org/ImageObject"  >
+      <img itemprop="image" src="https://lust.dev/favicon.png" />
+      <link itemprop="url" href="https://lust.dev/favicon.png" />
+      </span>
+      </a>
+    </div>
+</div>
+
+    
+
+    
+
+<!--Not again GitHub! Save us Muscular Failure Unicorn!-->
+
+<p>Just don&#8217;t. If you can&#8217;t reason why, please stop developing code critical to your business.</p>
+
+
+<figure >
+    
+        <img src="/img/github_down.png" />
+    
+    
+</figure>
+
+
+<h3 id="when-it-works-it-works:9caea413e602ba8b2ea3301e2cd987db">When it works, it works</h3>
+
+<p>Git is great. <em>Push</em> here, <em>pull</em> there. It works so well that you might be fatuously convinced it&#8217;s the perfect tool to deploy production code. Even worse, it might appear to work well at this task, further reinforcing your choice  However, the Achilles Heel of any DVCS is your origin provider. Let&#8217;s say that <a href="https://twitter.com/bitbucket/status/460418803805855745">BitBucket</a> has <a href="https://twitter.com/search?q=%40BitBucket%20down&amp;src=typd">borked</a> their database for the 4th time this month or GitHub is suffering yet another DDNS attack. Then we see <a href="http://jorgennilsson.com/article/there-is-always-a-drawback-bitbucket-major-outage">posts</a> <a href="https://bitbucket.org/alixandru/bitbucket-sync/issue/19/post-hook-deployment-stopped-working">opining</a> about failed Git based app deployments.</p>
+
+<h3 id="when-shit-goes-wrong-things-get-complicated:9caea413e602ba8b2ea3301e2cd987db">When shit goes wrong, things get complicated</h3>
+
+<p>Now shit&#8217;s gone wrong. No worries, there must be a more complicated way to solve what appeared to be a simple workflow. We&#8217;ve got all these Unix cli tools and can bodger something together. I think I can just scp the files over. Wait, better rsync them, I&#8217;m not sure exactly which ones changed. Arr&#8230; so many flags, do I want to compare file checksums or timestamps? Maybe I&#8217;ll tarball up everything and push it over to the servers. What was the command string again <a href="https://xkcd.com/1168/">to untar</a> and ungzip? Crap, I included my file permissions and they don&#8217;t work on the server. Huh, how was I supposed to know the code stored running PID&#8217;s in various files sprinkled throughout the source? WTF, someone tweaked some of those settings files server side and I just overwrote them. Fuck&#8230; I made backup of that server directory before I started, right? Alright, Hail Mary time, I&#8217;ll just export my remote repo and import it as a different origin on the server. How the hell do I do that?</p>
+
+<h3 id="shit-goes-wrong-at-the-wrong-time:9caea413e602ba8b2ea3301e2cd987db">Shit goes wrong at the wrong time</h3>
+
+
+<figure >
+    
+        <img src="/img/bitbucket_down.png" />
+    
+    
+</figure>
+
+
+<p>No knowledge of HTTP codes necessary at BitBucket (500 is bad).</p>
+
+<p>The above might be a fun exercise on the QA server when it&#8217;s 3pm and everyone&#8217;s in the office on a slow Tuesday, but that&#8217;s not how these things unfold. Nope. What will really happen is there is a hotfix that needs to go out and got assigned to the intern, because he needs the experience, you know. And because he&#8217;s the only guy on call during Thanksgiving since everyone else is away on vacation. But now he&#8217;s riding the wheels off this Rube Goldberg machine, getting both hands stuck in the tar pit and only working himself deeper as he borks the entire production setup and your site is down for the count at 2am on Black Friday.</p>
+
+<h3 id="special-snowflake-servers:9caea413e602ba8b2ea3301e2cd987db">Special snowflake servers</h3>
+
+<p>Git checkouts to update code encourage <a href="http://martinfowler.com/bliki/SnowflakeServer.html">Special Snowflake servers</a>. Each server is a unique, artisan crafted piece of Unix art. Like literal snowflakes, no two are the same. No one really understands how it all works and the little documentation that exists was last updated in the Bush administration.  Running <code>git status</code> shows lots of little file changes to get things just right on each machine, some versioned, some not, so no one has had the balls to <code>git reset --hard</code> for years now.</p>
+
+<p>
+<figure >
+    
+        <img src="/img/fail_bitbucket.png" />
+    
+    
+</figure>
+
+Satanic BitBucket Logo of Doom</p>
+
+<h3 id="the-better-deterministic-way:9caea413e602ba8b2ea3301e2cd987db">The better, deterministic way</h3>
+
+<p>Deploy your code as a self contained distributable. In Java we&#8217;ve got <a href="http://en.wikipedia.org/wiki/WAR_%28file_format%29">War</a> and <a href="http://en.wikipedia.org/wiki/EAR_%28file_format%29">Ear</a> files. In Play Framework we&#8217;ve got binary distributables you unzip and run. ASP.Net can be <a href="https://msdn.microsoft.com/en-us/library/dd465323%28v=vs.110%29.aspx" target="_blank">packaged</a>, just like <a href="https://www.ruby-toolbox.com/categories/packaging_to_executables" target="_blank">Ruby</a> and many others. They&#8217;re like <a href="http://en.wikipedia.org/wiki/Meal,_Ready-to-Eat" target="_blank">MRE</a>&#8216;s, but you just unzip them. No need to add water. You don&#8217;t care what version of Scala is running on the server host, whether the proper DLL is loaded, or if you&#8217;re on the proper Ruby release. It Just Works™. When shit&#8217;s broken and your customers are screaming on Twitter, you want your code to Just Work.</p>
+
+<h3 id="distributing-the-distributables:9caea413e602ba8b2ea3301e2cd987db">Distributing the distributables</h3>
+
+<p>&#8220;The distributable is huge!&#8221; you warn. Sure, 78MB won&#8217;t fit on a floppy, but we&#8217;ve got 10G server interconnects. I think we&#8217;ll be OK. &#8220;But where will we server those from,&#8221; you say, still unconvinced. How about <a href="http://aws.amazon.com/s3/" target="_blank">AWS S3</a>, with 11 nines durability (99.999999999). Or, you can setup your own <a href="http://docs.openstack.org/developer/swift/" target="_blank">Open Stack Swift</a> object store if you&#8217;d prefer.</p>
+
+<p>The process is simple:</p>
+
+<ol>
+<li>Built and unit/integration test a commit on CI</li>
+<li>Push passing build distributable to S3</li>
+<li>Your deploy script on server downloads from S3 and restarts the app</li>
+</ol>
+
+<p>If S3 is down (better take some real MRE&#8217;s into the basement, the end is near), you either:</p>
+
+<ol>
+<li>Download the distributable artifact from CI and scp it to the server</li>
+<li>If CI and S3 are down, build locally and scp it to the server</li>
+</ol>
+
+<p>The point is to have a canonical way to turn an explicit state of source (i.e. checkout hash) into an binary that will consistently run as desired where you deploy it. No chasing thousands of source files. No trying to compile all the source on your workstation, and on your CI, and on your front end servers. Fight entropy. Choose determinism.</p>
+
+<h3 id="other-reasons:9caea413e602ba8b2ea3301e2cd987db">Other Reasons</h3>
+
+<h4 id="file-contention:9caea413e602ba8b2ea3301e2cd987db">File contention</h4>
+
+<p>Do you work in one of those _scripting_ languages? Say PHP, Ruby, or Python. Ever had your SCM fail to update files because of open file pointers to running or zombie threads? Prepare yourself for some possible non-deterministic behavior when you deploy these apps via Git. It&#8217;ll be best to add some <em>pgrep</em> steps to run around and kill off possibly offensive threads, but then you&#8217;ve got to be asking yourself, &#8220;what life choices did I make that led me to run around killing myriad threads on each deploy?&#8221;</p>
+
+<h4 id="scm-8217-s-worse-than-git:9caea413e602ba8b2ea3301e2cd987db">SCM&#8217;s worse than git</h4>
+
+<p>Git works pretty well, but what if you&#8217;re deploying with another SCM like <strong>SVN</strong>. God help you, friend. The change databases that back your local SVN checkout can get corrupted in <a href="https://stackoverflow.com/questions/335987/how-can-a-svn-repository-become-corrupt">wondrous ways</a>. The net result can be that SVN says you&#8217;re on revision X, and <code>svn status</code> shows no files are changed locally. When you call <code>svn update</code> or checkout the target revision, you&#8217;re told you&#8217;re already up to date&#8230; but <strong>you&#8217;re not</strong>.<strong> </strong>This is true FML territory. If your SCM cannot reliably track changes, it should be cast to special circle in hell. Sadly, I&#8217;ve personally seen this happen three times in a single year. God help you, friend.</p>
+
+</div>
+
+	
+    <div class="comments">
+        <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'lustforge';
+    var disqus_identifier = 'https:\/\/lust.dev\/2015\/02\/28\/dont-use-git-to-deploy-code\/';
+    var disqus_title = 'Don’t use Git to Deploy Code';
+    var disqus_url = 'https:\/\/lust.dev\/2015\/02\/28\/dont-use-git-to-deploy-code\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+
+        <footer class="post-footer clearfix">
+    
+        <p class="post-tags">
+            <span>Tagged:</span>
+            
+                 <a href="/tags/amazon-s3/">Amazon S3</a>
+            
+                 <a href="/tags/continuous-integration/">Continuous Integration</a>
+            
+                 <a href="/tags/devops/">DevOps</a>
+            
+	    <a href="/tags/">[all]</a>
+        </p>
+    
+
+    <div class="share">
+        <a class="icon-twitter" href="https://twitter.com/share?text=Don%e2%80%99t%20use%20Git%20to%20Deploy%20Code&url=https%3a%2f%2flust.dev%2f2015%2f02%2f28%2fdont-use-git-to-deploy-code%2f"
+            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+            <i class="fa fa-twitter"></i>
+            <span class="hidden">Twitter</span>
+        </a>
+
+        <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2flust.dev%2f2015%2f02%2f28%2fdont-use-git-to-deploy-code%2f"
+            onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+            <i class="fa fa-facebook"></i>
+            <span class="hidden">Facebook</span>
+        </a>
+
+        <a class="icon-google-plus" href="https://plus.google.com/share?url=https%3a%2f%2flust.dev%2f2015%2f02%2f28%2fdont-use-git-to-deploy-code%2f"
+           onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+           <i class="fa fa-google-plus"></i>
+            <span class="hidden">Google+</span>
+        </a>
+    </div>
+</footer>
+
+    </article>
+</div>
+
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="site-title-wrapper">
+                    <h1 class="site-title">
+                        <a title="lust.dev" href="https://lust.dev/">lust.dev</a>
+                    </h1>
+                    <a class="button-square button-jump-top js-jump-top" href="#">
+                        <i class="fa fa-angle-up"></i>
+                    </a>
+                </div>
+
+                <p class="footer-copyright">
+                    <span>&copy; 2009 - 2018 / Powered by <a href="http://gohugo.io/">Hugo</a></span>
+                </p>
+                <p class="footer-copyright">
+                    <span><a href="https://github.com/twistedpair/ghostwriter">Lustwriter theme</a> By J. Lust</span>
+                    <span>/ Forked from <a href="https://github.com/jbub/ghostwriter">Ghostwriter</a></span>
+                </p>
+            </div>
+        </footer>
+
+        <script src="https://lust.dev/js/jquery-1.11.3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+        <script src="https://lust.dev/js/jquery.fitvids.js"></script>
+        <script src="https://lust.dev/js/scripts.js"></script>
+    </body>
+</html>
+

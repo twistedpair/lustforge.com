@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Php on lust.dev</title>
+    <link>https://lust.dev/tags/php/</link>
+    <description>Recent content in Php on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Sat, 08 Oct 2011 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/php/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Password Hasher : Every Hash Under the Sun</title>
+      <link>https://lust.dev/2011/10/08/password-hasher-every-hash-under-the-sun/</link>
+      <pubDate>Sat, 08 Oct 2011 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2011/10/08/password-hasher-every-hash-under-the-sun/</guid>
+      <description>
+
+&lt;style&gt;
+label.hashLabel {
+            width: 130px;
+            display: inline-block;
+}
+&lt;/style&gt;
+
+&lt;script&gt;
+   function getHashes() {
+        jQuery(&#39;#hashResults&#39;).html(&#34;Loading...&#34;);
+        jQuery(&#39;#hashResults&#39;).load( &#39;https://lustforge.com/Backends/ultraHash_backend.php?str=&#39;+encodeURI(jQuery(&#39;#hashStr&#39;).val()));
+   }
+   function clearHashes() {
+        jQuery(&#39;#hashStr&#39;).val(&#39;&#39;);
+        jQuery(&#39;#hashResults&#39;).html(&#39;&#39;);
+   }
+&lt;/script&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/cornedBeefHash.jpg&#34; /&gt;
+    
+    
+    &lt;figcaption&gt;
+        &lt;h4&gt;Big helping of hash&lt;/h4&gt;
+        
+    &lt;/figcaption&gt;
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;I got tired of having to find a place to run all my hashes frequently for random projects, so I through this together in a few lines. I hope it helps folks.&lt;/p&gt;
+
+&lt;p&gt;The following hashes are provided: &lt;code&gt;md2&lt;/code&gt;, &lt;code&gt;md4&lt;/code&gt;, &lt;code&gt;md5&lt;/code&gt;, &lt;code&gt;sha1&lt;/code&gt;, &lt;code&gt;sha224&lt;/code&gt;, &lt;code&gt;sha256&lt;/code&gt;, &lt;code&gt;sha384&lt;/code&gt;, &lt;code&gt;sha512&lt;/code&gt;, &lt;code&gt;ripemd128&lt;/code&gt;, &lt;code&gt;ripemd160&lt;/code&gt;, &lt;code&gt;ripemd256&lt;/code&gt;, &lt;code&gt;ripemd320&lt;/code&gt;, &lt;code&gt;whirlpool&lt;/code&gt;, &lt;code&gt;tiger128,3&lt;/code&gt;, &lt;code&gt;tiger160,3&lt;/code&gt;, &lt;code&gt;tiger192,3&lt;/code&gt;, &lt;code&gt;tiger128,4&lt;/code&gt;, &lt;code&gt;tiger160,4&lt;/code&gt;, &lt;code&gt;tiger192,4&lt;/code&gt;, &lt;code&gt;snefru&lt;/code&gt;, &lt;code&gt;snefru256&lt;/code&gt;, &lt;code&gt;gost&lt;/code&gt;, &lt;code&gt;adler32&lt;/code&gt;, &lt;code&gt;crc32&lt;/code&gt;, &lt;code&gt;crc32b&lt;/code&gt;, &lt;code&gt;salsa10&lt;/code&gt;, &lt;code&gt;salsa20&lt;/code&gt;, &lt;code&gt;haval128,3&lt;/code&gt;, &lt;code&gt;haval160,3&lt;/code&gt;, &lt;code&gt;haval192,3&lt;/code&gt;, &lt;code&gt;haval224,3&lt;/code&gt;, &lt;code&gt;haval256,3&lt;/code&gt;, &lt;code&gt;haval128,4&lt;/code&gt;, &lt;code&gt;haval160,4, haval192,4, haval224,4, haval256,4, haval128,5, haval160,5, haval192,5, haval224,5, haval256,5&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class=&#39;hashPrompt&#39;&gt;
+  Hash this: &lt;input id=&#39;hashStr&#39; type=&#34;text&#34; style=&#34;width:100%;&#34; name=&#34;str&#34; value=&#34;&#34; /&gt;&lt;br /&gt; &lt;button onclick=&#34;getHashes();&#34;&gt;Hash it&lt;/button&gt;&lt;button id=&#39;clear&#39; onclick=&#34;clearHashes();&#34;&gt;Clear&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;table id=&#34;hashResults&#34;&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&#34;the-script:6094c75f3b81f4fa53c3b0e6288b9238&#34;&gt;The Script&lt;/h3&gt;
+
+&lt;p&gt;For reference, this is the ugly piece of PHP that makes the magic happen.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;$str = urldecode( $_REQUEST[&#39;str&#39;] );
+
+foreach( hash_algos() as $n=&amp;gt;$hash ) {
+    $hashName = strtoupper($hash);
+    $theHash = ($str) ? hash($hash,$str) : &amp;quot;&amp;quot;;
+    $oddEven = ($n%2) ? &#39;odd&#39;:&#39;even&#39;;
+    echo &amp;quot;&amp;lt;tr class=&#39;$oddEven&#39;&amp;gt;&amp;lt;td&amp;gt;&amp;lt;label 
+class=&#39;hashLabel&#39;&amp;gt;$hashName:&amp;lt;/label&amp;gt;&amp;lt;input type=&#39;text&#39; 
+style=&#39;width:500px;&#39; value=&#39;$theHash&#39; /&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;quot;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Convert MySQL Dump to Routines Files [PHP script]</title>
+      <link>https://lust.dev/2010/11/06/convert-mysql-dump-to-routines-php-script/</link>
+      <pubDate>Sat, 06 Nov 2010 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2010/11/06/convert-mysql-dump-to-routines-php-script/</guid>
+      <description>&lt;p&gt;Perhaps you are like me and&amp;#8230; well&amp;#8230; didn&amp;rsquo;t get righteous about backuping up your MySQL routines to an SCM until your first database scare?&lt;/p&gt;
+
+&lt;p&gt;If you did, you&amp;#8217;d wish you could just take that database export script from &lt;a href=&#34;https://www.phpmyadmin.net&#34;&gt;PHPMyAdmin&lt;/a&gt; and parse / convert it to a bunch of tidy little Procedure, Function, and Trigger files. Why, that would be nice!&lt;/p&gt;
+
+&lt;p&gt;The following PHP script (PHP 5+) will do the following:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Breakout procedure/function/trigger as &lt;code&gt;[type\_name]/[routine\_name].sql&lt;/code&gt; files&lt;/li&gt;
+&lt;li&gt;Strip off those pesky &lt;code&gt;DEFINER&lt;/code&gt; statements that cause nothing but trouble&lt;/li&gt;
+&lt;li&gt;Add &lt;code&gt;DROP&lt;/code&gt;&lt;code&gt;`X`&lt;/code&gt;&lt;code&gt;IF EXISTS&lt;/code&gt; before &lt;code&gt;CREATE&lt;/code&gt; statements, for easier editing&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: script will create &lt;code&gt;procedures/&lt;/code&gt;, &lt;code&gt;functions/&lt;/code&gt;, and &lt;code&gt;triggers/&lt;/code&gt; directories where you specify.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;See&lt;/strong&gt;: Config options at the top of the file.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
+
+/**
+ * @author Lust
+ * @copyright 2010, LustForge.com
+ * Take a MySQL dump file and
+ * (1) If not already in file, adds -&amp;gt; DROP (PROCEDURE|TRIGGER|FUNCTION) IF EXISTS `(NAME)`
+ * (2) Remove DEFINER statements
+ * (3) Save by name and place in directory named (PROCEDURE|TRIGGER|FUNCTION)
+ */
+
+// SETUP
+// file name (input)
+$sql_dump_filename = &amp;quot;c:\\sql\\sql_dump.sql&amp;quot;;
+// output directory
+$sql_script_output_dir = &amp;quot;c:\\sql&amp;quot;; // NOTE &amp;quot;\\&amp;quot; is escape for &amp;quot;\&amp;quot;
+
+// Read in file
+echo &amp;quot;Reading input file...&amp;quot;;
+$sql_dump = file_get_contents($sql_dump_filename);
+if(!$sql_dump || strlen($sql_dump)==0)  {
+ die(&amp;quot;Cannot open file: $sql_dump_filename\n&amp;quot;);
+}
+echo &amp;quot;done\n&amp;quot;;
+
+// Create needed directories if they don&#39;t exist
+echo &amp;quot;Making output directories...&amp;quot;;
+$dir_names = array(&#39;procedures&#39;,&#39;triggers&#39;,&#39;functions&#39;);
+foreach( $dir_names AS $name) {
+ $name = $sql_script_output_dir.DIRECTORY_SEPARATOR.$name;
+ if(!is_dir($name))   {
+ mkdir($name);
+ }
+}
+echo &amp;quot;done\n&amp;quot;;
+
+// replace various junk
+echo &amp;quot;Replacing junk...&amp;quot;;
+$find = array(&#39;/\$\$/&#39;,
+&#39;/DEFINER=.*?\s(PROCEDURE|TRIGGER|FUNCTION)/sim&#39;,
+&#39;/(\s+|-+)\s\s(CREATE (PROCEDURE|FUNCTION|TRIGGER) (`[^`]*`))/sim&#39;);
+$replace = array(&#39;//&#39;,
+&#39;\1&#39;,
+&amp;quot;\r\rDROP \\3 IF EXISTS \\4//\r\\2&amp;quot;);
+$sql_dump = preg_replace($find,$replace,$sql_dump);
+echo &amp;quot;done\n&amp;quot;;
+
+// break out individual routines and save to files/dirs
+$matches = array();
+preg_match_all(&#39;%(?P&amp;lt;sql&amp;gt;DROP\s(?P&amp;lt;type&amp;gt;[a-z]*) IF EXISTS `(?P&amp;lt;name&amp;gt;[^`]*)`//.*?END//)%sim&#39;,$sql_dump,$matches);
+echo &amp;quot;Saving scripts out...&amp;quot;;
+$n=0;
+foreach($matches[&#39;name&#39;] AS $n=&amp;gt;$name)  {
+ $filename_out = strtolower($matches[&#39;type&#39;][$n].&#39;s&#39;.DIRECTORY_SEPARATOR.$name.&#39;.sql&#39;);
+ echo &amp;quot;$filename_out\n&amp;quot;;
+ file_put_contents( $sql_script_output_dir.DIRECTORY_SEPARATOR.$filename_out,$matches[&#39;sql&#39;][$n]);
+}
+echo &amp;quot;$n saved...done\n&amp;quot;;
+
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Unittesting with PhpDesigner and SimpleTest</title>
+      <link>https://lust.dev/2010/11/01/unittesting-with-phpdesigner/</link>
+      <pubDate>Mon, 01 Nov 2010 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2010/11/01/unittesting-with-phpdesigner/</guid>
+      <description>
+
+&lt;p&gt;Here is how to unitest within &lt;a href=&#34;http://www.mpsoftware.dk/phpdesigner.php&#34;&gt;PhpDesigner&lt;/a&gt;. The following was done on a Windows 7 machine with PhpDesigner 7.2.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Install &lt;a title=&#34;Download WAMP&#34; href=&#34;http://www.wampserver.com/en/download.php&#34; target=&#34;_blank&#34;&gt;WAMP server&lt;/a&gt; on your Windows machine. This is needed because the default PhpDesigner PHP engine cannot connect to databases (i.e. MySQL).&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Just use the default installer setup and location&lt;/li&gt;
+&lt;li&gt;We&amp;#8217;ll assume your WAMP is installed in &lt;code&gt;c:\wamp&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Now point your PhpDesigner at the WAMP.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;PhpDesigner&lt;/strong&gt; &amp;gt; &lt;strong&gt;Tools&lt;/strong&gt; &amp;gt; &lt;strong&gt;Preferences&amp;#8230;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Set the &lt;em&gt;Debugger&lt;/em&gt; to use the &lt;em&gt;PHP Interpreter&lt;/em&gt; your &lt;code&gt;c:\wamp\bin\php\php5.3.0\php-cgi.exe&lt;/code&gt; and the init file &lt;code&gt;c:\WAMP\bin\php\php5.3.0\php.ini&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Set the &lt;em&gt;Syntax Checker&lt;/em&gt; to use the above values too&lt;/li&gt;
+&lt;li&gt;Set &lt;em&gt;Run&lt;/em&gt; to use the above values too&lt;/li&gt;
+&lt;li&gt;Point your &lt;em&gt;Localhost&lt;/em&gt; folder to the WAMP localhost &lt;code&gt;c:\wamp\www\&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Restart your PhpDesigner installation&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Now download and install the &lt;a title=&#34;Download SimpleTest&#34; href=&#34;http://www.simpletest.org/en/download.html&#34; target=&#34;_blank&#34;&gt;SimpleTest &lt;/a&gt;unittesting framework&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Just download the files (&lt;strong&gt;1.0.1 recommended&lt;/strong&gt;, I could not get 1.1 released 2 days ago to run)&lt;/li&gt;
+&lt;li&gt;Unzip the files to the location of your PHP project&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Create a helloworld test and run it from the comfort of PhpDesginer!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
+// hide warnings from  SimpleTest 1.0.1
+require_once(dirname(__FILE__).&#39;/error_suppress.inc&#39;);
+// autorun this test&amp;lt;br /&amp;gt;
+require_once(dirname(__FILE__).&#39;/simpletest/autorun.php&#39;);
+// test all harvesters
+class TestOfHelloWorld extends UnitTestCase {
+    function testHelloWorld()   {
+        this-&amp;gt;assertEqual( 4, 4, &#39;Numbers do not match&#39;);
+    }
+}
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Note I&amp;#8217;ve made a PHP file to hide Warnings from SimpleTest 1.0.1&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Example: error_suppress.php&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
+//Include this to override some common warnings when running SimpleTest in PhpDesigner
+error_reporting(E_ALL &amp;amp;amp; ~E_DEPRECATED);// surpress dep errors - using old testing scripts
+date_default_timezone_set(&#39;US/Eastern&#39;);       // suppress errors of unset timezone
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Click &lt;strong&gt;Run&lt;/strong&gt; and look for the green lights!&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;if-you-are-a-dreamhost-user-like-me:ec04ccc0702441d9b1666f0567d94a2d&#34;&gt;If you are a Dreamhost user (like me)&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;For database unittests, you&amp;#8217;ll need to open an external IP on your database&lt;/li&gt;
+&lt;li&gt;Login to panel.dreamhost.com for your account&lt;/li&gt;
+&lt;li&gt;Click Goodies &amp;gt;MySQL Databases [on left]&lt;/li&gt;
+&lt;li&gt;Click on the name of your database user [in &amp;#8220;Users with Access&amp;#8221; column]&lt;/li&gt;
+&lt;li&gt;Copy your local computer&amp;#8217;s IP address to the list of allowed address and click &amp;#8220;Modify&amp;#8221;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Cracking WordPress Hashcash</title>
+      <link>https://lust.dev/2010/07/17/cracking-wordpress-hashcash/</link>
+      <pubDate>Sat, 17 Jul 2010 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2010/07/17/cracking-wordpress-hashcash/</guid>
+      <description>
+
+&lt;p&gt;As many know, &lt;a href=&#34;https://wordpress.org/plugins/hashcash/&#34;&gt;WordPress Hashcash&lt;/a&gt; is not a &lt;a href=&#34;http://en.wikipedia.org/wiki/Hashcash&#34;&gt;hashcash&lt;/a&gt; at all. This is more than merely semantics. A true hashcash would provide protections to blogs from spam bots, but WPHC does no such thing. Rather WPHC merely projects an aura of protection that even the most novitiate script kiddie can crack.&lt;/p&gt;
+
+&lt;p&gt;According to the &lt;a href=&#34;http://wordpress-plugins.feifei.us/hashcash/&#34; target=&#34;_blank&#34;&gt;authors of WPHC&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;WP Hashcash is an antispam plugin that eradicates comment spam on WordPress blogs.&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Not really, let me explain why.&lt;/p&gt;
+
+&lt;p&gt;WPHC inserts javascript into your blog&amp;#8217;s webpage. By default, a spam bot will not load and run this code because it is only run by web browsers. However, the spam bot makers are no Luddites and can easily pull this javascript code from the page, run it, and return the hashcash code.&lt;/p&gt;
+
+&lt;p&gt;To prove this fact, see the below PHP class UnHashcash which takes the HTML of a blog post, processes the javascript, and returns the purportedly secure hashcash code.&lt;/p&gt;
+
+&lt;script src=&#34;//gist.github.com/twistedpair/20b391f1e954e7a1aac9.js&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;I present this code as a clear example of why people should not assume that WPHC will protect their blogs from spam. The simplest solution is to require member sign up or use captchas and Akismet.&lt;/p&gt;
+
+&lt;p&gt;Oh, and I know this blog is running WPHC. I&amp;#8217;m looking forward to some spam bots. Spam Ahoy!&lt;/p&gt;
+
+&lt;h2 id=&#34;update-20-feb-2016:63bd52f0c6902ad4995f317a00b6a19d&#34;&gt;Update: 20 Feb 2016&lt;/h2&gt;
+
+&lt;p&gt;Blog has moved to static Hugo, so sorry, no longer running WPHC.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

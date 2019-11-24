@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mysql on lust.dev</title>
+    <link>https://lust.dev/tags/mysql/</link>
+    <description>Recent content in Mysql on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Sat, 06 Nov 2010 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Convert MySQL Dump to Routines Files [PHP script]</title>
+      <link>https://lust.dev/2010/11/06/convert-mysql-dump-to-routines-php-script/</link>
+      <pubDate>Sat, 06 Nov 2010 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2010/11/06/convert-mysql-dump-to-routines-php-script/</guid>
+      <description>&lt;p&gt;Perhaps you are like me and&amp;#8230; well&amp;#8230; didn&amp;rsquo;t get righteous about backuping up your MySQL routines to an SCM until your first database scare?&lt;/p&gt;
+
+&lt;p&gt;If you did, you&amp;#8217;d wish you could just take that database export script from &lt;a href=&#34;https://www.phpmyadmin.net&#34;&gt;PHPMyAdmin&lt;/a&gt; and parse / convert it to a bunch of tidy little Procedure, Function, and Trigger files. Why, that would be nice!&lt;/p&gt;
+
+&lt;p&gt;The following PHP script (PHP 5+) will do the following:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Breakout procedure/function/trigger as &lt;code&gt;[type\_name]/[routine\_name].sql&lt;/code&gt; files&lt;/li&gt;
+&lt;li&gt;Strip off those pesky &lt;code&gt;DEFINER&lt;/code&gt; statements that cause nothing but trouble&lt;/li&gt;
+&lt;li&gt;Add &lt;code&gt;DROP&lt;/code&gt;&lt;code&gt;`X`&lt;/code&gt;&lt;code&gt;IF EXISTS&lt;/code&gt; before &lt;code&gt;CREATE&lt;/code&gt; statements, for easier editing&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: script will create &lt;code&gt;procedures/&lt;/code&gt;, &lt;code&gt;functions/&lt;/code&gt;, and &lt;code&gt;triggers/&lt;/code&gt; directories where you specify.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;See&lt;/strong&gt;: Config options at the top of the file.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;?php
+
+/**
+ * @author Lust
+ * @copyright 2010, LustForge.com
+ * Take a MySQL dump file and
+ * (1) If not already in file, adds -&amp;gt; DROP (PROCEDURE|TRIGGER|FUNCTION) IF EXISTS `(NAME)`
+ * (2) Remove DEFINER statements
+ * (3) Save by name and place in directory named (PROCEDURE|TRIGGER|FUNCTION)
+ */
+
+// SETUP
+// file name (input)
+$sql_dump_filename = &amp;quot;c:\\sql\\sql_dump.sql&amp;quot;;
+// output directory
+$sql_script_output_dir = &amp;quot;c:\\sql&amp;quot;; // NOTE &amp;quot;\\&amp;quot; is escape for &amp;quot;\&amp;quot;
+
+// Read in file
+echo &amp;quot;Reading input file...&amp;quot;;
+$sql_dump = file_get_contents($sql_dump_filename);
+if(!$sql_dump || strlen($sql_dump)==0)  {
+ die(&amp;quot;Cannot open file: $sql_dump_filename\n&amp;quot;);
+}
+echo &amp;quot;done\n&amp;quot;;
+
+// Create needed directories if they don&#39;t exist
+echo &amp;quot;Making output directories...&amp;quot;;
+$dir_names = array(&#39;procedures&#39;,&#39;triggers&#39;,&#39;functions&#39;);
+foreach( $dir_names AS $name) {
+ $name = $sql_script_output_dir.DIRECTORY_SEPARATOR.$name;
+ if(!is_dir($name))   {
+ mkdir($name);
+ }
+}
+echo &amp;quot;done\n&amp;quot;;
+
+// replace various junk
+echo &amp;quot;Replacing junk...&amp;quot;;
+$find = array(&#39;/\$\$/&#39;,
+&#39;/DEFINER=.*?\s(PROCEDURE|TRIGGER|FUNCTION)/sim&#39;,
+&#39;/(\s+|-+)\s\s(CREATE (PROCEDURE|FUNCTION|TRIGGER) (`[^`]*`))/sim&#39;);
+$replace = array(&#39;//&#39;,
+&#39;\1&#39;,
+&amp;quot;\r\rDROP \\3 IF EXISTS \\4//\r\\2&amp;quot;);
+$sql_dump = preg_replace($find,$replace,$sql_dump);
+echo &amp;quot;done\n&amp;quot;;
+
+// break out individual routines and save to files/dirs
+$matches = array();
+preg_match_all(&#39;%(?P&amp;lt;sql&amp;gt;DROP\s(?P&amp;lt;type&amp;gt;[a-z]*) IF EXISTS `(?P&amp;lt;name&amp;gt;[^`]*)`//.*?END//)%sim&#39;,$sql_dump,$matches);
+echo &amp;quot;Saving scripts out...&amp;quot;;
+$n=0;
+foreach($matches[&#39;name&#39;] AS $n=&amp;gt;$name)  {
+ $filename_out = strtolower($matches[&#39;type&#39;][$n].&#39;s&#39;.DIRECTORY_SEPARATOR.$name.&#39;.sql&#39;);
+ echo &amp;quot;$filename_out\n&amp;quot;;
+ file_put_contents( $sql_script_output_dir.DIRECTORY_SEPARATOR.$filename_out,$matches[&#39;sql&#39;][$n]);
+}
+echo &amp;quot;$n saved...done\n&amp;quot;;
+
+?&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

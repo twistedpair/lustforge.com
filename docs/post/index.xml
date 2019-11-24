@@ -1,0 +1,1535 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on lust.dev</title>
+    <link>https://lust.dev/post/</link>
+    <description>Recent content in Posts on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Wed, 07 Nov 2018 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Cloud Build Triggers: Excluding Branches</title>
+      <link>https://lust.dev/2018/11/07/cloud-build-triggers-excluding-branches/</link>
+      <pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2018/11/07/cloud-build-triggers-excluding-branches/</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://cloud.google.com/cloud-build/&#34;&gt;Cloud Build&lt;/a&gt; is a powerful, scalable, and cheap way to run your CI/CD builds, but the triggers have some limitations, like branch exclusions.&lt;/p&gt;
+
+&lt;p&gt;For example, perhaps you have triggers to:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Build/deploy the tags to &lt;em&gt;production&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Build/deploy the `master branch to &lt;em&gt;integration&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Build/test feature branches on &lt;strong&gt;NOT&lt;/strong&gt; &lt;code&gt;master|develop&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;You can handle cases 1 &amp;amp; 2 with &lt;code&gt;branch&lt;/code&gt; and &lt;code&gt;tag&lt;/code&gt; triggers, but case 3 requires regex exclusions. Unfortunately, this is not an option in &lt;a href=&#34;https://cloud.google.com/cloud-build/docs/running-builds/automate-builds#build_trigger&#34;&gt;Cloud Build triggers&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;regex-contortions-to-the-rescue:b9963c2dec0c6e09e50e2cdb2d28851f&#34;&gt;Regex Contortions to the Rescue&lt;/h1&gt;
+
+&lt;p&gt;It&amp;rsquo;s well know that the solution to a regex problem is always more regex.&lt;/p&gt;
+
+&lt;p&gt;So, using some negative classes (a bunch of them actually), we can make a &lt;strong&gt;NOT&lt;/strong&gt; &lt;code&gt;master&lt;/code&gt; trigger regex for Cloud Build.&lt;/p&gt;
+
+&lt;p&gt;e.g. &lt;code&gt;^(([^m]|m($|[^a]|a($|[^s]|s($|[^t]|t($|[^e]|e($|[^r]))))))|master.+)&lt;/code&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:b9963c2dec0c6e09e50e2cdb2d28851f:2&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:b9963c2dec0c6e09e50e2cdb2d28851f:2&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;don-t-forget-to-match-the-entire-branch:b9963c2dec0c6e09e50e2cdb2d28851f&#34;&gt;Don&amp;rsquo;t Forget to Match the Entire Branch&lt;/h1&gt;
+
+&lt;p&gt;Make sure you match the &lt;strong&gt;entire branch&lt;/strong&gt; name, unless you want to &lt;strong&gt;match multiple branches&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;e.g. &amp;ldquo;&lt;code&gt;^master$&lt;/code&gt;&amp;rdquo; to match master, &lt;strong&gt;not&lt;/strong&gt; &amp;ldquo;&lt;code&gt;master&lt;/code&gt;&amp;ldquo;&lt;/p&gt;
+
+&lt;p&gt;Otherwise, when Jill checks in her feature branch &lt;code&gt;jill-css-masterpiece&lt;/code&gt;, it will automatically get sent to &lt;em&gt;integration&lt;/em&gt; or worse &lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:b9963c2dec0c6e09e50e2cdb2d28851f:10&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:b9963c2dec0c6e09e50e2cdb2d28851f:10&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+
+&lt;p&gt;Match it like you mean it 😉.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:b9963c2dec0c6e09e50e2cdb2d28851f:2&#34;&gt;I&amp;rsquo;m not proud of this solution, but it JustWorks™
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:b9963c2dec0c6e09e50e2cdb2d28851f:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:b9963c2dec0c6e09e50e2cdb2d28851f:10&#34;&gt;Many teams have &lt;code&gt;master&lt;/code&gt; commits ship to production
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:b9963c2dec0c6e09e50e2cdb2d28851f:10&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Handling Giant Swagger Specs</title>
+      <link>https://lust.dev/2017/08/11/giant-swagger-specs/</link>
+      <pubDate>Fri, 11 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2017/08/11/giant-swagger-specs/</guid>
+      <description>
+
+&lt;h1 id=&#34;swagger-spec-an-embarrassment-of-riches:09ac5e77c9181fef9c7e835ef4126d81&#34;&gt;Swagger Spec: An Embarrassment of Riches&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://swagger.io/specification/&#34;&gt;Swagger Spec&lt;/a&gt; is a great way to define and document API projects. Your code and documentation live and ship together, allowing for rapid documentation and development. However, you might say it&amp;rsquo;s too good.&lt;/p&gt;
+
+&lt;p&gt;As your team and APIs using Swagger grow, so too do the challenges of wrangling that giant spec without breaking your APIs or driving your developers bonkers. Unfortinately, tools like the Swagger Validator start to break down for large, real worls specs &lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:09ac5e77c9181fef9c7e835ef4126d81:2&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:09ac5e77c9181fef9c7e835ef4126d81:2&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;. Here are some lessons I learned productionizing such large specs &lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:09ac5e77c9181fef9c7e835ef4126d81:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:09ac5e77c9181fef9c7e835ef4126d81:1&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;1-use-yaml-not-json:09ac5e77c9181fef9c7e835ef4126d81&#34;&gt;1. Use YAML, Not JSON&lt;/h1&gt;
+
+&lt;p&gt;JSON is hard to read and easy to corrupt in large file sizes. YAML has:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Better readability&lt;/li&gt;
+&lt;li&gt;Intellij, Atom, and SubLime &lt;a href=&#34;https://github.com/pkkid/sublime-swagger-nav/blob/master/Swagger.sublime-syntax&#34;&gt;editor support&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;IDE (and vim) &lt;a href=&#34;https://plugins.jetbrains.com/plugin/8347-swagger&#34;&gt;schema auto complete&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;2-break-up-your-spec:09ac5e77c9181fef9c7e835ef4126d81&#34;&gt;2. Break Up Your Spec&lt;/h1&gt;
+
+&lt;p&gt;Use the &lt;a href=&#34;http://azimi.me/2015/07/16/split-swagger-into-smaller-files.html&#34;&gt;$ref includes&lt;/a&gt; functionality to compose multiple files into one spec. Break your spec into relevant sub sections (e.g. by entity type, department, etc). This will:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Reduce checkin conflicts between developers&lt;/li&gt;
+&lt;li&gt;Increase readability and maintainabilty&lt;/li&gt;
+&lt;li&gt;More easily isolate spec errors&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;3-dry-don-t-repeat-yaml:09ac5e77c9181fef9c7e835ef4126d81&#34;&gt;3. DRY: Don&amp;rsquo;t Repeat YAML&lt;/h1&gt;
+
+&lt;p&gt;Swagger allows reuse of &lt;a href=&#34;https://swagger.io/docs/specification/data-models/enums/&#34;&gt;enums&lt;/a&gt;, so don&amp;rsquo;t repeat them in the &lt;code&gt;GET&lt;/code&gt; &amp;amp; &lt;code&gt;POST&lt;/code&gt; endpoints, and inside the data objects. &lt;code&gt;$ref&lt;/code&gt; references work for enums just like other Swagger object references.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;paths:
+  /widgets:
+    get:
+      parameters:
+      - in: query
+        name: shape
+        required: true
+        schema:
+          $ref: &#39;#/components/schemas/Shape&#39;
+      responses:
+        &#39;200&#39;:
+          description: OK
+components:
+  schemas:
+    Shape:
+      type: string
+      enum:
+        - round
+        - square
+        - triangle
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;4-automate-swagger-spec-validation:09ac5e77c9181fef9c7e835ef4126d81&#34;&gt;4. Automate Swagger Spec Validation&lt;/h1&gt;
+
+&lt;p&gt;Preemptively validate your spec, rather than wait until your API fails to start or object mapping errors throw 500&amp;rsquo;s in production.&lt;/p&gt;
+
+&lt;p&gt;See my &lt;a href=&#34;https://lust.dev/2017/06/17/swagger-jenkins-validation/&#34;&gt;Automating Swagger Spec validation post&lt;/a&gt; on using Yelp&amp;rsquo;s &lt;a href=&#34;https://github.com/Yelp/swagger_spec_validator&#34;&gt;Swagger Spec Validator&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:09ac5e77c9181fef9c7e835ef4126d81:2&#34;&gt;Running Swagger Editor locally is slow (e.g. 6min npm install/start), consider the &lt;a href=&#34;http://halyph.com/talks/2016-swagger-slides/Run%20Swagger%20Editor%20Locally.html&#34;&gt;prebuilt Docker image&lt;/a&gt;.
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:09ac5e77c9181fef9c7e835ef4126d81:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:09ac5e77c9181fef9c7e835ef4126d81:1&#34;&gt;I&amp;rsquo;ve wrangled 10K and 11K spec files at work. 😢
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:09ac5e77c9181fef9c7e835ef4126d81:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Swagger Jenkins Validation</title>
+      <link>https://lust.dev/2017/06/17/swagger-jenkins-validation/</link>
+      <pubDate>Sat, 17 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2017/06/17/swagger-jenkins-validation/</guid>
+      <description>
+
+&lt;h1 id=&#34;the-mega-spec-problem:dd97c70627f7af6687ab825eb13b9fdd&#34;&gt;The Mega Spec Problem&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://swagger.io/specification/&#34;&gt;Swagger Spec&lt;/a&gt; is a great way to define and document API projects. Your code and documentation live and ship together, allowing for rapid documentation and development. However, you might say it&amp;rsquo;s too good.&lt;/p&gt;
+
+&lt;p&gt;When a team embraces Swagger, documenting every endpoint in great detail, the Swagger files swell to untenable dimensions&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:dd97c70627f7af6687ab825eb13b9fdd:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:dd97c70627f7af6687ab825eb13b9fdd:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;. What worked for the &lt;a href=&#34;http://petstore.swagger.io/&#34;&gt;PetStore Spec&lt;/a&gt; no longer runs against the &lt;a href=&#34;http://editor.swagger.io/&#34;&gt;Swagger Editor webapp&lt;/a&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:dd97c70627f7af6687ab825eb13b9fdd:2&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:dd97c70627f7af6687ab825eb13b9fdd:2&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;, so developers don&amp;rsquo;t bother to validate their spec edits before checkin. CI/CD auto updates your Swagger docs on deploy, auto breaking the documentation developers and customers rely upon, ultimately impeding productivity.&lt;/p&gt;
+
+&lt;p&gt;Thus, an automatic quality gate on Swagger Specs can mitigate this path to rapid documentation corruption.&lt;/p&gt;
+
+&lt;h1 id=&#34;automating-swagger-spec-validation:dd97c70627f7af6687ab825eb13b9fdd&#34;&gt;Automating Swagger Spec Validation&lt;/h1&gt;
+
+&lt;p&gt;You can catch two types of spec defects:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Format errors (e.g. JSON or YAML defects)&lt;/li&gt;
+&lt;li&gt;Invalid spec definitions&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Something as simple as running JSON through &lt;a href=&#34;https://stedolan.github.io/jq/&#34;&gt;jq&lt;/a&gt; will catch format errors, but we&amp;rsquo;ll focus on #2, since it&amp;rsquo;s a catch all.&lt;/p&gt;
+
+&lt;p&gt;Yelp&amp;rsquo;s &lt;a href=&#34;https://github.com/Yelp/swagger_spec_validator&#34;&gt;Swagger Spec Validator&lt;/a&gt; is just the ticket&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:dd97c70627f7af6687ab825eb13b9fdd:3&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:dd97c70627f7af6687ab825eb13b9fdd:3&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/bin/bash
+set -e
+FULL_SPEC_PATH=&amp;quot;/path/to/spec.json&amp;quot; # Absolute, please
+
+# Idempotent, local library install
+virtualenv .
+source bin/activate
+pip install swagger-spec-validator
+
+# Test the Spec
+python -c &amp;quot;from swagger_spec_validator import validate_spec_url; validate_spec_url(&#39;file://${FULL_SPEC_PATH}&#39;)&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Expect no output on success, or a trace on error.&lt;/p&gt;
+
+&lt;p&gt;For example, let&amp;rsquo;s corrupt the &lt;a href=&#34;http://petstore.swagger.io/v2/swagger.json&#34;&gt;Pet spec file&lt;/a&gt;, but keep it in valid JSON format.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;ApiResponse_WRONG_NAME&amp;quot;: {
+  &amp;quot;type&amp;quot;: &amp;quot;object&amp;quot;,
+  &amp;quot;properties&amp;quot;: {
+    ...
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Validation outputs the following helpful message, noting the &lt;code&gt;ApiResponse&lt;/code&gt; entity references are no longer valid.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Traceback (most recent call last):
+  File &amp;quot;&amp;lt;string&amp;gt;&amp;quot;, line 1, in &amp;lt;module&amp;gt;
+  ...
+  File &amp;quot;/usr/local/lib/python2.7/dist-packages/jsonschema/validators.py&amp;quot;, line 387, in resolve_from_url
+    return self.resolve_fragment(document, fragment)
+  File &amp;quot;/usr/local/lib/python2.7/dist-packages/jsonschema/validators.py&amp;quot;, line 421, in resolve_fragment
+    &amp;quot;Unresolvable JSON pointer: %r&amp;quot; % fragment
+swagger_spec_validator.common.SwaggerValidationError: Unresolvable JSON pointer: u&#39;definitions/ApiResponse&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;jenkins-wireup:dd97c70627f7af6687ab825eb13b9fdd&#34;&gt;Jenkins Wireup&lt;/h1&gt;
+
+&lt;p&gt;Validation is great, but it will only reliably occur when fully automatic (developers are busy people!). Integration with Jenkins will ensure every Swagger Spec commit is valid, and prevent bad specs from getting into master.&lt;/p&gt;
+
+&lt;p&gt;Simply add an &lt;code&gt;Execute Shell&lt;/code&gt; step and pass the above example (&lt;a href=&#34;https://gist.github.com/twistedpair/bc743b7e1a4b41753de6b148280410da&#34;&gt;gist link&lt;/a&gt;). The non-zero exit code on error will trigger an informative message to the offending developer.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Note:&lt;/em&gt; I prefer to have this as the first build step to &amp;ldquo;fail fast&amp;rdquo; on checkin, especially for long build processes, but you may prefer to do it last, so all build errors are reported.&lt;/p&gt;
+
+&lt;p&gt;Example Jenkins Config Screen:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/swagger_validator_jenkins_config.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:dd97c70627f7af6687ab825eb13b9fdd:1&#34;&gt;I had to wrangle an 11K spec file. Use &lt;a href=&#34;http://azimi.me/2015/07/16/split-swagger-into-smaller-files.html&#34;&gt;$ref includes&lt;/a&gt; if possible.
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:dd97c70627f7af6687ab825eb13b9fdd:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:dd97c70627f7af6687ab825eb13b9fdd:2&#34;&gt;Running Swagger Editor locally is slow (e.g. 6min npm install/start), consider the &lt;a href=&#34;http://halyph.com/talks/2016-swagger-slides/Run%20Swagger%20Editor%20Locally.html&#34;&gt;prebuilt Docker image&lt;/a&gt;.
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:dd97c70627f7af6687ab825eb13b9fdd:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:dd97c70627f7af6687ab825eb13b9fdd:3&#34;&gt;Aside from the &amp;ldquo;read the docs&amp;rdquo; link to the &lt;a href=&#34;https://swagger-spec-validator.readthedocs.io/en/latest/&#34;&gt;empty docs site&lt;/a&gt;.
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:dd97c70627f7af6687ab825eb13b9fdd:3&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>AWS Command Line Password Reset</title>
+      <link>https://lust.dev/2016/07/08/aws-cli-password-reset/</link>
+      <pubDate>Fri, 08 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/07/08/aws-cli-password-reset/</guid>
+      <description>
+
+&lt;h1 id=&#34;oh-nuts:5efceb1a28e3916f5b9c11396608079c&#34;&gt;Oh, Nuts&lt;/h1&gt;
+
+&lt;p&gt;Your AWS console login just expired, as the login prompt &lt;em&gt;has been warning for weeks&lt;/em&gt;. You need to update that Route 53 entry and your boss is waiting. Do you call the sysadmin and beg for a reset, or can you solve this yourself?&lt;/p&gt;
+
+&lt;h1 id=&#34;aws-cli-to-the-rescue:5efceb1a28e3916f5b9c11396608079c&#34;&gt;AWS CLI To the Rescue&lt;/h1&gt;
+
+&lt;p&gt;No worries, you&amp;rsquo;ve got this covered in 15 seconds.&lt;/p&gt;
+
+&lt;p&gt;Use the iam API call &lt;a href=&#34;https://docs.aws.amazon.com/cli/latest/reference/iam/update-login-profile.html&#34;&gt;update-login-profile&lt;/a&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:5efceb1a28e3916f5b9c11396608079c:2&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:5efceb1a28e3916f5b9c11396608079c:2&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; combined with your aws iam username (login name for the &lt;a href=&#34;https://console.aws.amazon.com/&#34;&gt;AWS Console Login&lt;/a&gt;).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws iam update-login-profile --user-name jsmith --password sesame --password-reset-required
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The combination is cracked. Login. Whistle innocently like this never happened.&lt;/p&gt;
+
+&lt;h1 id=&#34;other-dead-ends:5efceb1a28e3916f5b9c11396608079c&#34;&gt;Other Dead Ends&lt;/h1&gt;
+
+&lt;p&gt;The awscli has another tempting, but misleading API called &lt;a href=&#34;https://docs.aws.amazon.com/cli/latest/reference/iam/change-password.html&#34;&gt;change-password&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you tried it, you&amp;rsquo;d be saddened to see the required &lt;code&gt;--old-password&lt;/code&gt; parameter. This is a red herring. Dodge left.&lt;/p&gt;
+
+&lt;h1 id=&#34;you-don-t-have-aws-cli-password-reset-access:5efceb1a28e3916f5b9c11396608079c&#34;&gt;You Don&amp;rsquo;t Have AWS CLI Password Reset Access&lt;/h1&gt;
+
+&lt;p&gt;We got a problem here. Your choices are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Kowtow to your sysadmin for mercy&lt;/li&gt;
+&lt;li&gt;If it&amp;rsquo;s a root account, use the &lt;a href=&#34;https://www.amazon.com/ap/forgotpassword?openid.pape.preferred_auth_policies=MultifactorPhysical&amp;amp;openid.pape.max_auth_age=0&amp;amp;openid.return_to=https%3A%2F%2Fsignin.aws.amazon.com%2Foauth%3Fresponse_type%3Dcode%26client_id%3Darn%253Aaws%253Aiam%253A%253A015428540659%253Auser%252Fhomepage%26redirect_uri%3Dhttps%253A%252F%252Fconsole.aws.amazon.com%252Fconsole%252Fhome%253Fstate%253DhashArgs%252523%2526isauthcode%253Dtrue%26noAuthCookie%3Dtrue&amp;amp;prevRID=14XBRCDW9RJD7GXZ9KTP&amp;amp;openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;amp;openid.assoc_handle=aws&amp;amp;openid.mode=checkid_setup&amp;amp;openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&amp;amp;openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;amp;pageId=aws.ssop&amp;amp;openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&#34;&gt;password reset process&lt;/a&gt; to get a reset email&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:5efceb1a28e3916f5b9c11396608079c:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:5efceb1a28e3916f5b9c11396608079c:1&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;allow-users-to-reset-passwords:5efceb1a28e3916f5b9c11396608079c&#34;&gt;Allow Users to Reset Passwords&lt;/h1&gt;
+
+&lt;p&gt;If you&amp;rsquo;re a sysadmin, set the following IAM policy to enable self service user password reset.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+    &amp;quot;Version&amp;quot;: &amp;quot;2012-10-17&amp;quot;,
+    &amp;quot;Statement&amp;quot;: [
+        {
+            &amp;quot;Sid&amp;quot;: &amp;quot;Stmt1500731194000&amp;quot;,
+            &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+            &amp;quot;Action&amp;quot;: [
+                &amp;quot;iam:UpdateLoginProfile&amp;quot;
+            ],
+            &amp;quot;Resource&amp;quot;: [
+                &amp;quot;arn:aws:iam::1234567890:user/favorite_user&amp;quot;
+            ]
+        }
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:5efceb1a28e3916f5b9c11396608079c:2&#34;&gt;Password reset requires &lt;a href=&#34;https://docs.aws.amazon.com/IAM/latest/APIReference/API_UpdateLoginProfile.html&#34;&gt;UpdateLoginProfile&lt;/a&gt; IAM policy action, included in Admin role.
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:5efceb1a28e3916f5b9c11396608079c:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:5efceb1a28e3916f5b9c11396608079c:1&#34;&gt;This email will be sent to the root account email only. You&amp;rsquo;ve got access, right?
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:5efceb1a28e3916f5b9c11396608079c:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Login With Broken AWS MFA Device</title>
+      <link>https://lust.dev/2016/06/14/login-broken-aws-mfa-device/</link>
+      <pubDate>Tue, 14 Jun 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/06/14/login-broken-aws-mfa-device/</guid>
+      <description>
+
+&lt;h1 id=&#34;oh-fudge:0f9727b081e90b0e13d3a31272a59d66&#34;&gt;Oh, Fudge&lt;/h1&gt;
+
+&lt;p&gt;Your dog just broken your iPhone&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:0f9727b081e90b0e13d3a31272a59d66:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:0f9727b081e90b0e13d3a31272a59d66:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; and the master token for your AWS root account is locked up in the safe at work. Your boss needs an emergency update to your prod infrastructure. How do you login to your MFA protected AWS account?&lt;/p&gt;
+
+&lt;h1 id=&#34;aws-cli-to-the-rescue:0f9727b081e90b0e13d3a31272a59d66&#34;&gt;AWS CLI To the Rescue&lt;/h1&gt;
+
+&lt;p&gt;No worries, you&amp;rsquo;ve got this covered in 15 seconds.&lt;/p&gt;
+
+&lt;p&gt;Lookup the ARN of your MFA device in IAM, via the username you use for &lt;a href=&#34;https://console.aws.amazon.com/&#34;&gt;AWS Console Login&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws iam list-mfa-devices --user-name john_smith
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Outputs:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+    &amp;quot;MFADevices&amp;quot;: [
+        {
+            &amp;quot;UserName&amp;quot;: &amp;quot;john_smith&amp;quot;,
+            &amp;quot;SerialNumber&amp;quot;: &amp;quot;arn:aws:iam::1234567890123:mfa/john_smith&amp;quot;,
+            &amp;quot;EnableDate&amp;quot;: &amp;quot;2016-01-01T17:00:00Z&amp;quot;
+        }
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws iam deactivate-mfa-device --user-name john_smith --serial-number arn:aws:iam::1234567890123:mfa/john_smith
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The safe is cracked. Login. Pretend like this never happened.&lt;/p&gt;
+
+&lt;h1 id=&#34;you-don-t-have-aws-cli-admin-access:0f9727b081e90b0e13d3a31272a59d66&#34;&gt;You Don&amp;rsquo;t Have AWS CLI Admin Access&lt;/h1&gt;
+
+&lt;p&gt;We got a problem here. Your choices are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Use your root token / ask your sys admin to remove the MFA from your account&lt;/li&gt;
+&lt;li&gt;Contact &lt;a href=&#34;https://aws.amazon.com/forms/aws-mfa-support&#34;&gt;AWS MFA Device Support&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:0f9727b081e90b0e13d3a31272a59d66:1&#34;&gt;Consider ordering a &lt;a href=&#34;https://www.amazon.com/SafeNet-IDProve-Time-based-6-Digit-Services/dp/B002CRN5X8?ie=UTF8&amp;amp;keywords=gemalto%20aws&amp;amp;qid=1462806259&amp;amp;ref_=sr_1_1&amp;amp;sr=8-1&#34;&gt;physical token&lt;/a&gt;, inserting in mason jar, and burying in backyard
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:0f9727b081e90b0e13d3a31272a59d66:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Modulo Operator Performance Impact</title>
+      <link>https://lust.dev/2016/05/08/modulo-operator-performance-impact/</link>
+      <pubDate>Sun, 08 May 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/05/08/modulo-operator-performance-impact/</guid>
+      <description>
+
+&lt;p&gt;I was surprised when someone told me not to use the &lt;a href=&#34;https://en.wikipedia.org/wiki/Modulo_operation&#34;&gt;modulo operator&lt;/a&gt; in high performance code. My textbooks used modulo (&lt;code&gt;%&lt;/code&gt;) and various high performance implementations &lt;a href=&#34;https://dzone.com/articles/hashmap-performance&#34;&gt;say to use modulo&lt;/a&gt;. Where had I gone wrong?&lt;/p&gt;
+
+&lt;h2 id=&#34;the-bad:4328c785535fae6da643b5f4d6375870&#34;&gt;The Bad&lt;/h2&gt;
+
+&lt;p&gt;If you look at the JDK&amp;rsquo;s &lt;code&gt;mod()&lt;/code&gt; implementation, you&amp;rsquo;ll see that it&amp;rsquo;s indeed &lt;code&gt;O(n)&lt;/code&gt; &lt;a href=&#34;https://github.com/openjdk-mirror/jdk7u-jdk/blob/f4d80957e89a19a29bb9f9807d2a28351ed7f7df/src/share/native/java/lang/fdlibm/src/e_fmod.c#L42&#34;&gt;for IEE754 floats&lt;/a&gt;, and &lt;code&gt;O(1)&lt;/code&gt; &lt;a href=&#34;https://github.com/openjdk-mirror/jdk7u-jdk/blob/f4d80957e89a19a29bb9f9807d2a28351ed7f7df/src/share/native/java/lang/fdlibm/src/s_modf.c#L46&#34;&gt;for doubles&lt;/a&gt;. Note, the Java Spec defines modulo for integers and also &lt;a href=&#34;https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.17.3&#34;&gt;for negative floating point numbers&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Luckily, there are tricks for modulo with integers.&lt;/p&gt;
+
+&lt;h2 id=&#34;high-performance-modulo:4328c785535fae6da643b5f4d6375870&#34;&gt;High Performance Modulo&lt;/h2&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the trick; &lt;strong&gt;don&amp;rsquo;t use floats&lt;/strong&gt;. Floats are a pain for numerous reason, but let&amp;rsquo;s assume you&amp;rsquo;re wise enough to use a primitive integer type (int or long) to feed you &lt;code&gt;mod()&lt;/code&gt; code, such as your hashmap implementation. There are many neat &lt;a href=&#34;http://graphics.stanford.edu/~seander/bithacks.html#ModulusDivisionEasy&#34;&gt;bit twiddling tricks&lt;/a&gt; to quickly conjure &lt;code&gt;mod(int,int)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;powers-of-two:4328c785535fae6da643b5f4d6375870&#34;&gt;Powers of Two&lt;/h3&gt;
+
+&lt;p&gt;Computers are binary by nature, so using powers of two provide lots of tricks. These can compute &lt;code&gt;mod(int, somePowerOf2)&lt;/code&gt; in only a &lt;em&gt;single machine instruction&lt;/em&gt;! Here&amp;rsquo;s how.&lt;/p&gt;
+
+&lt;!-- %[link to LustBox algos][1] --&gt;
+
+&lt;p&gt;For example, if I want to do &lt;code&gt;61 % 8&lt;/code&gt;, to know which of an &lt;code&gt;Array[Byte]&lt;/code&gt; to grab a value from, we can think of it in binary as &lt;a href=&#34;https://en.wikipedia.org/wiki/Logical_conjunction&#34;&gt;logical conjunction&lt;/a&gt; of the dividend with the  mask of all bits lower than the divisor. For powers of 2, that&amp;rsquo;s just n-1. The bit operations are illustrated below, using 32 bit integers.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://lust.dev/img/bit_diagram.svg&#34;&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/bit_diagram.svg&#34; alt=&#34;Note: Applicable only to Natural Integers&#34; /&gt;
+    
+    
+    &lt;figcaption&gt;
+        &lt;p&gt;
+        Note: Applicable only to Natural Integers
+        
+            
+        
+        &lt;/p&gt; 
+    &lt;/figcaption&gt;
+    
+&lt;/figure&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;We can code this simply as:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def modPow2(n:Int, p2: Int) = n &amp;amp; (p2-1)
+
+def isPow2(n:Int):Boolean = ((n-1) &amp;amp; n ) == 0
+
+def modFast(n:Int, b: Int) = if (isPow2(b)) modPow2(n,b) else n % b
+
+// The old way
+def modOld(n:Int, b:Int) = n % b
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;performance-comparsion:4328c785535fae6da643b5f4d6375870&#34;&gt;Performance Comparsion&lt;/h2&gt;
+
+&lt;p&gt;Comparing the byte code of classic modulo, and our faster version, we see they are both &lt;strong&gt;4 lines of byte code&lt;/strong&gt;. However, classic &lt;code&gt;%&lt;/code&gt; calls the byte code operation &lt;a href=&#34;https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html#jvms-6.5.irem&#34;&gt;&lt;code&gt;irem&lt;/code&gt;&lt;/a&gt; which itself calls a native routine, so it&amp;rsquo;s far more complicated and won&amp;rsquo;t run in constant time.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;  public int modOld(int, int);
+    Code:
+       0: iload_1
+       1: iload_2
+       2: irem
+       3: ireturn
+
+  public int modPow2(int, int); // with 8-1 inlined
+    Code:
+       0: iload_1
+       1: bipush        7
+       3: iand
+       4: ireturn
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A simple benchmark&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:4328c785535fae6da643b5f4d6375870:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:4328c785535fae6da643b5f4d6375870:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; on bare metal&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:4328c785535fae6da643b5f4d6375870:2&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:4328c785535fae6da643b5f4d6375870:2&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; shows what we expect, doing one billion passes of each.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Power 8 trick is the fastest&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;irem&lt;/code&gt; implementation is nearly as fast&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fmod&lt;/code&gt; implementation is 3x slower&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://lust.dev/img/modulo_benchmark_chart.svg&#34;&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/modulo_benchmark_chart.svg&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;!---
+t = [1.589,1.954,7.987]
+bar(t)
+set(ax,&#39;XTickLabel&#39;, {&#34;n &amp; b-1&#34;,&#34;n % b (int)&#34;,&#34;n % b (double)&#34;})
+title(&#34;Comparision of Modulo Execution Times&#34;)
+ylabel(&#39;Mean Time (ns)&#39;)
+xlabel(&#34;Modulo Methods&#34;)
+t(2)/t(1)
+--&gt;
+
+&lt;h2 id=&#34;conclusions:4328c785535fae6da643b5f4d6375870&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Modulo isn&amp;rsquo;t a major performance hog&lt;/li&gt;
+&lt;li&gt;Avoid Double modulo operations if possible (can you use int&amp;rsquo;s?)&lt;/li&gt;
+&lt;li&gt;The reference Java modulo implementation is fast&lt;/li&gt;
+&lt;li&gt;For &lt;code&gt;mod(a,2^n)&lt;/code&gt; operations, &lt;code&gt;modPow2&lt;/code&gt; is ~23% faster than stock moduolo&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If modulo is a critical path in your code, and your divisor is a power of 2 (with Natural dividends), use this trick. Otherwise, the stock JVM implementation should serve you well.&lt;/p&gt;
+
+&lt;!---
+
+### floating
+### Common Ints
+
+TODO: remainderKnuth, remainderBurnikelZiegler, in BigDecimal
+TODO: Check Knuth book for other Impl&#39;s (didn&#39;t see any)
+
+first 3 Google hits, none mention the cost of the operation. Sadness.
+--&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:4328c785535fae6da643b5f4d6375870:1&#34;&gt;Benchmarked with a &lt;a href=&#34;https://gist.github.com/twistedpair/58414ee3237544eaf54a787a59f656c6&#34;&gt;simple iterator&lt;/a&gt;, and &lt;a href=&#34;https://scalameter.github.io/&#34;&gt;ScalaMeter&lt;/a&gt;, and &lt;a href=&#34;http://openjdk.java.net/projects/code-tools/jmh/&#34;&gt;JMH&lt;/a&gt; (see &lt;a href=&#34;https://github.com/twistedpair/benchmark-jvm-modulo&#34;&gt;repo&lt;/a&gt;). JMH provided the most consistent approach, and uses the most advanced methods to warmup and prevent garbage collections. Performed on an untilized, bare metal machine with N=1 billion (1K runs of 1M iterations). JVM memory preallocated at startup (&lt;code&gt;-Xmx=2G -Xms=2G&lt;/code&gt;)
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:4328c785535fae6da643b5f4d6375870:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:4328c785535fae6da643b5f4d6375870:2&#34;&gt;HotSpot 1.8.0_91, Ubuntu 15.04, i7-4790K, 32GB PC3 19200 ram, SSD
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:4328c785535fae6da643b5f4d6375870:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Dangers of the Unit Type Parameter</title>
+      <link>https://lust.dev/2016/04/12/dangers-of-unit-type-parameter/</link>
+      <pubDate>Tue, 12 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/04/12/dangers-of-unit-type-parameter/</guid>
+      <description>
+
+&lt;p&gt;I ran into the following Scala pitfall when refactoring some code recently.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-problem:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;The problem&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://docs.scala-lang.org/overviews/core/futures.html#futures&#34;&gt;Futures&lt;/a&gt; sometimes execute in expected order, other times not. Testing with &lt;code&gt;Await.result(f)&lt;/code&gt; didn&amp;rsquo;t block. The world was no longer deterministic. Why? Unit.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-code:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;The code&lt;/h2&gt;
+
+&lt;p&gt;This was the code before:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def makeFut1():Future[Int] = Future.successful( 1 + 1) 
+def makeFut2():Future[String] = Future.successful( &amp;quot;foo&amp;quot; + &amp;quot;bar&amp;quot; )
+def doSideEffect(a:Int,b:String):Unit = println(s&amp;quot;[$a] [$b]&amp;quot;)
+
+def doWork():Future[Unit] = 
+  for {
+    futA &amp;lt;- makeFut1()
+    futB &amp;lt;- makeFut2()
+  } yield doSideEffect(futA,futB)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Alas synchronous &lt;code&gt;doSideEffect(...)&lt;/code&gt; method was refactored to be async, becoming:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def doSideEffect(a:Int,b:String):Unit = Future { println(s&amp;quot;[$a] [$b]&amp;quot;) }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;What broke? Nothing. Scala compiled and ran it just fine. But, WFT? We&amp;rsquo;re yielding a &lt;code&gt;Future[Unit]&lt;/code&gt; not a &lt;code&gt;Unit&lt;/code&gt;, shouldn&amp;rsquo;t that make &lt;code&gt;doWork()&lt;/code&gt; return a &lt;code&gt;Future[Future[Unit]]&lt;/code&gt; and fail type checking?&lt;/p&gt;
+
+&lt;h2 id=&#34;unit-and-value-discarding:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;Unit and Value Discarding&lt;/h2&gt;
+
+&lt;p&gt;In short, the &lt;a href=&#34;http://www.scala-lang.org/docu/files/ScalaReference.pdf&#34;&gt;Scala Spec&lt;/a&gt; section 6.26.1 says,&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;If e has some value type and the expected type is Unit, e is converted
+to the expected type by embedding it in the term { e; () }.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The following code would be transformed accordingly:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def intUnit(n:Int):Unit = n*2        // pre-compile
+def intUnit(n:Int):Unit = {n*2; ()}  // post-compile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This gets tricky with type parameters. If you returned &lt;code&gt;Future[Future[Unit]]&lt;/code&gt;, you&amp;rsquo;re really returning &lt;code&gt;Future[Unit]&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;compiler-don-t-care-bout-unit:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;Compiler Don&amp;rsquo;t Care `bout Unit&lt;/h2&gt;
+
+&lt;p&gt;Thus, we see that by returning the Unit type, we&amp;rsquo;re really returning Void, and lose any type checking of the return type at all. As such, the compiler doesn&amp;rsquo;t give a damn&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:0f7ca2f56d5a07b83a78e2aa186b1719:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:0f7ca2f56d5a07b83a78e2aa186b1719:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; what we return.  Any &lt;code&gt;Future&lt;/code&gt; executed in said yield will probably be invoked, but not as this flatmapping chain of futures, and not in the order you&amp;rsquo;d expect.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;doSideEffect(...)&lt;/code&gt; is invoked, and it&amp;rsquo;s Future created, but said Future isn&amp;rsquo;t tied to this sequence of Futures. Thus, the Future returned by &lt;code&gt;doWork()&lt;/code&gt; won&amp;rsquo;t wait for it, returning &lt;code&gt;Unit&lt;/code&gt; immeadiately.&lt;/p&gt;
+
+&lt;h2 id=&#34;don-t-return-unit:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;Don&amp;rsquo;t Return Unit&lt;/h2&gt;
+
+&lt;p&gt;Only use return type Unit for Void functions (a.k.a. Procedures). Using Unit to parameterize a type effectively negates type checking on that type, and loses the guarantees you&amp;rsquo;ve come to expect from the type system and compiler.&lt;/p&gt;
+
+&lt;p&gt;An alternative to the above example, using a sealed algebra for return state, would be:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;sealed trait Result
+object Good extends Result
+object Bad extends Result
+
+def makeFut1():Future[Int] = Future.successful( 1 + 1) 
+def makeFut2():Future[String] = Future.successful( &amp;quot;foo&amp;quot; + &amp;quot;bar&amp;quot; )
+def doSideEffectB(a:Int,b:String):Future[Result] 
+  = Future { println(s&amp;quot;[$a] [$b]&amp;quot;); Good }
+
+def doWork():Future[Result] = {
+    for {
+        futA &amp;lt;- makeFut1()
+        futB &amp;lt;- makeFut2()
+    } yield doSideEffectB(futA,futB)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And failed to compile, as we&amp;rsquo;d hope!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Sample.scala:55: error: type mismatch;
+ found   : scala.concurrent.Future[Result]
+ required: Result
+        } yield doSideEffectB(futA,futB)
+                             ^
+one error found
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Horay for types!&lt;/p&gt;
+
+&lt;h2 id=&#34;appendix-unit-type-and-void:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;(Appendix) Unit Type and Void&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.scala-lang.org/files/archive/nightly/docs/library/index.html#scala.Unit$&#34;&gt;Unit&lt;/a&gt; is a &lt;a href=&#34;https://en.wikipedia.org/wiki/Unit_type&#34;&gt;Unit Type&lt;/a&gt; from Type Theory, meaning it&amp;rsquo;s a universal singleton instance referenced by &lt;code&gt;()&lt;/code&gt;, the zero tuple. Every &lt;code&gt;()&lt;/code&gt; in your code points to the same Unit instance. Since all Scala value types can be converted to Unit, the compiler may change them to Unit as required for return signatures to match. Any &lt;em&gt;value type&lt;/em&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:0f7ca2f56d5a07b83a78e2aa186b1719:2&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:0f7ca2f56d5a07b83a78e2aa186b1719:2&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; can be converted.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s decompile the following functions to see what Scala does to Unit returns:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def intInt(n:Int):Int = n*2
+def intUnit(n:Int):Unit = n*2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;  public int intInt(int);
+    Code:
+       0: iconst_2 // Load integer 2
+       1: iload_1  // Load another int
+       2: imul     // Multiply ints 
+       3: ireturn  // return product
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;  public void intUnit(int);
+    Code:
+       0: iconst_2 // Load integer 2
+       1: iload_1  // Load another int
+       2: imul     // Multiply ints 
+       3: pop      // Discard value
+       4: return   // Return VOID
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;a href=&#34;https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings&#34;&gt;byte code&lt;/a&gt; shows Java does the math in both cases, but the Unit return &lt;strong&gt;discards all values and returns Void.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;appendix-incorrect-unit-use:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;(Appendix) Incorrect Unit Use&lt;/h2&gt;
+
+&lt;p&gt;Because Unit is converted from any other &lt;em&gt;value type&lt;/em&gt;, &lt;code&gt;Unit&lt;/code&gt; can be converted to &lt;code&gt;()&lt;/code&gt;. That is, Unit can be converted from a type to an instance by the complier, sort of. This can lead to confusion in code.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def myProcedure(n:Int):Unit = {n * n; Unit}      // pre-compiled
+def myProcedure(n:Int):Unit = {n * n; Unit; ()}  // post-compiled
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Developers may explicitly return &lt;code&gt;Unit&lt;/code&gt;, but really they are returning the &lt;em&gt;Unit type&lt;/em&gt;, not the singleton Unit reference, &lt;code&gt;()&lt;/code&gt;. The reference to the actual type is being discarded.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:0f7ca2f56d5a07b83a78e2aa186b1719:1&#34;&gt;Set the &lt;code&gt;-Ywarn-value-discard&lt;/code&gt; compiler flag to fail builds on Value Discarding
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:0f7ca2f56d5a07b83a78e2aa186b1719:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:0f7ca2f56d5a07b83a78e2aa186b1719:2&#34;&gt;value type T , &lt;code&gt;scala.Nothing &amp;lt;: T &amp;lt;: scala.Any&lt;/code&gt;
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:0f7ca2f56d5a07b83a78e2aa186b1719:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Deploy Hugo Files to S3</title>
+      <link>https://lust.dev/2016/02/28/deploy-hugo-files-to-s3/</link>
+      <pubDate>Sun, 28 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/02/28/deploy-hugo-files-to-s3/</guid>
+      <description>
+
+&lt;p&gt;We discussed AWS S3, CloudFront, and Route53 setup in the &lt;a href=&#34;https://lust.dev/2016/02/27/hosting-hugo-on-aws/&#34;&gt;previous post&lt;/a&gt;. The last step is to deploy those files to S3 each time you&amp;rsquo;ve made new &lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; posts.&lt;/p&gt;
+
+&lt;h2 id=&#34;site-configuration:dabd23fda0353466eed0168462515352&#34;&gt;Site Configuration&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;re going to use SSL because &lt;a href=&#34;https://en.wikipedia.org/wiki/Edward_Snowden#Technology_industry&#34;&gt;you can&amp;rsquo;t trust anyone&lt;/a&gt;. Make sure your site configuration uses &lt;strong&gt;SSL&lt;/strong&gt;. I also found you need a &lt;strong&gt;trailing slash&lt;/strong&gt;, or many templates create invalid URL&amp;rsquo;s.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;# config.toml
+baseurl = &amp;quot;https://yoursite.com/&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;deployment:dabd23fda0353466eed0168462515352&#34;&gt;Deployment&lt;/h2&gt;
+
+&lt;p&gt;This really is the easy part. We&amp;rsquo;ll:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Build a fresh copy of the blog&lt;/li&gt;
+&lt;li&gt;Sync all posts and files, ignoring duplicates in the &lt;code&gt;post&lt;/code&gt; directory&lt;/li&gt;
+&lt;li&gt;Ensure they&amp;rsquo;re marked as &lt;strong&gt;public-read&lt;/strong&gt; so folks can read them&lt;/li&gt;
+&lt;li&gt;Use S3 encryption because we&amp;rsquo;re paranoid, and it&amp;rsquo;s free&lt;/li&gt;
+&lt;li&gt;Invalidate the root page, and page listings&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;set -e # Fail fast
+
+DISTRIBUTION_ID=K823EJPPN4O2K9O
+BUCKET_NAME=mysite.com-cdn
+
+# Build a fresh copy
+hugo -v 
+
+# Copy over pages - not static js/img/css/downloads
+aws s3 sync --acl &amp;quot;public-read&amp;quot; --sse &amp;quot;AES256&amp;quot; public/ s3://$BUCKET_NAME --exclude &#39;post&#39;
+
+# Invalidate root page and page listings
+aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths /index.html / /page/*
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can turn this into a sheel script like the one that &lt;a href=&#34;https://github.com/twistedpair/lustforge.com/blob/master/deploy_site.sh&#34;&gt;deploys this blog&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;invalidation-costs:dabd23fda0353466eed0168462515352&#34;&gt;Invalidation Costs&lt;/h2&gt;
+
+&lt;p&gt;Note the CloudFront &lt;a href=&#34;https://aws.amazon.com/cloudfront/pricing/#Request_Pricing_for_All_HTTP_Methods_(per_10,000)&#34;&gt;invalidation pricing&lt;/a&gt;. An &lt;code&gt;InvalidationRequest&lt;/code&gt; is when you ask to purge the cache for a given path.&lt;/p&gt;
+
+&lt;p&gt;Some examples include:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;purge one file using &lt;code&gt;/blah/file.txt&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;purge all files at a path using &lt;code&gt;/blah/*&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;purge everything using &lt;code&gt;/*&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Though these may purge from one to thousands of files, each counts as a &lt;strong&gt;single invalidation request&lt;/strong&gt;. The first 1K monthly requests are free, but they are &lt;code&gt;¢0.5&lt;/code&gt; there after, which could rack up if you were invalidating thousands of files individually, or redeploying with a commit hook frequently.&lt;/p&gt;
+
+&lt;p&gt;While you could always invalidate the entire distribution with &lt;code&gt;/*&lt;/code&gt;, this will force all 50 worldwide edge locations to reload every file for you site on the next visit (&amp;ldquo;cache miss&amp;rdquo;), defeating the purpose of your CDN. As such, it&amp;rsquo;s often better to invalidate just the affected files, as long as there are not many. This is why I&amp;rsquo;m only invalidating about 6 files above.&lt;/p&gt;
+
+&lt;p&gt;Alternatively, use unique asset names if they will change frequently, or &lt;a href=&#34;https://developers.google.com/speed/docs/insights/LeverageBrowserCaching&#34;&gt;URL fingerprinting&lt;/a&gt; and you won&amp;rsquo;t ever need to invalidate.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>AWS Hugo Hosting, HowTo</title>
+      <link>https://lust.dev/2016/02/27/hosting-hugo-on-aws/</link>
+      <pubDate>Sat, 27 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/02/27/hosting-hugo-on-aws/</guid>
+      <description>
+
+&lt;p&gt;Running your &lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; static blog site is easy and cheap, but there are a few snags I had to solve when I deployed mine. Follow these instruction to host your Hugo blog on AWS &lt;a href=&#34;https://aws.amazon.com/s3/&#34;&gt;S3&lt;/a&gt; and &lt;a href=&#34;https://aws.amazon.com/cloudfront/&#34;&gt;Cloudfront&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;disclaimer:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Disclaimer&lt;/h2&gt;
+
+&lt;p&gt;The following works for me. If you&amp;rsquo;re not comfortable with a CLI, use the &lt;a href=&#34;console.aws.amazon.com/console/home&#34;&gt;AWS Web Console&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;bucket-configuration:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Bucket Configuration&lt;/h2&gt;
+
+&lt;p&gt;Other tutorials use the AWS web console, and feature lots of screenshots, but your&amp;rsquo;re a savvy Hugo user. We&amp;rsquo;ll use the AWS Commandline interface tool, ak.k. &lt;strong&gt;awscli&lt;/strong&gt;. You can install it with &lt;code&gt;pip&lt;/code&gt;, if you don&amp;rsquo;t already have it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo pip install awscli
+aws configure # Follow instructions to setup
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Make a bucket. The name does not matter. No one will see this. If someone is already using that name, you&amp;rsquo;ll need to pick another. We&amp;rsquo;ll also add a bucket to hold all of our &lt;strong&gt;logs&lt;/strong&gt;, so that you can know who visited.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Set your domain here
+YOUR_DOMAIN=&amp;quot;yourdomain.com&amp;quot;
+REGION=&amp;quot;us-east-1&amp;quot;
+# Don&#39;t change these
+BUCKET_NAME=&amp;quot;${YOUR_DOMAIN}-cdn&amp;quot;
+LOG_BUCKET_NAME=&amp;quot;${BUCKET_NAME}-logs&amp;quot;
+
+# One fresh bucket please!
+aws s3 mb s3://$BUCKET_NAME --region $REGION
+# And another for the logs
+aws s3 mb s3://$LOG_BUCKET_NAME --region $REGION
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;bucket-permissions-and-logging:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Bucket Permissions and Logging&lt;/h2&gt;
+
+&lt;p&gt;Give AWS the rights to insert logs into your bucket. Then tell S3 to log your website visits to that bucket.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Let AWS write the logs to this location
+aws s3api put-bucket-acl --bucket $LOG_BUCKET_NAME \
+--grant-write &#39;URI=&amp;quot;http://acs.amazonaws.com/groups/s3/LogDelivery&amp;quot;&#39; \
+--grant-read-acp &#39;URI=&amp;quot;http://acs.amazonaws.com/groups/s3/LogDelivery&amp;quot;&#39;
+
+# Setup logging
+LOG_POLICY=&amp;quot;{\&amp;quot;LoggingEnabled\&amp;quot;:{\&amp;quot;TargetBucket\&amp;quot;:\&amp;quot;$LOG_BUCKET_NAME\&amp;quot;,\&amp;quot;TargetPrefix\&amp;quot;:\&amp;quot;$BUCKET_NAME\&amp;quot;}}&amp;quot;
+aws s3api put-bucket-logging --bucket $BUCKET_NAME --bucket-logging-status $LOG_POLICY
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;create-s3-bucket-website:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Create S3 Bucket Website&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll tell S3 to turn our bucket into a website. This will give it a public URL that does redirecting for us. We need this since Hugo blog pages like &lt;strong&gt;foo.com/bob/&lt;/strong&gt; are really &lt;strong&gt;foo.com/bob/index.html&lt;/strong&gt;. We need to redirect those root paths like &lt;strong&gt;/bob/&lt;/strong&gt; to &lt;strong&gt;/bob/index.html&lt;/strong&gt;. Normally you&amp;rsquo;d need rewrite rules with Nginx or Apache, but S3 can do that too.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Create website config
+echo &amp;quot;{
+    \&amp;quot;IndexDocument\&amp;quot;: {
+        \&amp;quot;Suffix\&amp;quot;: \&amp;quot;index.html\&amp;quot;
+    },
+    \&amp;quot;ErrorDocument\&amp;quot;: {
+        \&amp;quot;Key\&amp;quot;: \&amp;quot;404.html\&amp;quot;
+    },
+    \&amp;quot;RoutingRules\&amp;quot;: [
+        {
+            \&amp;quot;Redirect\&amp;quot;: {
+                \&amp;quot;ReplaceKeyWith\&amp;quot;: \&amp;quot;index.html\&amp;quot;
+            },
+            \&amp;quot;Condition\&amp;quot;: {
+                \&amp;quot;KeyPrefixEquals\&amp;quot;: \&amp;quot;/\&amp;quot;
+            }
+        }
+    ]
+}&amp;quot; &amp;gt; website.json
+
+aws s3api put-bucket-website --bucket $BUCKET_NAME --website-configuration file://website.json
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now you can visit &lt;code&gt;http://&amp;lt;bucket_name&amp;gt;.s3-website-&amp;lt;region&amp;gt;.amazonaws.com&lt;/code&gt; to browse your site!&lt;/p&gt;
+
+&lt;h2 id=&#34;get-free-ssl-certificates:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Get Free SSL Certificates&lt;/h2&gt;
+
+&lt;p&gt;Everything should have SSL, so AWS decided to give away &lt;a href=&#34;https://aws.amazon.com/certificate-manager/pricing/&#34;&gt;FREE SSL certificates&lt;/a&gt; for all AWS users. Thanks, Jeff! Make sure you can access the admin email &lt;a href=&#34;http://www.whois-search.com/&#34;&gt;address on your domain&lt;/a&gt;, and then run the following and check your email. The email should go through instantly. Note that we&amp;rsquo;re also requesting the &lt;code&gt;www.&lt;/code&gt; variant of this domain. We&amp;rsquo;ll use this for redirecting &lt;code&gt;www.foo.com&lt;/code&gt; to &lt;code&gt;foo.com&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws acm request-certificate --domain-name $YOUR_DOMAIN --subject-alternative-names &amp;quot;www.$YOUR_DOMAIN&amp;quot; --idempotency-token &amp;quot;`date +%s`&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The idempotency token will prevent running this twice from sending two requests. Also, note that ACM will renew your certs each year automatically, so this SSL really is &lt;a href=&#34;https://en.wikipedia.org/wiki/Ron_Popeil&#34;&gt;set it and forget it&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Call ACM and get the ARN of your cert to use in the next step.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws acm list-certificates --certificate-statuses ISSUED
+# Example result
+{
+    &amp;quot;CertificateSummaryList&amp;quot;: [
+        {
+            &amp;quot;CertificateArn&amp;quot;: &amp;quot;arn:aws:acm:us-east-1:7865196219991:certificate/de305d54-75b4-431b-adb2-eb6b9e546014&amp;quot;,
+            &amp;quot;DomainName&amp;quot;: &amp;quot;yoursite.com&amp;quot;
+        }
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;cloudfront-setup:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;CloudFront Setup&lt;/h2&gt;
+
+&lt;p&gt;S3 hosts your files as a website, but we want a vanity domain and custom SSL. Plus, a &lt;a href=&#34;https://aws.amazon.com/cloudfront/details/#Detailed_Description&#34;&gt;worldwide 54 edge location CDN&lt;/a&gt; would be nice. AWS CloudFront can accomplish all of this quite easily.&lt;/p&gt;
+
+&lt;p&gt;First we&amp;rsquo;ll tell &lt;code&gt;awscli&lt;/code&gt; to enable the CloudFront tools, which are presently in &amp;ldquo;Preview Mode.&amp;rdquo;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws  configure  set preview.cloudfront true # Honey badger don&#39;t care
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is a long config, so let&amp;rsquo;s break it down:&lt;/p&gt;
+
+&lt;h4 id=&#34;origin-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Origin Config&lt;/h4&gt;
+
+&lt;p&gt;We must use the &lt;strong&gt;S3 website hosting URL&lt;/strong&gt; not simply point to the S3 bucket like regular CF setup. This allows us to get &lt;strong&gt;index.html&lt;/strong&gt; redirecting. This also means we cannot use &lt;strong&gt;HTTPS Only&lt;/strong&gt; on the origin, because its domain won&amp;rsquo;t match the generic S3 certificate AWS uses for all S3 requests.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;  &amp;quot;Origins&amp;quot;: {
+    &amp;quot;Quantity&amp;quot;: 1,
+    &amp;quot;Items&amp;quot;: [
+      {
+        &amp;quot;Id&amp;quot;: &amp;quot;$BUCKET_NAME-origin&amp;quot;,
+        &amp;quot;OriginPath&amp;quot;: &amp;quot;&amp;quot;,
+        &amp;quot;CustomOriginConfig&amp;quot;: {
+          &amp;quot;OriginProtocolPolicy&amp;quot;: &amp;quot;http-only&amp;quot;,
+          &amp;quot;HTTPPort&amp;quot;: 80,
+          &amp;quot;OriginSslProtocols&amp;quot;: {
+            &amp;quot;Quantity&amp;quot;: 3,
+            &amp;quot;Items&amp;quot;: [
+              &amp;quot;TLSv1&amp;quot;,
+              &amp;quot;TLSv1.1&amp;quot;,
+              &amp;quot;TLSv1.2&amp;quot;
+            ]
+          },
+          &amp;quot;HTTPSPort&amp;quot;: 443
+        },
+        &amp;quot;DomainName&amp;quot;: &amp;quot;$BUCKET_NAME.s3-website-$REGION.amazonaws.com&amp;quot;
+      }
+    ]
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;logging-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Logging Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Log CF hits to the buckets we already made&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;Logging&amp;quot;: {
+    &amp;quot;Bucket&amp;quot;: &amp;quot;$LOG_BUCKET_NAME.s3.amazonaws.com&amp;quot;, 
+    &amp;quot;Prefix&amp;quot;: &amp;quot;${BUCKET_NAME}-cf/&amp;quot;, 
+    &amp;quot;Enabled&amp;quot;: true
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;cache-behavior-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Cache Behavior Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;We want everyone coming to the site to use SSL, so we&amp;rsquo;ll redirect port 80 &amp;rarr; 443.&lt;/li&gt;
+&lt;li&gt;Cache content for 30min by DefaultCacheBehavior&lt;/li&gt;
+&lt;li&gt;Only forward &lt;code&gt;HEAD&lt;/code&gt; and &lt;code&gt;GET&lt;/code&gt; requests, cache them too&lt;/li&gt;
+&lt;li&gt;Gzip content if possible (reduce bandwidth usage, faster)&lt;/li&gt;
+&lt;li&gt;Don&amp;rsquo;t forward headers&lt;/li&gt;
+&lt;li&gt;Don&amp;rsquo;t trust other signers&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;DefaultCacheBehavior&amp;quot;: {
+&amp;quot;DefaultCacheBehavior&amp;quot;: {
+    &amp;quot;ViewerProtocolPolicy&amp;quot;: &amp;quot;redirect-to-https&amp;quot;,
+    &amp;quot;DefaultTTL&amp;quot;: 1800,
+    &amp;quot;AllowedMethods&amp;quot;: {
+      &amp;quot;Quantity&amp;quot;: 2,
+      &amp;quot;Items&amp;quot;: [
+        &amp;quot;HEAD&amp;quot;,&amp;quot;GET&amp;quot;
+      ],
+      &amp;quot;CachedMethods&amp;quot;: {
+        &amp;quot;Quantity&amp;quot;: 2,
+        &amp;quot;Items&amp;quot;: [
+          &amp;quot;HEAD&amp;quot;,&amp;quot;GET&amp;quot;
+        ]
+      }
+    },
+    &amp;quot;MinTTL&amp;quot;: 0,
+    &amp;quot;Compress&amp;quot;: true,
+    &amp;quot;ForwardedValues&amp;quot;: {
+      &amp;quot;Headers&amp;quot;: {
+        &amp;quot;Quantity&amp;quot;: 0
+      },
+      &amp;quot;Cookies&amp;quot;: {
+        &amp;quot;Forward&amp;quot;: &amp;quot;none&amp;quot;
+      },
+      &amp;quot;QueryString&amp;quot;: false
+    },
+    &amp;quot;TrustedSigners&amp;quot;: {
+      &amp;quot;Enabled&amp;quot;: false,
+      &amp;quot;Quantity&amp;quot;: 0
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;ssl-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;SSL Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Use the new SSL cert from ACM, referenced by the ARN&lt;/li&gt;
+&lt;li&gt;Use &lt;a href=&#34;https://en.wikipedia.org/wiki/Server_Name_Indication&#34;&gt;SNI&lt;/a&gt;, breaking wood burning browsers on WinXP, because it&amp;rsquo;s FREE&lt;/li&gt;
+&lt;li&gt;Warning: &lt;strong&gt;Not&lt;/strong&gt; using SNI &lt;a href=&#34;https://aws.amazon.com/cloudfront/pricing/#Request_Pricing_for_All_HTTP_Methods_(per_10,000)&#34;&gt;costs &lt;code&gt;$600/mo&lt;/code&gt;&lt;/a&gt;, so &lt;strong&gt;use SNI&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;ViewerCertificate&amp;quot;: {
+    &amp;quot;SSLSupportMethod&amp;quot;: &amp;quot;sni-only&amp;quot;, 
+    &amp;quot;ACMCertificateArn&amp;quot;: &amp;quot;$SSL_ARN&amp;quot;, 
+    &amp;quot;MinimumProtocolVersion&amp;quot;: &amp;quot;TLSv1&amp;quot;, 
+    &amp;quot;Certificate&amp;quot;: &amp;quot;$SSL_ARN&amp;quot;, 
+    &amp;quot;CertificateSource&amp;quot;: &amp;quot;acm&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;error-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Error Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Forward Cloudfront &lt;code&gt;Not Found&lt;/code&gt; and &lt;code&gt;Forbidden&lt;/code&gt; errors to your custom pages&lt;/li&gt;
+&lt;li&gt;Cache failures for 5min, then try the Origin again&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;CustomErrorResponses&amp;quot;: {
+    &amp;quot;Quantity&amp;quot;: 2,
+    &amp;quot;Items&amp;quot;: [
+        {
+            &amp;quot;ErrorCode&amp;quot;: 403, 
+            &amp;quot;ResponsePagePath&amp;quot;: &amp;quot;/404.html&amp;quot;, 
+            &amp;quot;ResponseCode&amp;quot;: &amp;quot;404&amp;quot;,
+            &amp;quot;ErrorCachingMinTTL&amp;quot;: 300
+        }, 
+        {
+            &amp;quot;ErrorCode&amp;quot;: 404, 
+            &amp;quot;ResponsePagePath&amp;quot;: &amp;quot;/404.html&amp;quot;, 
+            &amp;quot;ResponseCode&amp;quot;: &amp;quot;404&amp;quot;,
+            &amp;quot;ErrorCachingMinTTL&amp;quot;: 300
+        }
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;redirect-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Redirect Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mask the ugly default CF domain with your vanity domain&lt;/li&gt;
+&lt;li&gt;Accept root and &lt;code&gt;www.&lt;/code&gt; variants&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;Aliases&amp;quot;: {
+    &amp;quot;Quantity&amp;quot;: 2,
+    &amp;quot;Items&amp;quot;: [
+        &amp;quot;$YOUR_DOMAIN&amp;quot;, &amp;quot;www.$YOUR_DOMAIN&amp;quot;
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;misc-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Misc Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Serve &lt;code&gt;foo.com/index.html&lt;/code&gt; to &lt;code&gt;foo.com&lt;/code&gt; requests&lt;/li&gt;
+&lt;li&gt;Use all edge nodes worldwide&lt;/li&gt;
+&lt;li&gt;Turn it on&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+    &amp;quot;DefaultRootObject&amp;quot;: &amp;quot;index.html&amp;quot;, 
+    &amp;quot;PriceClass&amp;quot;: &amp;quot;PriceClass_All&amp;quot;, 
+    &amp;quot;Enabled&amp;quot;: true
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;making-the-distribution:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Making the Distribution&lt;/h3&gt;
+
+&lt;p&gt;Sorry, it&amp;rsquo;s really ugly, but such is bash escaping.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# From above
+SSL_ARN=&amp;quot;arn:aws:acm:us-east-1:7865196219991:certificate/de305d54-75b4-431b-adb2-eb6b9e546014&amp;quot;
+
+CALLER_REF=&amp;quot;`date +%s`&amp;quot; # current second
+echo &amp;quot;{
+    \&amp;quot;Comment\&amp;quot;: \&amp;quot;$BUCKET_NAME Static Hosting\&amp;quot;, 
+    \&amp;quot;Logging\&amp;quot;: {
+        \&amp;quot;Bucket\&amp;quot;: \&amp;quot;$LOG_BUCKET_NAME.s3.amazonaws.com\&amp;quot;, 
+        \&amp;quot;Prefix\&amp;quot;: \&amp;quot;${BUCKET_NAME}-cf/\&amp;quot;, 
+        \&amp;quot;Enabled\&amp;quot;: true,
+        \&amp;quot;IncludeCookies\&amp;quot;: false
+    }, 
+    \&amp;quot;Origins\&amp;quot;: {
+        \&amp;quot;Quantity\&amp;quot;: 1,
+        \&amp;quot;Items\&amp;quot;: [
+            {
+                \&amp;quot;Id\&amp;quot;:\&amp;quot;$BUCKET_NAME-origin\&amp;quot;,
+                \&amp;quot;OriginPath\&amp;quot;: \&amp;quot;\&amp;quot;, 
+                \&amp;quot;CustomOriginConfig\&amp;quot;: {
+                    \&amp;quot;OriginProtocolPolicy\&amp;quot;: \&amp;quot;http-only\&amp;quot;, 
+                    \&amp;quot;HTTPPort\&amp;quot;: 80, 
+                    \&amp;quot;OriginSslProtocols\&amp;quot;: {
+                        \&amp;quot;Quantity\&amp;quot;: 3,
+                        \&amp;quot;Items\&amp;quot;: [
+                            \&amp;quot;TLSv1\&amp;quot;, 
+                            \&amp;quot;TLSv1.1\&amp;quot;, 
+                            \&amp;quot;TLSv1.2\&amp;quot;
+                        ]
+                    }, 
+                    \&amp;quot;HTTPSPort\&amp;quot;: 443
+                }, 
+                \&amp;quot;DomainName\&amp;quot;: \&amp;quot;$BUCKET_NAME.s3-website-$REGION.amazonaws.com\&amp;quot;
+            }
+        ]
+    }, 
+    \&amp;quot;DefaultRootObject\&amp;quot;: \&amp;quot;index.html\&amp;quot;, 
+    \&amp;quot;PriceClass\&amp;quot;: \&amp;quot;PriceClass_All\&amp;quot;, 
+    \&amp;quot;Enabled\&amp;quot;: true, 
+    \&amp;quot;CallerReference\&amp;quot;: \&amp;quot;$CALLER_REF\&amp;quot;,
+    \&amp;quot;DefaultCacheBehavior\&amp;quot;: {
+        \&amp;quot;TargetOriginId\&amp;quot;: \&amp;quot;$BUCKET_NAME-origin\&amp;quot;,
+        \&amp;quot;ViewerProtocolPolicy\&amp;quot;: \&amp;quot;redirect-to-https\&amp;quot;, 
+        \&amp;quot;DefaultTTL\&amp;quot;: 1800,
+        \&amp;quot;AllowedMethods\&amp;quot;: {
+            \&amp;quot;Quantity\&amp;quot;: 2,
+            \&amp;quot;Items\&amp;quot;: [
+                \&amp;quot;HEAD\&amp;quot;, 
+                \&amp;quot;GET\&amp;quot;
+            ], 
+            \&amp;quot;CachedMethods\&amp;quot;: {
+                \&amp;quot;Quantity\&amp;quot;: 2,
+                \&amp;quot;Items\&amp;quot;: [
+                    \&amp;quot;HEAD\&amp;quot;, 
+                    \&amp;quot;GET\&amp;quot;
+                ]
+            }
+        }, 
+        \&amp;quot;MinTTL\&amp;quot;: 0, 
+        \&amp;quot;Compress\&amp;quot;: true,
+        \&amp;quot;ForwardedValues\&amp;quot;: {
+            \&amp;quot;Headers\&amp;quot;: {
+                \&amp;quot;Quantity\&amp;quot;: 0
+            }, 
+            \&amp;quot;Cookies\&amp;quot;: {
+                \&amp;quot;Forward\&amp;quot;: \&amp;quot;none\&amp;quot;
+            }, 
+            \&amp;quot;QueryString\&amp;quot;: false
+        },
+        \&amp;quot;TrustedSigners\&amp;quot;: {
+            \&amp;quot;Enabled\&amp;quot;: false, 
+            \&amp;quot;Quantity\&amp;quot;: 0
+        }
+    }, 
+    \&amp;quot;ViewerCertificate\&amp;quot;: {
+        \&amp;quot;SSLSupportMethod\&amp;quot;: \&amp;quot;sni-only\&amp;quot;, 
+        \&amp;quot;ACMCertificateArn\&amp;quot;: \&amp;quot;$SSL_ARN\&amp;quot;, 
+        \&amp;quot;MinimumProtocolVersion\&amp;quot;: \&amp;quot;TLSv1\&amp;quot;, 
+        \&amp;quot;Certificate\&amp;quot;: \&amp;quot;$SSL_ARN\&amp;quot;, 
+        \&amp;quot;CertificateSource\&amp;quot;: \&amp;quot;acm\&amp;quot;
+    }, 
+    \&amp;quot;CustomErrorResponses\&amp;quot;: {
+        \&amp;quot;Quantity\&amp;quot;: 2,
+        \&amp;quot;Items\&amp;quot;: [
+            {
+                \&amp;quot;ErrorCode\&amp;quot;: 403, 
+                \&amp;quot;ResponsePagePath\&amp;quot;: \&amp;quot;/404.html\&amp;quot;, 
+                \&amp;quot;ResponseCode\&amp;quot;: \&amp;quot;404\&amp;quot;,
+                \&amp;quot;ErrorCachingMinTTL\&amp;quot;: 300
+            }, 
+            {
+                \&amp;quot;ErrorCode\&amp;quot;: 404, 
+                \&amp;quot;ResponsePagePath\&amp;quot;: \&amp;quot;/404.html\&amp;quot;, 
+                \&amp;quot;ResponseCode\&amp;quot;: \&amp;quot;404\&amp;quot;,
+                \&amp;quot;ErrorCachingMinTTL\&amp;quot;: 300
+            }
+        ]
+    }, 
+    \&amp;quot;Aliases\&amp;quot;: {
+        \&amp;quot;Quantity\&amp;quot;: 2,
+        \&amp;quot;Items\&amp;quot;: [
+            \&amp;quot;$YOUR_DOMAIN\&amp;quot;, 
+            \&amp;quot;www.$YOUR_DOMAIN\&amp;quot;
+        ]
+    }
+}&amp;quot; &amp;gt; distroConfig.json
+
+# Now apply it
+aws cloudfront create-distribution --distribution-config file://distroConfig.json
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Nice. You&amp;rsquo;ve got a CloudFront distribution. Run the below to get the domain name for use next.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws cloudfront list-distributions --query &#39;DistributionList.Items[].{id:Id,comment:Comment,domain:DomainName}&#39;
+# i.e. d8ukw3iojeij2.cloudfront.net
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;route-53-domain-setup:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Route 53 Domain Setup&lt;/h2&gt;
+
+&lt;p&gt;Only one more step! We&amp;rsquo;ll point your &lt;a href=&#34;https://aws.amazon.com/route53/&#34;&gt;Route 53&lt;/a&gt; hosted domain to the CF distribution. This uses &lt;a href=&#34;https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html&#34;&gt;an alias&lt;/a&gt; for the zone apex and a CNAME for the subdomain.&lt;/p&gt;
+
+&lt;p&gt;Find your current hosted zone (domain). i.e. &lt;code&gt;/hostedzone/ZAAWZQV036URT&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws route53 list-hosted-zones
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This config alias the domain to your Cloudfront distribution.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The bare domain get&amp;rsquo;s aliased&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;www&lt;/code&gt; subdomain uses a CNAME&lt;/li&gt;
+&lt;li&gt;Aliases all refernce zone &lt;code&gt;ZAAWZQV036URT&lt;/code&gt;, because &lt;a href=&#34;https://docs.aws.amazon.com/Route53/latest/APIReference/CreateAliasRRSAPI.html&#34;&gt;AWS says so&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;UPSERT&lt;/code&gt; so that this config is applied idempotently&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;Changes&amp;quot;: [
+    {
+      &amp;quot;Action&amp;quot;: &amp;quot;UPSERT&amp;quot;,
+      &amp;quot;ResourceRecordSet&amp;quot;: {
+        &amp;quot;AliasTarget&amp;quot;: {
+          &amp;quot;HostedZoneId&amp;quot;: &amp;quot;Z2FDTNDATAQYW2&amp;quot;,
+          &amp;quot;EvaluateTargetHealth&amp;quot;: false,
+          &amp;quot;DNSName&amp;quot;: &amp;quot;d8ukw3iojeij2.cloudfront.net.&amp;quot;
+        },
+        &amp;quot;Type&amp;quot;: &amp;quot;A&amp;quot;,
+        &amp;quot;Name&amp;quot;: &amp;quot;yoursite.com.&amp;quot;
+      }
+    },
+    {
+      &amp;quot;Action&amp;quot;: &amp;quot;UPSERT&amp;quot;,
+      &amp;quot;ResourceRecordSet&amp;quot;: {
+        &amp;quot;ResourceRecords&amp;quot;: [
+          {
+            &amp;quot;Value&amp;quot;: &amp;quot;d8ukw3iojeij2.cloudfront.net&amp;quot;
+          }
+        ],
+        &amp;quot;Type&amp;quot;: &amp;quot;CNAME&amp;quot;,
+        &amp;quot;Name&amp;quot;: &amp;quot;www.yoursite.com.&amp;quot;,
+        &amp;quot;TTL&amp;quot;: 300
+      }
+    }
+  ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ok, here goes. Build the json and submit it. Note, you&amp;rsquo;ll need to wait ~TTL seconds for the DNS to propagate.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;HOSTED_ZONE_ID=&amp;quot;/hostedzone/ZAAWZQV036URT&amp;quot;
+DISTRO_URL=&amp;quot;d8ukw3iojeij2.cloudfront.net&amp;quot;
+
+echo &amp;quot;{
+    \&amp;quot;Comment\&amp;quot;: \&amp;quot;Let there be Hugo!\&amp;quot;,
+    \&amp;quot;Changes\&amp;quot;: [
+        {
+            \&amp;quot;Action\&amp;quot;:\&amp;quot;UPSERT\&amp;quot;,
+            \&amp;quot;ResourceRecordSet\&amp;quot;: {
+                \&amp;quot;AliasTarget\&amp;quot;: {
+                    \&amp;quot;HostedZoneId\&amp;quot;: \&amp;quot;Z2FDTNDATAQYW2\&amp;quot;, 
+                    \&amp;quot;EvaluateTargetHealth\&amp;quot;: false, 
+                    \&amp;quot;DNSName\&amp;quot;: \&amp;quot;$DISTRO_URL.\&amp;quot;
+                }, 
+                \&amp;quot;Type\&amp;quot;: \&amp;quot;A\&amp;quot;, 
+                \&amp;quot;Name\&amp;quot;: \&amp;quot;$YOUR_DOMAIN.\&amp;quot;
+            }
+        },{
+            \&amp;quot;Action\&amp;quot;:\&amp;quot;UPSERT\&amp;quot;,
+            \&amp;quot;ResourceRecordSet\&amp;quot;: {
+                \&amp;quot;ResourceRecords\&amp;quot;: [
+                    {
+                        \&amp;quot;Value\&amp;quot;: \&amp;quot;$DISTRO_URL\&amp;quot;
+                    }
+                ],
+                \&amp;quot;Type\&amp;quot;: \&amp;quot;CNAME\&amp;quot;,
+                \&amp;quot;Name\&amp;quot;: \&amp;quot;www.$YOUR_DOMAIN.\&amp;quot;,
+                \&amp;quot;TTL\&amp;quot;: 300
+            }
+        }
+    ]
+}&amp;quot; &amp;gt; r53Batch.json
+
+aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --change-batch file://r53Batch.json
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;deployment:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Deployment&lt;/h2&gt;
+
+&lt;p&gt;Great job, you&amp;rsquo;re an AWS API zen master now! That was &lt;em&gt;easy&lt;/em&gt;, right? At least it will be easy to redo later or script with Ansible.&lt;/p&gt;
+
+&lt;p&gt;Note, because there are 54 edge nodes worldwide, it may &lt;strong&gt;take some time&lt;/strong&gt; (i.e. 30min) for your distribtion to be complete. Go get a cup of coffee and let the interwebs stabalize.&lt;/p&gt;
+
+&lt;p&gt;See the next post to &lt;a href=&#34;https://lust.dev/2016/02/28/deploy-hugo-files-to-s3/&#34;&gt;Deploy Hugo Files to S3&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Farewell WordPress, Hello Hugo!</title>
+      <link>https://lust.dev/2016/02/21/farewell-wordpress-hello-hugo/</link>
+      <pubDate>Sun, 21 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/02/21/farewell-wordpress-hello-hugo/</guid>
+      <description>&lt;p&gt;After nearly eight years on WordPress, I finally had enough. Why wait 5 seconds to load a page of 100% static content? Why use the slow and clunky WordPress UI to mangle new posts? And why pay a host &lt;a href=&#34;https://store.wordpress.com/plans/&#34;&gt;$299/yr&lt;/a&gt; for your custom WordPress domain and theme? No sir. I had enough.&lt;/p&gt;
+
+&lt;p&gt;For years I worked on webapps where every facet was burnished to perfection. Dependencies were inlined, dead code elided, artifacts combined and compressed, and every millisecond of load time scrutinized. Blogging about such practices on a WP blog was always a comedic foil. I could go on ad nauseum disparaging WordPress and PHP, but I&amp;rsquo;ll not. It is a tool that works well for many, providing them a functional presence online. WordPress simply didn&amp;rsquo;t meet my needs.&lt;/p&gt;
+
+&lt;p&gt;Today &lt;strong&gt;LustForge.com&lt;/strong&gt; now runs from &lt;a href=&#34;https://aws.amazon.com/cloudfront/&#34;&gt;AWS CloudFront&lt;/a&gt;, backed by &lt;a href=&#34;https://aws.amazon.com/s3/&#34;&gt;S3&lt;/a&gt;, rather than &lt;a href=&#34;https://www.dreamhost.com/&#34;&gt;DreamHost LLC&lt;/a&gt; where it lived since 2008. Instead of costing $119/yr, the blog now costs me &lt;code&gt;¢0.3/yr&lt;/code&gt; in storage, and &lt;code&gt;¢12/yr&lt;/code&gt; in bandwidth. If we count the domain, that&amp;rsquo;s &lt;code&gt;$12.12/yr&lt;/code&gt;. Not bad for a superior product, served from 45 edge nodes worldwide and backed with 11 nines durability. Read &lt;a href=&#34;https://lust.dev/2016/02/27/hosting-hugo-on-aws/&#34;&gt;the complete howto&lt;/a&gt;, order use my &lt;a href=&#34;https://docs.google.com/spreadsheets/d/1-ymzKpTd6M1AYvTrfCGxEt5u6fr4zHim3tSqz1qk94c/edit?usp=sharing&#34;&gt;AWS Blog Hosting Calculator&lt;/a&gt; to see what your blog would cost to hose.&lt;/p&gt;
+
+&lt;p&gt;Farewell WordPress. Hello, &lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Home Cooked Apache Spark</title>
+      <link>https://lust.dev/2016/01/07/home-cooked-apache-spark/</link>
+      <pubDate>Thu, 07 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/01/07/home-cooked-apache-spark/</guid>
+      <description>
+
+&lt;p&gt;We use Apache Spark for various applications at &lt;a href=&#34;https://mc10inc.com&#34;&gt;my job&lt;/a&gt;, but Spark is still relatively unstable, as evidenced by the project&amp;rsquo;s &lt;a href=&#34;https://github.com/apache/spark/pulls&#34;&gt;11K+&lt;/a&gt; pull requests. To maintain developer velocity, we regularly patch show stopper bugs in the Spark source. The process is simple.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Install JDK 6, which is required for PySpark (or you&amp;rsquo;ll get a lengthy warning). Use the &lt;code&gt;oracle-java8-set-default&lt;/code&gt; package to switch between Java 6 and 8, or set &lt;code&gt;JAVA_HOME&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo apt-get install oracle-java6-installer
+oracle-java8-set-default # Go back to Java 8 when you&#39;re done building
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Fork the &lt;a href=&#34;https://github.com/apache/spark&#34;&gt;Apache Spark repo&lt;/a&gt; so you can submit a Pull Request later&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Clone it locally, checking out your tag of interest&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;git clone git@github.com:mc10-inc/spark.git special-spark
+cd special-spark
+git checkout v1.4.1 # Tag of interest
+JAVA_HOME=&amp;quot;/usr/lib/jvm/java-6-oracle&amp;quot; # In case you&#39;ve got 7/8/9 installed
+./make-distribution.sh --name al-dente-spark --tgz
+# Build time of 5:40.12s on my i7-4790K
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Fire up your custom spark build like any other&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;./dist/bin/spark-shell
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Copy the Spark assembly jar to your servers and reboot. Be sure to remove the old artifact, otherwise the ClassLodaer will load both versions and be vexed.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#Move original assembly to backup location
+SPK_PATH=&amp;lt;your spark path&amp;gt;
+mv $SPK_PATH/lib/spark-assembly-1.&amp;lt;spark version&amp;gt;-hadoop2.4.0.jar spark-assembly-backup.jar
+cp dist/lib/spark-assembly-&amp;lt;spark version&amp;gt;-hadoop2.2.0.jar $SPK_PATH/lib/
+./bin/spark-shell # Contact!
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;additional-tricks:4df31c08f441718271b2f3213a675cee&#34;&gt;Additional Tricks&lt;/h2&gt;
+
+&lt;p&gt;Scala 2.10 is old hat. Most people develop on Scala 2.11, and 2.12 will be released in 2 months. To run Spark on Scala 2.11, you must build it &lt;a href=&#34;https://spark.apache.org/docs/latest/building-spark.html#building-for-scala-211&#34;&gt;yourself&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;./dev/change-scala-version.sh 2.11
+./make-distribution.sh --name al-dente-spark --tgz # Build again
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;possible-failures:4df31c08f441718271b2f3213a675cee&#34;&gt;Possible Failures&lt;/h3&gt;
+
+&lt;p&gt;Possible error message below, if you don&amp;rsquo;t use Java 6. I use PySpark, so I need that integration. Why Python needs a version of Java EoL&amp;rsquo;d &lt;a href=&#34;http://www.oracle.com/technetwork/java/eol-135779.html&#34;&gt;3 years ago&lt;/a&gt; is beyond me, but then again, Python 3 split from Python 2 eight years ago.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;+ echo &#39;***NOTE***: JAVA_HOME is not set to a JDK 6 installation. The resulting&#39;
+***NOTE***: JAVA_HOME is not set to a JDK 6 installation. The resulting
++ echo &#39;            distribution may not work well with PySpark and will not run&#39;
+            distribution may not work well with PySpark and will not run
++ echo &#39;            with Java 6 (See SPARK-1703 and SPARK-1911).&#39;
+            with Java 6 (See SPARK-1703 and SPARK-1911).
++ echo &#39;            This test can be disabled by adding --skip-java-test.&#39;
+            This test can be disabled by adding --skip-java-test.
++ echo &#39;Output from &#39;\&#39;&#39;java -version&#39;\&#39;&#39; was:&#39;
+Output from &#39;java -version&#39; was:
++ echo &#39;java version &amp;quot;1.8.0_66&amp;quot;
+Java(TM) SE Runtime Environment (build 1.8.0_66-b17)
+Java HotSpot(TM) 64-Bit Server VM (build 25.66-b17, mixed mode)&#39;
+java version &amp;quot;1.8.0_66&amp;quot;
+Java(TM) SE Runtime Environment (build 1.8.0_66-b17)
+Java HotSpot(TM) 64-Bit Server VM (build 25.66-b17, mixed mode)
++ read -p &#39;Would you like to continue anyways? [y,n]: &#39; -r
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Remote Debugging Apache Spark Clusters</title>
+      <link>https://lust.dev/2016/01/01/remote-debugging-apache-spark-clusters/</link>
+      <pubDate>Fri, 01 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/01/01/remote-debugging-apache-spark-clusters/</guid>
+      <description>
+
+&lt;p&gt;Debugging Apache Spark can be tricky. Sure, everything works on your &lt;code&gt;--master local[4]&lt;/code&gt; cluster, but not when run on a real cluster. In these cases, you need to drop to a debug breakpoint in the running cluster.&lt;/p&gt;
+
+&lt;h1 id=&#34;get-debugger-listening:4f6d4ffb5de2e91f09058cc87ab666ab&#34;&gt;Get Debugger Listening&lt;/h1&gt;
+
+&lt;p&gt;Simply update the launch args wherever you start Spark like so. Note: &lt;code&gt;SPARK_JAVA_OPTS&lt;/code&gt; won&amp;rsquo;t do the trick.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;
+  export SPARK_WORKER_OPTS=&amp;quot;-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=n&amp;quot;
+  export SPARK_MASTER_OPTS=&amp;quot;-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=n&amp;quot;
+  /opt/spark/sbin/start-master.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Open an SSH tunnel to your remote cluster machine, mapping &lt;code&gt;localhost:4000&lt;/code&gt; to &lt;code&gt;spark-master.foo.com:5000&lt;/code&gt;, assuming the cluster is at &lt;code&gt;spark-master.foo.com&lt;/code&gt;, listening on port &lt;code&gt;5000&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;ssh -L localhost:5000:spark-master.foo.com:4000  you@spark-master.foo.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now Eclipse will think you&amp;rsquo;re just debugging a local Spark process.&lt;/p&gt;
+
+&lt;h1 id=&#34;set-eclipse-breakpoint:4f6d4ffb5de2e91f09058cc87ab666ab&#34;&gt;Set Eclipse Breakpoint&lt;/h1&gt;
+
+&lt;p&gt;Let&amp;rsquo;s checkout the &lt;a href=&#34;https://github.com/apache/spark&#34;&gt;Spark source&lt;/a&gt; and set that breakpoint. Let&amp;rsquo;s say you want to sniff around the Spark Master when a &lt;a href=&#34;https://github.com/apache/spark/blob/v1.6.0/core/src/main/scala/org/apache/spark/deploy/master/Master.scala#L503&#34;&gt;Worker gets disconnected&lt;/a&gt;, in release v1.6.0.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;git clone https://github.com/apache/spark.git
+git checkout v1.6.0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now import the Spark &lt;code&gt;core&lt;/code&gt; module into ScalaIDE. There are a &lt;em&gt;lot&lt;/em&gt; of modules, you only need &lt;code&gt;spark-core&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Set your breakpoint and create a Remote Java Application debugger config as shown below.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/debug_config_eclipse_spark.png&#34; /&gt;
+    
+    
+    &lt;figcaption&gt;
+        &lt;h4&gt;ScalaIDE Debugger Configuration&lt;/h4&gt;
+        
+    &lt;/figcaption&gt;
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;That&amp;rsquo;s it! Now you can debug on your live cluster as if it were your desktop.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Black Box Interviewing</title>
+      <link>https://lust.dev/2015/11/12/black-box-interviewing/</link>
+      <pubDate>Thu, 12 Nov 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2015/11/12/black-box-interviewing/</guid>
+      <description>&lt;p&gt;Empirically speaking, the majority of software developers are uninspiring&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:8b800c1c342d276be479b14d963b96ab:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:8b800c1c342d276be479b14d963b96ab:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;. This applies to the formally and informally trained. Perhaps this is because many web frameworks and 4GL&amp;rsquo;s don&amp;rsquo;t require much understanding of bits, threads, and complexity. If you&amp;rsquo;ve no idea what makes the machine tick, you&amp;rsquo;re creations will be simply dependent on the “magic” of computers, rather than the determinism of science and math.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve interviewed perhaps &lt;del&gt;30&lt;/del&gt; 60 software developers over the years, and have been interviewed &lt;del&gt;15&lt;/del&gt; 20 times myself.&lt;/p&gt;
+
+&lt;p&gt;Some interviewers will ask sorting questions. I disdain this practice. Every serious interviewee has memorized an implementation of bubble sort, whether she understands it or not. The far more revealing and rigorous questions is as powerful as it is short; “Why?” Why did the language implement X like that? Why did you design your system that way? Why does the algorithm run slower on this or that memory architecture?&lt;/p&gt;
+
+&lt;p&gt;But such trenchant questions require a depth of understanding from the interviewer as interviewee. These are more difficult to grade on a standardized, enterprise interview rubric&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:8b800c1c342d276be479b14d963b96ab:2&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:8b800c1c342d276be479b14d963b96ab:2&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;m routinely surprised by interviewees that know only the world within the 80 character width of their IDE. They don&amp;rsquo;t know how the VM executors their code, how the memory model functions, how much space their classes and objects consume, their algorithm&amp;rsquo;s complexity, or the myriad steps that occur from the tokenizing and lexing of their routine to execution in the registers of the production system.&lt;/p&gt;
+
+&lt;p&gt;To many the frameworks, compilers, and language are simply a magic box&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:8b800c1c342d276be479b14d963b96ab:3&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:8b800c1c342d276be479b14d963b96ab:3&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;. It&amp;rsquo;s a testament to 4GL&amp;rsquo;s and the FOSS frameworks that this is sufficient to create complex programs and earn a descent living. It&amp;rsquo;s also a specter over developers and ops that crucial pieces of corporate infrastructure, developed by contractors that have since moved on, are fraught with memory leaks and fatal edge cases that no one understands or is capable of fixing.&lt;/p&gt;
+
+&lt;p&gt;Accordingly, the title “Senior Software Engineer” can be earned at some institutions for having an order of magnitude less ability than at others. A “Junior Engineer” at Company A might easily surpass the “Principal Engineer” at a neighboring Company B. At Google, you can be a “Software Developer” for 5 years without earning the mantel of “Engineer” unless you go through the grinder of being interviewed from scratch again. At other firms, the fact that you&amp;rsquo;ve warmed your chair for 5 years without running away automatically makes you a “Principal Engineer.”&lt;/p&gt;
+
+&lt;p&gt;In summary, you cannot simply judge an applicant by their title. You must grok their cumulative experience and development culture. People can drone on ad nauseam speaking to their resume and purported successes, but to distill their true technical acumen, you must challenge them with open ended technical questions and real world coding challenged. Thus, check the resume and title at the door, and treat the interview like a blackbox. If they understand what makes the machine tick and the fundamental concepts that back computer science, they&amp;rsquo;ll likely be able to excel at whatever framework you&amp;rsquo;re using.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:8b800c1c342d276be479b14d963b96ab:1&#34;&gt;p58, Raymond, Eric S. &lt;a href=&#34;https://en.wikipedia.org/wiki/The_Cathedral_and_the_Bazaar&#34;&gt;The Cathedral &amp;amp; The Bazaar&lt;/a&gt;. Beijing: O`Reilly, 1999. Print.
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:8b800c1c342d276be479b14d963b96ab:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:8b800c1c342d276be479b14d963b96ab:2&#34;&gt;I&amp;rsquo;ve been shocked when fellow interviewers fumbled, not knowing answers to our employer&amp;rsquo;s standard interview deck for novice developer candidates.
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:8b800c1c342d276be479b14d963b96ab:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:8b800c1c342d276be479b14d963b96ab:3&#34;&gt;Developers learn Spring, not Java; JQuery, not Javascript.
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:8b800c1c342d276be479b14d963b96ab:3&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Cassandra Errors: The UnSet Upsert</title>
+      <link>https://lust.dev/2015/06/22/cassandra-errors-the-unset-upsert/</link>
+      <pubDate>Mon, 22 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2015/06/22/cassandra-errors-the-unset-upsert/</guid>
+      <description>&lt;p&gt;During a late night coding session I got the following trace from the Datastax Cassandra Java Driver:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;com.datastax.driver.core.exceptions.SyntaxError: line 1:36 mismatched input &#39;WHERE&#39; expecting K_SET (UPDATE my_table [WHERE] id...)
+at com.datastax.driver.core.Responses$Error.asException(Responses.java:101) ~[cassandra-driver-core-2.1.5.jar:na]
+at com.datastax.driver.core.DefaultResultSetFuture.onSet(DefaultResultSetFuture.java:140) ~[cassandra-driver-core-2.1.5.jar:na]
+at com.datastax.driver.core.RequestHandler.setFinalResult(RequestHandler.java:293) ~[cassandra-driver-core-2.1.5.jar:na]
+at com.datastax.driver.core.RequestHandler.onSet(RequestHandler.java:455) ~[cassandra-driver-core-2.1.5.jar:na]
+at com.datastax.driver.core.Connection$Dispatcher.messageReceived(Connection.java:734) ~[cassandra-driver-core-2.1.5.jar:na]
+at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:70) ~[netty-3.10.1.Final.jar:na]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ok. Let&amp;#8217;s think it through:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Did we not put a key column in the &lt;code&gt;WHERE&lt;/code&gt; clause? Nope.&lt;/li&gt;
+&lt;li&gt;Did we put a non-key column in the &lt;code&gt;WHERE&lt;/code&gt; clause? Nope.&lt;/li&gt;
+&lt;li&gt;Did we put a key column in the &lt;code&gt;SET&lt;/code&gt; clause? Nope.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;OK, what then?&lt;/p&gt;
+
+&lt;p&gt;Well&amp;#8230; my code has many &lt;code&gt;setIfNonNull(...)&lt;/code&gt; helpers. Turns out my testing dataset had all &lt;code&gt;NULL&lt;/code&gt;s. Thus, nothing was being set! Obviously an &lt;code&gt;UPDATE&lt;/code&gt; must update something (though the lines are blurred in C* Upsert land).&lt;/p&gt;
+
+&lt;p&gt;So, this cryptic message from C* should really read &lt;strong&gt;&amp;#8220;Update statement missing SET clause, you fool.&amp;#8221;&lt;/strong&gt; Now if I could &lt;a href=&#34;https://github.com/apache/cassandra/search?utf8=%E2%9C%93&amp;q=mismatched&#34; target=&#34;_blank&#34;&gt;find it in the source&lt;/a&gt;, I&amp;#8217;d submit a PR.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Don’t use Git to Deploy Code</title>
+      <link>https://lust.dev/2015/02/28/dont-use-git-to-deploy-code/</link>
+      <pubDate>Sat, 28 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2015/02/28/dont-use-git-to-deploy-code/</guid>
+      <description>
+
+&lt;!--Not again GitHub! Save us Muscular Failure Unicorn!--&gt;
+
+&lt;p&gt;Just don&amp;#8217;t. If you can&amp;#8217;t reason why, please stop developing code critical to your business.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/github_down.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;when-it-works-it-works:9caea413e602ba8b2ea3301e2cd987db&#34;&gt;When it works, it works&lt;/h3&gt;
+
+&lt;p&gt;Git is great. &lt;em&gt;Push&lt;/em&gt; here, &lt;em&gt;pull&lt;/em&gt; there. It works so well that you might be fatuously convinced it&amp;#8217;s the perfect tool to deploy production code. Even worse, it might appear to work well at this task, further reinforcing your choice  However, the Achilles Heel of any DVCS is your origin provider. Let&amp;#8217;s say that &lt;a href=&#34;https://twitter.com/bitbucket/status/460418803805855745&#34;&gt;BitBucket&lt;/a&gt; has &lt;a href=&#34;https://twitter.com/search?q=%40BitBucket%20down&amp;amp;src=typd&#34;&gt;borked&lt;/a&gt; their database for the 4th time this month or GitHub is suffering yet another DDNS attack. Then we see &lt;a href=&#34;http://jorgennilsson.com/article/there-is-always-a-drawback-bitbucket-major-outage&#34;&gt;posts&lt;/a&gt; &lt;a href=&#34;https://bitbucket.org/alixandru/bitbucket-sync/issue/19/post-hook-deployment-stopped-working&#34;&gt;opining&lt;/a&gt; about failed Git based app deployments.&lt;/p&gt;
+
+&lt;h3 id=&#34;when-shit-goes-wrong-things-get-complicated:9caea413e602ba8b2ea3301e2cd987db&#34;&gt;When shit goes wrong, things get complicated&lt;/h3&gt;
+
+&lt;p&gt;Now shit&amp;#8217;s gone wrong. No worries, there must be a more complicated way to solve what appeared to be a simple workflow. We&amp;#8217;ve got all these Unix cli tools and can bodger something together. I think I can just scp the files over. Wait, better rsync them, I&amp;#8217;m not sure exactly which ones changed. Arr&amp;#8230; so many flags, do I want to compare file checksums or timestamps? Maybe I&amp;#8217;ll tarball up everything and push it over to the servers. What was the command string again &lt;a href=&#34;https://xkcd.com/1168/&#34;&gt;to untar&lt;/a&gt; and ungzip? Crap, I included my file permissions and they don&amp;#8217;t work on the server. Huh, how was I supposed to know the code stored running PID&amp;#8217;s in various files sprinkled throughout the source? WTF, someone tweaked some of those settings files server side and I just overwrote them. Fuck&amp;#8230; I made backup of that server directory before I started, right? Alright, Hail Mary time, I&amp;#8217;ll just export my remote repo and import it as a different origin on the server. How the hell do I do that?&lt;/p&gt;
+
+&lt;h3 id=&#34;shit-goes-wrong-at-the-wrong-time:9caea413e602ba8b2ea3301e2cd987db&#34;&gt;Shit goes wrong at the wrong time&lt;/h3&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/bitbucket_down.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;No knowledge of HTTP codes necessary at BitBucket (500 is bad).&lt;/p&gt;
+
+&lt;p&gt;The above might be a fun exercise on the QA server when it&amp;#8217;s 3pm and everyone&amp;#8217;s in the office on a slow Tuesday, but that&amp;#8217;s not how these things unfold. Nope. What will really happen is there is a hotfix that needs to go out and got assigned to the intern, because he needs the experience, you know. And because he&amp;#8217;s the only guy on call during Thanksgiving since everyone else is away on vacation. But now he&amp;#8217;s riding the wheels off this Rube Goldberg machine, getting both hands stuck in the tar pit and only working himself deeper as he borks the entire production setup and your site is down for the count at 2am on Black Friday.&lt;/p&gt;
+
+&lt;h3 id=&#34;special-snowflake-servers:9caea413e602ba8b2ea3301e2cd987db&#34;&gt;Special snowflake servers&lt;/h3&gt;
+
+&lt;p&gt;Git checkouts to update code encourage &lt;a href=&#34;http://martinfowler.com/bliki/SnowflakeServer.html&#34;&gt;Special Snowflake servers&lt;/a&gt;. Each server is a unique, artisan crafted piece of Unix art. Like literal snowflakes, no two are the same. No one really understands how it all works and the little documentation that exists was last updated in the Bush administration.  Running &lt;code&gt;git status&lt;/code&gt; shows lots of little file changes to get things just right on each machine, some versioned, some not, so no one has had the balls to &lt;code&gt;git reset --hard&lt;/code&gt; for years now.&lt;/p&gt;
+
+&lt;p&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/fail_bitbucket.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+Satanic BitBucket Logo of Doom&lt;/p&gt;
+
+&lt;h3 id=&#34;the-better-deterministic-way:9caea413e602ba8b2ea3301e2cd987db&#34;&gt;The better, deterministic way&lt;/h3&gt;
+
+&lt;p&gt;Deploy your code as a self contained distributable. In Java we&amp;#8217;ve got &lt;a href=&#34;http://en.wikipedia.org/wiki/WAR_%28file_format%29&#34;&gt;War&lt;/a&gt; and &lt;a href=&#34;http://en.wikipedia.org/wiki/EAR_%28file_format%29&#34;&gt;Ear&lt;/a&gt; files. In Play Framework we&amp;#8217;ve got binary distributables you unzip and run. ASP.Net can be &lt;a href=&#34;https://msdn.microsoft.com/en-us/library/dd465323%28v=vs.110%29.aspx&#34; target=&#34;_blank&#34;&gt;packaged&lt;/a&gt;, just like &lt;a href=&#34;https://www.ruby-toolbox.com/categories/packaging_to_executables&#34; target=&#34;_blank&#34;&gt;Ruby&lt;/a&gt; and many others. They&amp;#8217;re like &lt;a href=&#34;http://en.wikipedia.org/wiki/Meal,_Ready-to-Eat&#34; target=&#34;_blank&#34;&gt;MRE&lt;/a&gt;&amp;#8216;s, but you just unzip them. No need to add water. You don&amp;#8217;t care what version of Scala is running on the server host, whether the proper DLL is loaded, or if you&amp;#8217;re on the proper Ruby release. It Just Works™. When shit&amp;#8217;s broken and your customers are screaming on Twitter, you want your code to Just Work.&lt;/p&gt;
+
+&lt;h3 id=&#34;distributing-the-distributables:9caea413e602ba8b2ea3301e2cd987db&#34;&gt;Distributing the distributables&lt;/h3&gt;
+
+&lt;p&gt;&amp;#8220;The distributable is huge!&amp;#8221; you warn. Sure, 78MB won&amp;#8217;t fit on a floppy, but we&amp;#8217;ve got 10G server interconnects. I think we&amp;#8217;ll be OK. &amp;#8220;But where will we server those from,&amp;#8221; you say, still unconvinced. How about &lt;a href=&#34;http://aws.amazon.com/s3/&#34; target=&#34;_blank&#34;&gt;AWS S3&lt;/a&gt;, with 11 nines durability (99.999999999). Or, you can setup your own &lt;a href=&#34;http://docs.openstack.org/developer/swift/&#34; target=&#34;_blank&#34;&gt;Open Stack Swift&lt;/a&gt; object store if you&amp;#8217;d prefer.&lt;/p&gt;
+
+&lt;p&gt;The process is simple:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Built and unit/integration test a commit on CI&lt;/li&gt;
+&lt;li&gt;Push passing build distributable to S3&lt;/li&gt;
+&lt;li&gt;Your deploy script on server downloads from S3 and restarts the app&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;If S3 is down (better take some real MRE&amp;#8217;s into the basement, the end is near), you either:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Download the distributable artifact from CI and scp it to the server&lt;/li&gt;
+&lt;li&gt;If CI and S3 are down, build locally and scp it to the server&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The point is to have a canonical way to turn an explicit state of source (i.e. checkout hash) into an binary that will consistently run as desired where you deploy it. No chasing thousands of source files. No trying to compile all the source on your workstation, and on your CI, and on your front end servers. Fight entropy. Choose determinism.&lt;/p&gt;
+
+&lt;h3 id=&#34;other-reasons:9caea413e602ba8b2ea3301e2cd987db&#34;&gt;Other Reasons&lt;/h3&gt;
+
+&lt;h4 id=&#34;file-contention:9caea413e602ba8b2ea3301e2cd987db&#34;&gt;File contention&lt;/h4&gt;
+
+&lt;p&gt;Do you work in one of those _scripting_ languages? Say PHP, Ruby, or Python. Ever had your SCM fail to update files because of open file pointers to running or zombie threads? Prepare yourself for some possible non-deterministic behavior when you deploy these apps via Git. It&amp;#8217;ll be best to add some &lt;em&gt;pgrep&lt;/em&gt; steps to run around and kill off possibly offensive threads, but then you&amp;#8217;ve got to be asking yourself, &amp;#8220;what life choices did I make that led me to run around killing myriad threads on each deploy?&amp;#8221;&lt;/p&gt;
+
+&lt;h4 id=&#34;scm-8217-s-worse-than-git:9caea413e602ba8b2ea3301e2cd987db&#34;&gt;SCM&amp;#8217;s worse than git&lt;/h4&gt;
+
+&lt;p&gt;Git works pretty well, but what if you&amp;#8217;re deploying with another SCM like &lt;strong&gt;SVN&lt;/strong&gt;. God help you, friend. The change databases that back your local SVN checkout can get corrupted in &lt;a href=&#34;https://stackoverflow.com/questions/335987/how-can-a-svn-repository-become-corrupt&#34;&gt;wondrous ways&lt;/a&gt;. The net result can be that SVN says you&amp;#8217;re on revision X, and &lt;code&gt;svn status&lt;/code&gt; shows no files are changed locally. When you call &lt;code&gt;svn update&lt;/code&gt; or checkout the target revision, you&amp;#8217;re told you&amp;#8217;re already up to date&amp;#8230; but &lt;strong&gt;you&amp;#8217;re not&lt;/strong&gt;.&lt;strong&gt; &lt;/strong&gt;This is true FML territory. If your SCM cannot reliably track changes, it should be cast to special circle in hell. Sadly, I&amp;#8217;ve personally seen this happen three times in a single year. God help you, friend.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

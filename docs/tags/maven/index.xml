@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Maven on lust.dev</title>
+    <link>https://lust.dev/tags/maven/</link>
+    <description>Recent content in Maven on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Tue, 03 Jul 2012 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/maven/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>GWT war file Size Reduction – a.k.a GWT Weightloss</title>
+      <link>https://lust.dev/2012/07/03/gwt-war-file-size-reduction-a-k-a-gwt-weightloss/</link>
+      <pubDate>Tue, 03 Jul 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/07/03/gwt-war-file-size-reduction-a-k-a-gwt-weightloss/</guid>
+      <description>
+
+&lt;p&gt;GWT is great, but the size and number of files compiled can slowly creep upward. In a large project, this can mean your &lt;code&gt;war&lt;/code&gt; file contains thousands of unneeded files. On environments like AppEngine, where the size of your war is limited, this introduces an upper bound on the application size.&lt;/p&gt;
+
+&lt;p&gt;Don&amp;#8217;t worry, you can easily slim that war down.&lt;/p&gt;
+
+&lt;h3 id=&#34;the-stowaways:ebed58af2d057af71a4873944b21a278&#34;&gt;The Stowaways&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;.gwt-tmp/&lt;/code&gt; - used in the compile process, we don&amp;#8217;t need them anymore&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;_.junit_symbolMaps/&lt;/code&gt; - used by junit, not needed in production&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;WEB-INF/classes/com/yourPkg/&lt;/code&gt; - compiled java classes, but client runs JS&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div&gt;
+  But, you don&amp;#8217;t want to ax the entire `WEB-INF/` folder since it contains .rpc manifests. Hold on to these or RPC&amp;#8217;s will be bollixed.
+&lt;/div&gt;
+
+&lt;h3 id=&#34;maven-to-the-rescue:ebed58af2d057af71a4873944b21a278&#34;&gt;Maven to the rescue&lt;/h3&gt;
+
+&lt;p&gt;The following line used when packaging your war using the &lt;strong&gt;maven-antrun-plugin&lt;/strong&gt; does the trick, or you can just do it by hand or your scripting framework of choice.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;plugin&amp;gt;
+    &amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;maven-antrun-plugin&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;1.6&amp;lt;/version&amp;gt;
+    &amp;lt;executions&amp;gt;
+        &amp;lt;execution&amp;gt;
+            &amp;lt;id&amp;gt;package-configuration&amp;lt;/id&amp;gt;
+            &amp;lt;phase&amp;gt;generate-resources&amp;lt;/phase&amp;gt;
+            &amp;lt;configuration&amp;gt;
+                &amp;lt;tasks&amp;gt;
+                    &amp;lt;echo message=&amp;quot;Copying GWT resources into WAR file&amp;quot; /&amp;gt;
+                    &amp;lt;copy todir=&amp;quot;${project.build.directory}/${project.warOutputName}&amp;quot;&amp;gt;
+                        &amp;lt;fileset dir=&amp;quot;../gwt/target/yourModuleName&amp;quot;&amp;gt;
+                            &amp;lt;exclude name=&amp;quot;**/.gwt-tmp/**&amp;quot; /&amp;gt;
+                            &amp;lt;exclude name=&amp;quot;**/*junit_symbolMaps/**&amp;quot; /&amp;gt;
+                             &amp;lt;!-- Just want JS files, not classes, rpc --&amp;gt;
+                            &amp;lt;exclude name=&amp;quot;**/WEB-INF/classes/com/yourPkg/**&amp;quot; /&amp;gt;
+                        &amp;lt;/fileset&amp;gt;
+                    &amp;lt;/copy&amp;gt;
+                &amp;lt;/tasks&amp;gt;
+            &amp;lt;/configuration&amp;gt;
+            &amp;lt;goals&amp;gt;
+                &amp;lt;goal&amp;gt;run&amp;lt;/goal&amp;gt;
+            &amp;lt;/goals&amp;gt;
+        &amp;lt;/execution&amp;gt;
+    &amp;lt;/executions&amp;gt;
+&amp;lt;/plugin&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;case-study:ebed58af2d057af71a4873944b21a278&#34;&gt;Case Study&lt;/h3&gt;
+
+&lt;p&gt;On my project, we took the number of GWT &lt;strong&gt;files in the war from 2800 to 400&lt;/strong&gt;. If we made better use of &lt;a href=&#34;https://developers.google.com/web-toolkit/doc/latest/DevGuideClientBundle#CssResource&#34;&gt;CSSResource&lt;/a&gt;, &lt;a href=&#34;https://developers.google.com/web-toolkit/doc/latest/DevGuideClientBundle#ImageResource&#34;&gt;ImageResource&lt;/a&gt;, and &lt;a href=&#34;https://developers.google.com/web-toolkit/doc/latest/DevGuideClientBundle#DataResource&#34;&gt;DataResource&lt;/a&gt;, it would be more like 150 files in the war.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Saved 2400 files from war file&lt;/li&gt;
+&lt;li&gt;Saved 50% on war file size&lt;/li&gt;
+&lt;li&gt;Sped up compilation by 90 seconds&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>GWT Maps API v3 and Maven</title>
+      <link>https://lust.dev/2012/01/29/gwt-maps-api-v3-and-maven/</link>
+      <pubDate>Sun, 29 Jan 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/01/29/gwt-maps-api-v3-and-maven/</guid>
+      <description>
+
+&lt;h3 id=&#34;deprecated:788057619e1afc861a3694ae552ddea7&#34;&gt;Deprecated&lt;/h3&gt;
+
+&lt;p&gt;This post was for building the pre-alpha version of the&lt;a href=&#34;https://github.com/branflake2267/GWT-Maps-V3-Api&#34;&gt;GWT-Maps-V3-API&lt;/a&gt;. However, it&amp;#8217;s now fully Mavenized and hosted on &lt;a href=&#34;https://github.com/branflake2267/GWT-Maps-V3-Api&#34;&gt;GitHib&lt;/a&gt;. Please check it out from there and simply build it.&lt;/p&gt;
+
+&lt;h3 id=&#34;original-post:788057619e1afc861a3694ae552ddea7&#34;&gt;Original Post&lt;/h3&gt;
+
+&lt;p&gt;I&amp;#8217;ve been a great fan of &lt;a href=&#34;https://plus.google.com/u/1/111739836936169749229/posts&#34;&gt;Brandon Donnelson&amp;#8217;s&lt;/a&gt; ongoing &lt;a href=&#34;http://code.google.com/p/gwt-maps-api/&#34;&gt;gwt-maps-api&lt;/a&gt; project. However, I also love the simplicity Maven brings to my projects and life as a whole. The following is how to build the &lt;em&gt;gwt-maps-api&lt;/em&gt; project using Maven (m2e) and Eclipse (Indigo). Note that since the project is still prebeta, the below are subject to change. Post a comment if you have an issue or suggestion.&lt;/p&gt;
+
+&lt;h2 id=&#34;assumptions:788057619e1afc861a3694ae552ddea7&#34;&gt;Assumptions:&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Eclipse Indigo installed w/ Maven integration.&lt;/li&gt;
+&lt;li&gt;GWT Eclipse plugin installed (for Indigo 3.7).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Google how to do these tasks if unsure. They should be straight forward.&lt;/p&gt;
+
+&lt;h2 id=&#34;checkout-the-project:788057619e1afc861a3694ae552ddea7&#34;&gt;Checkout the project&lt;/h2&gt;
+
+&lt;p&gt;Using Tortoise or your subversion client of choice, check out&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;http://gwt-maps-api.googlecode.com/svn/trunk/Apis_Google_Maps/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;import-to-eclipse:788057619e1afc861a3694ae552ddea7&#34;&gt;Import to Eclipse&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;From the Eclipse Project Explorer: &lt;strong&gt;Right Click &amp;gt; Import&amp;#8230; &amp;gt; General &amp;gt; Existing Projects into Workspace.&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Browse&lt;/strong&gt; and find the location you checked the source out to under &lt;strong&gt;Selected root directory.&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Finish&lt;/strong&gt; on the Import Wizard.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;prune-missing-dependencies:788057619e1afc861a3694ae552ddea7&#34;&gt;Prune Missing Dependencies&lt;/h2&gt;
+
+&lt;p&gt;First let&amp;#8217;s get rid of the hardcoded references to missing external libraries in the project since these are making Eclipse give your error messages.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Right Click&lt;/strong&gt; your project on the &lt;strong&gt;Projects Explorer &amp;gt; Build Path &amp;gt; Configure Build Path&amp;#8230;&lt;/strong&gt; .&lt;/li&gt;
+&lt;li&gt;Remove the links to other projects under &lt;strong&gt;Projects&lt;/strong&gt; tab.&lt;/li&gt;
+&lt;li&gt;Remove links to external &lt;em&gt;ajaxloader&lt;/em&gt;, &lt;em&gt;gwt-user&lt;/em&gt;, &lt;em&gt;gwt-dev&lt;/em&gt;, and &lt;em&gt;validation-api&lt;/em&gt; jars under the &lt;strong&gt;Libraries&lt;/strong&gt; tab.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;mavenize-the-project:788057619e1afc861a3694ae552ddea7&#34;&gt;Mavenize the Project&lt;/h3&gt;
+
+&lt;p&gt;The project is not currently under Maven dependency control. How sad :(. Let&amp;#8217;s fix that.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Right Click&lt;/strong&gt; on the project in the Project Explorer and click &lt;strong&gt;Maven2 &amp;gt; Enable Dependency Management&lt;/strong&gt; (and &lt;strong&gt;Finish&lt;/strong&gt;, ignore config options). Now Maven will try to resolve dependencies.&lt;/li&gt;
+&lt;li&gt;You&amp;#8217;ll need to give it a POM  file to tell it the dependencies and configure the build process. Replace the contents of &lt;strong&gt;pom.xml&lt;/strong&gt; in your project root with the below xml and save. Maven will now download and configure the dependencies.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;project xmlns=&amp;quot;http://maven.apache.org/POM/4.0.0&amp;quot; xmlns:xsi=&amp;quot;http://www.w3.org/2001/XMLSchema-instance&amp;quot;
+ xsi:schemaLocation=&amp;quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&amp;quot;&amp;gt;
+
+    &amp;lt;modelVersion&amp;gt;4.0.0&amp;lt;/modelVersion&amp;gt;
+
+    &amp;lt;scm&amp;gt;
+        &amp;lt;url&amp;gt;http://gwt-maps-api.googlecode.com/svn&amp;lt;/url&amp;gt;
+        &amp;lt;connection&amp;gt;scm:svn:http://gwt-maps-api.googlecode.com/svn/trunk/&amp;lt;/connection&amp;gt;
+        &amp;lt;developerConnection&amp;gt;scm:svn:http://gwt-maps-api.googlecode.com/svn/trunk/&amp;lt;/developerConnection&amp;gt;
+    &amp;lt;/scm&amp;gt;
+
+    &amp;lt;!-- Artifact details that people will use search for this project --&amp;gt;
+    &amp;lt;groupId&amp;gt;com.google.gwt.maps&amp;lt;/groupId&amp;gt;
+    &amp;lt;artifactId&amp;gt;gwt-maps-api-v3&amp;lt;/artifactId&amp;gt;
+    &amp;lt;version&amp;gt;1.0.0-SNAPSHOT&amp;lt;/version&amp;gt;
+    &amp;lt;name&amp;gt;Google Web Toolkit Maps API V3&amp;lt;/name&amp;gt;
+    &amp;lt;url&amp;gt;http://code.google.com/p/gwt-maps-api/&amp;lt;/url&amp;gt;
+
+    &amp;lt;!-- Example license --&amp;gt;
+    &amp;lt;licenses&amp;gt;
+        &amp;lt;license&amp;gt;
+            &amp;lt;!-- &amp;lt;name&amp;gt;LGPLv3&amp;lt;/name&amp;gt; &amp;lt;url&amp;gt;http://www.gnu.org/licenses/lgpl-3.0.txt&amp;lt;/url&amp;gt; --&amp;gt;
+        &amp;lt;/license&amp;gt;
+    &amp;lt;/licenses&amp;gt;
+
+    &amp;lt;!-- Dev info --&amp;gt;
+    &amp;lt;developers&amp;gt;
+        &amp;lt;developer&amp;gt;
+            &amp;lt;name&amp;gt;Brandon Donnelson&amp;lt;/name&amp;gt;
+            &amp;lt;email&amp;gt;branflake2267@gmail.com&amp;lt;/email&amp;gt;
+            &amp;lt;organization&amp;gt;Gone Vertical LLC&amp;lt;/organization&amp;gt;
+            &amp;lt;url&amp;gt;http://gonevertical.com/&amp;lt;/url&amp;gt;
+        &amp;lt;/developer&amp;gt;
+    &amp;lt;/developers&amp;gt;
+
+    &amp;lt;properties&amp;gt;
+        &amp;lt;!-- Java props --&amp;gt;
+        &amp;lt;javaVersion&amp;gt;1.6&amp;lt;/javaVersion&amp;gt;
+        &amp;lt;no.unittests&amp;gt;false&amp;lt;/no.unittests&amp;gt;
+        &amp;lt;webappDirectory&amp;gt;${project.build.directory}/${project.build.finalName}&amp;lt;/webappDirectory&amp;gt;
+        &amp;lt;project.build.sourceEncoding&amp;gt;UTF-8&amp;lt;/project.build.sourceEncoding&amp;gt;
+
+        &amp;lt;!-- GWT props --&amp;gt;
+        &amp;lt;gwt.version&amp;gt;2.4.0&amp;lt;/gwt.version&amp;gt;
+        &amp;lt;gwt.extraJvmArgs&amp;gt;-Xmx1024m -Xss8m&amp;lt;/gwt.extraJvmArgs&amp;gt;
+        &amp;lt;gwt.test.skip&amp;gt;false&amp;lt;/gwt.test.skip&amp;gt;
+    &amp;lt;/properties&amp;gt;
+
+    &amp;lt;!-- Actual build instructions and sequences --&amp;gt;
+    &amp;lt;build&amp;gt;
+
+        &amp;lt;!-- Generate compiled stuff in the folder used for developing mode --&amp;gt;
+        &amp;lt;!--&amp;lt;outputDirectory&amp;gt;${project.build.directory}/war/WEB-INF/classes&amp;lt;/outputDirectory&amp;gt; --&amp;gt;
+        &amp;lt;outputDirectory&amp;gt;${basedir}/war/WEB-INF/classes&amp;lt;/outputDirectory&amp;gt;
+        &amp;lt;testOutputDirectory&amp;gt;${basedir}/target/test-classes&amp;lt;/testOutputDirectory&amp;gt;
+
+        &amp;lt;!-- Build this code --&amp;gt;
+        &amp;lt;sourceDirectory&amp;gt;src&amp;lt;/sourceDirectory&amp;gt;
+        &amp;lt;testSourceDirectory&amp;gt;test&amp;lt;/testSourceDirectory&amp;gt;
+
+        &amp;lt;!-- Plugins needed for building --&amp;gt;
+        &amp;lt;plugins&amp;gt;
+            &amp;lt;!-- Build and package module as GWT jar w/ .gwt inside --&amp;gt;
+            &amp;lt;plugin&amp;gt;
+                &amp;lt;groupId&amp;gt;org.codehaus.mojo&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;gwt-maven-plugin&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;2.4.0&amp;lt;/version&amp;gt;
+                &amp;lt;executions&amp;gt;
+                    &amp;lt;execution&amp;gt;
+                        &amp;lt;goals&amp;gt;
+                            &amp;lt;goal&amp;gt;resources&amp;lt;/goal&amp;gt;
+                        &amp;lt;/goals&amp;gt;
+                    &amp;lt;/execution&amp;gt;
+                &amp;lt;/executions&amp;gt;
+                &amp;lt;configuration&amp;gt;
+                    &amp;lt;module&amp;gt;com.google.gwt.maps.Apis_Google_Maps&amp;lt;/module&amp;gt;
+                &amp;lt;/configuration&amp;gt;
+            &amp;lt;/plugin&amp;gt;
+            &amp;lt;!-- Build using java 1.6. GWT requires at least Java 1.5 --&amp;gt;
+            &amp;lt;plugin&amp;gt;
+                &amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;maven-compiler-plugin&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;2.3.2&amp;lt;/version&amp;gt;
+
+                &amp;lt;configuration&amp;gt;
+                    &amp;lt;source&amp;gt;${javaVersion}&amp;lt;/source&amp;gt;
+                    &amp;lt;target&amp;gt;${javaVersion}&amp;lt;/target&amp;gt;
+                &amp;lt;/configuration&amp;gt;
+            &amp;lt;/plugin&amp;gt;
+            &amp;lt;!-- Deploy source code in the repository --&amp;gt;
+            &amp;lt;plugin&amp;gt;
+                &amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;maven-source-plugin&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;2.1.2&amp;lt;/version&amp;gt;
+
+                &amp;lt;executions&amp;gt;
+                    &amp;lt;execution&amp;gt;
+                        &amp;lt;goals&amp;gt;
+                            &amp;lt;goal&amp;gt;jar&amp;lt;/goal&amp;gt;
+                        &amp;lt;/goals&amp;gt;
+                    &amp;lt;/execution&amp;gt;
+                &amp;lt;/executions&amp;gt;
+            &amp;lt;/plugin&amp;gt;
+            &amp;lt;!-- Deploy javadoc in the repository --&amp;gt;
+            &amp;lt;plugin&amp;gt;
+                &amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+                &amp;lt;artifactId&amp;gt;maven-javadoc-plugin&amp;lt;/artifactId&amp;gt;
+                &amp;lt;version&amp;gt;2.8&amp;lt;/version&amp;gt;
+
+                &amp;lt;executions&amp;gt;
+                    &amp;lt;execution&amp;gt;
+                        &amp;lt;id&amp;gt;attach-javadocs&amp;lt;/id&amp;gt;
+                        &amp;lt;goals&amp;gt;
+                            &amp;lt;goal&amp;gt;jar&amp;lt;/goal&amp;gt;
+                        &amp;lt;/goals&amp;gt;
+                    &amp;lt;/execution&amp;gt;
+                &amp;lt;/executions&amp;gt;
+            &amp;lt;/plugin&amp;gt;
+        &amp;lt;/plugins&amp;gt;
+
+    &amp;lt;/build&amp;gt;
+
+    &amp;lt;!-- External project dependencies --&amp;gt;
+    &amp;lt;dependencies&amp;gt;
+
+        &amp;lt;!-- Other Google --&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.google.gwt.google-apis&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;gwt-ajaxloader&amp;lt;/artifactId&amp;gt;
+            &amp;lt;version&amp;gt;1.1.0&amp;lt;/version&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;!-- Just the necessary GWT bits --&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.google.gwt&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;gwt-user&amp;lt;/artifactId&amp;gt;
+            &amp;lt;version&amp;gt;${gwt.version}&amp;lt;/version&amp;gt;
+            &amp;lt;scope&amp;gt;provided&amp;lt;/scope&amp;gt; &amp;lt;!-- don&#39;t copy to jar --&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;com.google.gwt&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;gwt-dev&amp;lt;/artifactId&amp;gt;
+            &amp;lt;version&amp;gt;${gwt.version}&amp;lt;/version&amp;gt; &amp;lt;!-- don&#39;t copy to jar --&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+        &amp;lt;!-- Testing --&amp;gt;
+        &amp;lt;dependency&amp;gt;
+            &amp;lt;groupId&amp;gt;junit&amp;lt;/groupId&amp;gt;
+            &amp;lt;artifactId&amp;gt;junit&amp;lt;/artifactId&amp;gt;
+            &amp;lt;version&amp;gt;4.7&amp;lt;/version&amp;gt;
+            &amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt; &amp;lt;!-- don&#39;t copy to jar --&amp;gt;
+        &amp;lt;/dependency&amp;gt;
+
+    &amp;lt;/dependencies&amp;gt;
+
+&amp;lt;/project&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;make-project-a-gwt-project:788057619e1afc861a3694ae552ddea7&#34;&gt;Make Project a GWT Project&lt;/h2&gt;
+
+&lt;p&gt;This will enable the GWT Eclipse plugin functionality for this project.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Right Click&lt;/strong&gt; project from &lt;strong&gt;Project Explorer &amp;gt; Google &amp;gt; Google Web Toolkit Settings&amp;#8230;&lt;/strong&gt; .&lt;/li&gt;
+&lt;li&gt;Check (or uncheck and recheck) &lt;strong&gt;Use Google Web Toolkit&lt;/strong&gt; checkbox. It should be using the second radio button &lt;strong&gt;Use specific SDK&lt;/strong&gt; which is the maven GWT  jar.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;build-and-install-project:788057619e1afc861a3694ae552ddea7&#34;&gt;Build and Install Project&lt;/h2&gt;
+
+&lt;p&gt;Now we&amp;#8217;ll build the project and package it into a GWT Library.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Right Click&lt;/strong&gt; project from &lt;strong&gt;Project Explorer &amp;gt; Run as &amp;gt; Run Configurations&amp;#8230;&lt;/strong&gt; .&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Right Click&lt;/strong&gt; on &lt;strong&gt;Maven Build&lt;/strong&gt; and click &lt;strong&gt;New&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Under &lt;strong&gt;Name&lt;/strong&gt; give your this configuration a name like &amp;#8220;&lt;em&gt;Build gwt-maps-api Library.&lt;/em&gt;&amp;#8220;&lt;/li&gt;
+&lt;li&gt;Under &lt;strong&gt;Base Directory&lt;/strong&gt; click &lt;strong&gt;Browse Worldspace&amp;#8230;&lt;/strong&gt; and select the current project.&lt;/li&gt;
+&lt;li&gt;Under &lt;strong&gt;Goals&lt;/strong&gt; enter &lt;em&gt;clean compile package install&lt;/em&gt;. This will clean out the project, compile it, package it into a jar and install it in your local Maven repo.&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Apply&lt;/strong&gt; and click &lt;strong&gt;Run&lt;/strong&gt;. Now you should see a bunch of output ending in &lt;em&gt;BUILD SUCCESS.&lt;/em&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Horay!&lt;/p&gt;
+
+&lt;p&gt;You&amp;#8217;ve now built the API and can use it. To stay up today, update your project via Subversion and just rebuild it! That was easy.&lt;/p&gt;
+
+&lt;h2 id=&#34;using-the-library-in-your-project:788057619e1afc861a3694ae552ddea7&#34;&gt;Using the Library in your Project&lt;/h2&gt;
+
+&lt;p&gt;For your new map API consuming GWT project, either add the above jar file into your &lt;strong&gt;Build Path&lt;/strong&gt; as an &lt;strong&gt;External JAR&lt;/strong&gt; or add the following dependency if it is a Maven project (easier, Maven rocks!).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;dependency&amp;gt;
+ &amp;lt;groupId&amp;gt;com.google.gwt.maps&amp;lt;/groupId&amp;gt;
+ &amp;lt;artifactId&amp;gt;gwt-maps-api-v3&amp;lt;/artifactId&amp;gt;
+ &amp;lt;version&amp;gt;1.0.0-SNAPSHOT&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now just inheirt this in your module that uses it. In the &lt;em&gt;yourModule.gwt.xml&lt;/em&gt; add:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;...
+  &amp;lt;!-- Load the gwt maps api --&amp;gt;
+  &amp;lt;inherits name=&#39;com.google.gwt.maps.Apis_Google_Maps&#39;/&amp;gt;
+...
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

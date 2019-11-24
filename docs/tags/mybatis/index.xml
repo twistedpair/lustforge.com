@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mybatis on lust.dev</title>
+    <link>https://lust.dev/tags/mybatis/</link>
+    <description>Recent content in Mybatis on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Sun, 12 Oct 2014 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/mybatis/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Using Immutable Objects with MyBatis</title>
+      <link>https://lust.dev/2014/10/12/using-immutable-objects-with-mybatis/</link>
+      <pubDate>Sun, 12 Oct 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2014/10/12/using-immutable-objects-with-mybatis/</guid>
+      <description>
+
+&lt;h3 id=&#34;immutable-is-beautiful:d90d602dac8d4ebcf6da451e2175ba06&#34;&gt;Immutable is Beautiful&lt;/h3&gt;
+
+&lt;p&gt;I&amp;#8217;m a fan of immutable objects. We all know the benefits; simple, no mutators, thread safe, cache word optimizable. However, I see far too many MyBatis (and iBatis) developers adding no arg constructors to their POJO&amp;#8217;s simply so that MyBatis can reflect and set all of the values into the field setters. I&amp;#8217;ll ask &amp;#8220;&lt;em&gt;why does this POJO need to be mutated&lt;/em&gt;&amp;#8221; and they quip that it doesn&amp;#8217;t, but these setters and protected no-arg constructors are needed by MyBatis. This violates my principle that you make your library work with your code, not the other way around.&lt;/p&gt;
+
+&lt;p&gt;Given the lack of good documentation on immutable objects in MyBatis, I hope the following helps folks.&lt;/p&gt;
+
+&lt;h3 id=&#34;example-implementation:d90d602dac8d4ebcf6da451e2175ba06&#34;&gt;Example Implementation&lt;/h3&gt;
+
+&lt;p&gt;We need a &lt;strong&gt;ResultMap&lt;/strong&gt; that will tell MyBatis how to map this to a constructor. This is because Java reflection only exposes the constructor parameter types and order, not the names of the parameters (so claim &lt;a title=&#34;Claims!&#34; href=&#34;http://mybatis.github.io/mybatis-3/sqlmap-xml.html#constructor&#34; target=&#34;_blank&#34;&gt;the MyBatis docs&lt;/a&gt;, though Spring somehow manages to &lt;a title=&#34;Proof!&#34; href=&#34;http://docs.spring.io/spring-framework/docs/current/spring-framework-reference/html/beans.html#beans-factory-ctor-arguments-resolution&#34; target=&#34;_blank&#34;&gt;do this with bean constructors&lt;/a&gt;&amp;#8230;).&lt;/p&gt;
+
+&lt;p&gt;The mapper maps the column names returned in the query to the types on the constructor. It also lays out the order of the arguments. Make sure the constructor argument order exactly matches that of your POJO.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; underscores before types map to the primitive value. &lt;strong&gt;_long&lt;/strong&gt; maps to the primitive long type. &lt;strong&gt;long&lt;/strong&gt; maps to the wrapper type &lt;a href=&#34;http://docs.oracle.com/javase/7/docs/api/java/lang/Long.html&#34; target=&#34;_blank&#34;&gt;java.lang.Long&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;resultMap  id=&amp;quot;fooViewMap&amp;quot; type=&amp;quot;com.lustforge.FooView&amp;quot;&amp;gt;
+	&amp;lt;constructor&amp;gt;
+		&amp;lt;arg column=&amp;quot;id&amp;quot; javaType=&amp;quot;_long&amp;quot;/&amp;gt;
+		&amp;lt;arg column=&amp;quot;is_dirty&amp;quot;	javaType=&amp;quot;_boolean&amp;quot;/&amp;gt;
+	&amp;lt;/constructor&amp;gt;
+&amp;lt;/resultMap&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now make sure your query block points to the mapper via its &lt;strong&gt;resultMap&lt;/strong&gt; attribute. Again confirm that the column names returned &lt;strong&gt;exactly match those in the map&lt;/strong&gt;. &lt;strong&gt;Note:&lt;/strong&gt; the order does not need to match for the query.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-xml&#34;&gt;&amp;lt;select id=&amp;quot;getFooViews&amp;quot; resultMap=&amp;quot;fooViewMap&amp;quot;&amp;gt;
+  &amp;lt;![CDATA[
+	    SELECT 
+   		foo.id
+   		foo.is_dirty
+
+		FROM foo
+		-- your query here
+	 ]]&amp;gt;
+&amp;lt;/select&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally make sure your POJO constructor matches. It&amp;#8217;s also a good idea to leave a note to future developers to update MyBatis if they alter the constructor argument types or order.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;public final class FooView {
+
+	private final long id;
+	private final boolean isDirty;
+
+	// Prescient comment
+	// NOTE: MyBatis depends on parameter order and type for object creation
+	// If you change the constructor, update the MyBatis mapper
+	public FooView(long id, boolean isDirty) {
+	    super();
+	    this.id = id;
+	    this.isDirty = isDirty;
+	}
+
+	public long getId() {
+	    return id;
+	}
+
+	public boolean isDirty() {
+	    return isDirty;
+	}
+	
+	// ... don&#39;t forget equals/hashcode and toString as well
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That was easy and now you&amp;#8217;re using best practices. Pat yourself on the back and get busy with your new immutable POJO.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Apache Spark on lust.dev</title>
+    <link>https://lust.dev/tags/apache-spark/</link>
+    <description>Recent content in Apache Spark on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Thu, 07 Jan 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/apache-spark/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Home Cooked Apache Spark</title>
+      <link>https://lust.dev/2016/01/07/home-cooked-apache-spark/</link>
+      <pubDate>Thu, 07 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/01/07/home-cooked-apache-spark/</guid>
+      <description>
+
+&lt;p&gt;We use Apache Spark for various applications at &lt;a href=&#34;https://mc10inc.com&#34;&gt;my job&lt;/a&gt;, but Spark is still relatively unstable, as evidenced by the project&amp;rsquo;s &lt;a href=&#34;https://github.com/apache/spark/pulls&#34;&gt;11K+&lt;/a&gt; pull requests. To maintain developer velocity, we regularly patch show stopper bugs in the Spark source. The process is simple.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Install JDK 6, which is required for PySpark (or you&amp;rsquo;ll get a lengthy warning). Use the &lt;code&gt;oracle-java8-set-default&lt;/code&gt; package to switch between Java 6 and 8, or set &lt;code&gt;JAVA_HOME&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo apt-get install oracle-java6-installer
+oracle-java8-set-default # Go back to Java 8 when you&#39;re done building
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Fork the &lt;a href=&#34;https://github.com/apache/spark&#34;&gt;Apache Spark repo&lt;/a&gt; so you can submit a Pull Request later&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Clone it locally, checking out your tag of interest&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;git clone git@github.com:mc10-inc/spark.git special-spark
+cd special-spark
+git checkout v1.4.1 # Tag of interest
+JAVA_HOME=&amp;quot;/usr/lib/jvm/java-6-oracle&amp;quot; # In case you&#39;ve got 7/8/9 installed
+./make-distribution.sh --name al-dente-spark --tgz
+# Build time of 5:40.12s on my i7-4790K
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Fire up your custom spark build like any other&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;./dist/bin/spark-shell
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Copy the Spark assembly jar to your servers and reboot. Be sure to remove the old artifact, otherwise the ClassLodaer will load both versions and be vexed.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#Move original assembly to backup location
+SPK_PATH=&amp;lt;your spark path&amp;gt;
+mv $SPK_PATH/lib/spark-assembly-1.&amp;lt;spark version&amp;gt;-hadoop2.4.0.jar spark-assembly-backup.jar
+cp dist/lib/spark-assembly-&amp;lt;spark version&amp;gt;-hadoop2.2.0.jar $SPK_PATH/lib/
+./bin/spark-shell # Contact!
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;additional-tricks:4df31c08f441718271b2f3213a675cee&#34;&gt;Additional Tricks&lt;/h2&gt;
+
+&lt;p&gt;Scala 2.10 is old hat. Most people develop on Scala 2.11, and 2.12 will be released in 2 months. To run Spark on Scala 2.11, you must build it &lt;a href=&#34;https://spark.apache.org/docs/latest/building-spark.html#building-for-scala-211&#34;&gt;yourself&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;./dev/change-scala-version.sh 2.11
+./make-distribution.sh --name al-dente-spark --tgz # Build again
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;possible-failures:4df31c08f441718271b2f3213a675cee&#34;&gt;Possible Failures&lt;/h3&gt;
+
+&lt;p&gt;Possible error message below, if you don&amp;rsquo;t use Java 6. I use PySpark, so I need that integration. Why Python needs a version of Java EoL&amp;rsquo;d &lt;a href=&#34;http://www.oracle.com/technetwork/java/eol-135779.html&#34;&gt;3 years ago&lt;/a&gt; is beyond me, but then again, Python 3 split from Python 2 eight years ago.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;+ echo &#39;***NOTE***: JAVA_HOME is not set to a JDK 6 installation. The resulting&#39;
+***NOTE***: JAVA_HOME is not set to a JDK 6 installation. The resulting
++ echo &#39;            distribution may not work well with PySpark and will not run&#39;
+            distribution may not work well with PySpark and will not run
++ echo &#39;            with Java 6 (See SPARK-1703 and SPARK-1911).&#39;
+            with Java 6 (See SPARK-1703 and SPARK-1911).
++ echo &#39;            This test can be disabled by adding --skip-java-test.&#39;
+            This test can be disabled by adding --skip-java-test.
++ echo &#39;Output from &#39;\&#39;&#39;java -version&#39;\&#39;&#39; was:&#39;
+Output from &#39;java -version&#39; was:
++ echo &#39;java version &amp;quot;1.8.0_66&amp;quot;
+Java(TM) SE Runtime Environment (build 1.8.0_66-b17)
+Java HotSpot(TM) 64-Bit Server VM (build 25.66-b17, mixed mode)&#39;
+java version &amp;quot;1.8.0_66&amp;quot;
+Java(TM) SE Runtime Environment (build 1.8.0_66-b17)
+Java HotSpot(TM) 64-Bit Server VM (build 25.66-b17, mixed mode)
++ read -p &#39;Would you like to continue anyways? [y,n]: &#39; -r
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Remote Debugging Apache Spark Clusters</title>
+      <link>https://lust.dev/2016/01/01/remote-debugging-apache-spark-clusters/</link>
+      <pubDate>Fri, 01 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/01/01/remote-debugging-apache-spark-clusters/</guid>
+      <description>
+
+&lt;p&gt;Debugging Apache Spark can be tricky. Sure, everything works on your &lt;code&gt;--master local[4]&lt;/code&gt; cluster, but not when run on a real cluster. In these cases, you need to drop to a debug breakpoint in the running cluster.&lt;/p&gt;
+
+&lt;h1 id=&#34;get-debugger-listening:4f6d4ffb5de2e91f09058cc87ab666ab&#34;&gt;Get Debugger Listening&lt;/h1&gt;
+
+&lt;p&gt;Simply update the launch args wherever you start Spark like so. Note: &lt;code&gt;SPARK_JAVA_OPTS&lt;/code&gt; won&amp;rsquo;t do the trick.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;
+  export SPARK_WORKER_OPTS=&amp;quot;-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=n&amp;quot;
+  export SPARK_MASTER_OPTS=&amp;quot;-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=n&amp;quot;
+  /opt/spark/sbin/start-master.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Open an SSH tunnel to your remote cluster machine, mapping &lt;code&gt;localhost:4000&lt;/code&gt; to &lt;code&gt;spark-master.foo.com:5000&lt;/code&gt;, assuming the cluster is at &lt;code&gt;spark-master.foo.com&lt;/code&gt;, listening on port &lt;code&gt;5000&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;ssh -L localhost:5000:spark-master.foo.com:4000  you@spark-master.foo.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now Eclipse will think you&amp;rsquo;re just debugging a local Spark process.&lt;/p&gt;
+
+&lt;h1 id=&#34;set-eclipse-breakpoint:4f6d4ffb5de2e91f09058cc87ab666ab&#34;&gt;Set Eclipse Breakpoint&lt;/h1&gt;
+
+&lt;p&gt;Let&amp;rsquo;s checkout the &lt;a href=&#34;https://github.com/apache/spark&#34;&gt;Spark source&lt;/a&gt; and set that breakpoint. Let&amp;rsquo;s say you want to sniff around the Spark Master when a &lt;a href=&#34;https://github.com/apache/spark/blob/v1.6.0/core/src/main/scala/org/apache/spark/deploy/master/Master.scala#L503&#34;&gt;Worker gets disconnected&lt;/a&gt;, in release v1.6.0.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;git clone https://github.com/apache/spark.git
+git checkout v1.6.0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now import the Spark &lt;code&gt;core&lt;/code&gt; module into ScalaIDE. There are a &lt;em&gt;lot&lt;/em&gt; of modules, you only need &lt;code&gt;spark-core&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Set your breakpoint and create a Remote Java Application debugger config as shown below.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/debug_config_eclipse_spark.png&#34; /&gt;
+    
+    
+    &lt;figcaption&gt;
+        &lt;h4&gt;ScalaIDE Debugger Configuration&lt;/h4&gt;
+        
+    &lt;/figcaption&gt;
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;That&amp;rsquo;s it! Now you can debug on your live cluster as if it were your desktop.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

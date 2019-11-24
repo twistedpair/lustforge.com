@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Regex on lust.dev</title>
+    <link>https://lust.dev/tags/regex/</link>
+    <description>Recent content in Regex on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Wed, 07 Nov 2018 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/regex/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Cloud Build Triggers: Excluding Branches</title>
+      <link>https://lust.dev/2018/11/07/cloud-build-triggers-excluding-branches/</link>
+      <pubDate>Wed, 07 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2018/11/07/cloud-build-triggers-excluding-branches/</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://cloud.google.com/cloud-build/&#34;&gt;Cloud Build&lt;/a&gt; is a powerful, scalable, and cheap way to run your CI/CD builds, but the triggers have some limitations, like branch exclusions.&lt;/p&gt;
+
+&lt;p&gt;For example, perhaps you have triggers to:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Build/deploy the tags to &lt;em&gt;production&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Build/deploy the `master branch to &lt;em&gt;integration&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Build/test feature branches on &lt;strong&gt;NOT&lt;/strong&gt; &lt;code&gt;master|develop&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;You can handle cases 1 &amp;amp; 2 with &lt;code&gt;branch&lt;/code&gt; and &lt;code&gt;tag&lt;/code&gt; triggers, but case 3 requires regex exclusions. Unfortunately, this is not an option in &lt;a href=&#34;https://cloud.google.com/cloud-build/docs/running-builds/automate-builds#build_trigger&#34;&gt;Cloud Build triggers&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;regex-contortions-to-the-rescue:b9963c2dec0c6e09e50e2cdb2d28851f&#34;&gt;Regex Contortions to the Rescue&lt;/h1&gt;
+
+&lt;p&gt;It&amp;rsquo;s well know that the solution to a regex problem is always more regex.&lt;/p&gt;
+
+&lt;p&gt;So, using some negative classes (a bunch of them actually), we can make a &lt;strong&gt;NOT&lt;/strong&gt; &lt;code&gt;master&lt;/code&gt; trigger regex for Cloud Build.&lt;/p&gt;
+
+&lt;p&gt;e.g. &lt;code&gt;^(([^m]|m($|[^a]|a($|[^s]|s($|[^t]|t($|[^e]|e($|[^r]))))))|master.+)&lt;/code&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:b9963c2dec0c6e09e50e2cdb2d28851f:2&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:b9963c2dec0c6e09e50e2cdb2d28851f:2&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;don-t-forget-to-match-the-entire-branch:b9963c2dec0c6e09e50e2cdb2d28851f&#34;&gt;Don&amp;rsquo;t Forget to Match the Entire Branch&lt;/h1&gt;
+
+&lt;p&gt;Make sure you match the &lt;strong&gt;entire branch&lt;/strong&gt; name, unless you want to &lt;strong&gt;match multiple branches&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;e.g. &amp;ldquo;&lt;code&gt;^master$&lt;/code&gt;&amp;rdquo; to match master, &lt;strong&gt;not&lt;/strong&gt; &amp;ldquo;&lt;code&gt;master&lt;/code&gt;&amp;ldquo;&lt;/p&gt;
+
+&lt;p&gt;Otherwise, when Jill checks in her feature branch &lt;code&gt;jill-css-masterpiece&lt;/code&gt;, it will automatically get sent to &lt;em&gt;integration&lt;/em&gt; or worse &lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:b9963c2dec0c6e09e50e2cdb2d28851f:10&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:b9963c2dec0c6e09e50e2cdb2d28851f:10&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+
+&lt;p&gt;Match it like you mean it 😉.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:b9963c2dec0c6e09e50e2cdb2d28851f:2&#34;&gt;I&amp;rsquo;m not proud of this solution, but it JustWorks™
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:b9963c2dec0c6e09e50e2cdb2d28851f:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:b9963c2dec0c6e09e50e2cdb2d28851f:10&#34;&gt;Many teams have &lt;code&gt;master&lt;/code&gt; commits ship to production
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:b9963c2dec0c6e09e50e2cdb2d28851f:10&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

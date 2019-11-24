@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Scala on lust.dev</title>
+    <link>https://lust.dev/tags/scala/</link>
+    <description>Recent content in Scala on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Sun, 08 May 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/scala/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Modulo Operator Performance Impact</title>
+      <link>https://lust.dev/2016/05/08/modulo-operator-performance-impact/</link>
+      <pubDate>Sun, 08 May 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/05/08/modulo-operator-performance-impact/</guid>
+      <description>
+
+&lt;p&gt;I was surprised when someone told me not to use the &lt;a href=&#34;https://en.wikipedia.org/wiki/Modulo_operation&#34;&gt;modulo operator&lt;/a&gt; in high performance code. My textbooks used modulo (&lt;code&gt;%&lt;/code&gt;) and various high performance implementations &lt;a href=&#34;https://dzone.com/articles/hashmap-performance&#34;&gt;say to use modulo&lt;/a&gt;. Where had I gone wrong?&lt;/p&gt;
+
+&lt;h2 id=&#34;the-bad:4328c785535fae6da643b5f4d6375870&#34;&gt;The Bad&lt;/h2&gt;
+
+&lt;p&gt;If you look at the JDK&amp;rsquo;s &lt;code&gt;mod()&lt;/code&gt; implementation, you&amp;rsquo;ll see that it&amp;rsquo;s indeed &lt;code&gt;O(n)&lt;/code&gt; &lt;a href=&#34;https://github.com/openjdk-mirror/jdk7u-jdk/blob/f4d80957e89a19a29bb9f9807d2a28351ed7f7df/src/share/native/java/lang/fdlibm/src/e_fmod.c#L42&#34;&gt;for IEE754 floats&lt;/a&gt;, and &lt;code&gt;O(1)&lt;/code&gt; &lt;a href=&#34;https://github.com/openjdk-mirror/jdk7u-jdk/blob/f4d80957e89a19a29bb9f9807d2a28351ed7f7df/src/share/native/java/lang/fdlibm/src/s_modf.c#L46&#34;&gt;for doubles&lt;/a&gt;. Note, the Java Spec defines modulo for integers and also &lt;a href=&#34;https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.17.3&#34;&gt;for negative floating point numbers&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Luckily, there are tricks for modulo with integers.&lt;/p&gt;
+
+&lt;h2 id=&#34;high-performance-modulo:4328c785535fae6da643b5f4d6375870&#34;&gt;High Performance Modulo&lt;/h2&gt;
+
+&lt;p&gt;Here&amp;rsquo;s the trick; &lt;strong&gt;don&amp;rsquo;t use floats&lt;/strong&gt;. Floats are a pain for numerous reason, but let&amp;rsquo;s assume you&amp;rsquo;re wise enough to use a primitive integer type (int or long) to feed you &lt;code&gt;mod()&lt;/code&gt; code, such as your hashmap implementation. There are many neat &lt;a href=&#34;http://graphics.stanford.edu/~seander/bithacks.html#ModulusDivisionEasy&#34;&gt;bit twiddling tricks&lt;/a&gt; to quickly conjure &lt;code&gt;mod(int,int)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;powers-of-two:4328c785535fae6da643b5f4d6375870&#34;&gt;Powers of Two&lt;/h3&gt;
+
+&lt;p&gt;Computers are binary by nature, so using powers of two provide lots of tricks. These can compute &lt;code&gt;mod(int, somePowerOf2)&lt;/code&gt; in only a &lt;em&gt;single machine instruction&lt;/em&gt;! Here&amp;rsquo;s how.&lt;/p&gt;
+
+&lt;!-- %[link to LustBox algos][1] --&gt;
+
+&lt;p&gt;For example, if I want to do &lt;code&gt;61 % 8&lt;/code&gt;, to know which of an &lt;code&gt;Array[Byte]&lt;/code&gt; to grab a value from, we can think of it in binary as &lt;a href=&#34;https://en.wikipedia.org/wiki/Logical_conjunction&#34;&gt;logical conjunction&lt;/a&gt; of the dividend with the  mask of all bits lower than the divisor. For powers of 2, that&amp;rsquo;s just n-1. The bit operations are illustrated below, using 32 bit integers.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://lust.dev/img/bit_diagram.svg&#34;&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/bit_diagram.svg&#34; alt=&#34;Note: Applicable only to Natural Integers&#34; /&gt;
+    
+    
+    &lt;figcaption&gt;
+        &lt;p&gt;
+        Note: Applicable only to Natural Integers
+        
+            
+        
+        &lt;/p&gt; 
+    &lt;/figcaption&gt;
+    
+&lt;/figure&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;We can code this simply as:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def modPow2(n:Int, p2: Int) = n &amp;amp; (p2-1)
+
+def isPow2(n:Int):Boolean = ((n-1) &amp;amp; n ) == 0
+
+def modFast(n:Int, b: Int) = if (isPow2(b)) modPow2(n,b) else n % b
+
+// The old way
+def modOld(n:Int, b:Int) = n % b
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;performance-comparsion:4328c785535fae6da643b5f4d6375870&#34;&gt;Performance Comparsion&lt;/h2&gt;
+
+&lt;p&gt;Comparing the byte code of classic modulo, and our faster version, we see they are both &lt;strong&gt;4 lines of byte code&lt;/strong&gt;. However, classic &lt;code&gt;%&lt;/code&gt; calls the byte code operation &lt;a href=&#34;https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html#jvms-6.5.irem&#34;&gt;&lt;code&gt;irem&lt;/code&gt;&lt;/a&gt; which itself calls a native routine, so it&amp;rsquo;s far more complicated and won&amp;rsquo;t run in constant time.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;  public int modOld(int, int);
+    Code:
+       0: iload_1
+       1: iload_2
+       2: irem
+       3: ireturn
+
+  public int modPow2(int, int); // with 8-1 inlined
+    Code:
+       0: iload_1
+       1: bipush        7
+       3: iand
+       4: ireturn
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A simple benchmark&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:4328c785535fae6da643b5f4d6375870:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:4328c785535fae6da643b5f4d6375870:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; on bare metal&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:4328c785535fae6da643b5f4d6375870:2&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:4328c785535fae6da643b5f4d6375870:2&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; shows what we expect, doing one billion passes of each.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Power 8 trick is the fastest&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;irem&lt;/code&gt; implementation is nearly as fast&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fmod&lt;/code&gt; implementation is 3x slower&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://lust.dev/img/modulo_benchmark_chart.svg&#34;&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/modulo_benchmark_chart.svg&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;!---
+t = [1.589,1.954,7.987]
+bar(t)
+set(ax,&#39;XTickLabel&#39;, {&#34;n &amp; b-1&#34;,&#34;n % b (int)&#34;,&#34;n % b (double)&#34;})
+title(&#34;Comparision of Modulo Execution Times&#34;)
+ylabel(&#39;Mean Time (ns)&#39;)
+xlabel(&#34;Modulo Methods&#34;)
+t(2)/t(1)
+--&gt;
+
+&lt;h2 id=&#34;conclusions:4328c785535fae6da643b5f4d6375870&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Modulo isn&amp;rsquo;t a major performance hog&lt;/li&gt;
+&lt;li&gt;Avoid Double modulo operations if possible (can you use int&amp;rsquo;s?)&lt;/li&gt;
+&lt;li&gt;The reference Java modulo implementation is fast&lt;/li&gt;
+&lt;li&gt;For &lt;code&gt;mod(a,2^n)&lt;/code&gt; operations, &lt;code&gt;modPow2&lt;/code&gt; is ~23% faster than stock moduolo&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If modulo is a critical path in your code, and your divisor is a power of 2 (with Natural dividends), use this trick. Otherwise, the stock JVM implementation should serve you well.&lt;/p&gt;
+
+&lt;!---
+
+### floating
+### Common Ints
+
+TODO: remainderKnuth, remainderBurnikelZiegler, in BigDecimal
+TODO: Check Knuth book for other Impl&#39;s (didn&#39;t see any)
+
+first 3 Google hits, none mention the cost of the operation. Sadness.
+--&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:4328c785535fae6da643b5f4d6375870:1&#34;&gt;Benchmarked with a &lt;a href=&#34;https://gist.github.com/twistedpair/58414ee3237544eaf54a787a59f656c6&#34;&gt;simple iterator&lt;/a&gt;, and &lt;a href=&#34;https://scalameter.github.io/&#34;&gt;ScalaMeter&lt;/a&gt;, and &lt;a href=&#34;http://openjdk.java.net/projects/code-tools/jmh/&#34;&gt;JMH&lt;/a&gt; (see &lt;a href=&#34;https://github.com/twistedpair/benchmark-jvm-modulo&#34;&gt;repo&lt;/a&gt;). JMH provided the most consistent approach, and uses the most advanced methods to warmup and prevent garbage collections. Performed on an untilized, bare metal machine with N=1 billion (1K runs of 1M iterations). JVM memory preallocated at startup (&lt;code&gt;-Xmx=2G -Xms=2G&lt;/code&gt;)
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:4328c785535fae6da643b5f4d6375870:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:4328c785535fae6da643b5f4d6375870:2&#34;&gt;HotSpot 1.8.0_91, Ubuntu 15.04, i7-4790K, 32GB PC3 19200 ram, SSD
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:4328c785535fae6da643b5f4d6375870:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Dangers of the Unit Type Parameter</title>
+      <link>https://lust.dev/2016/04/12/dangers-of-unit-type-parameter/</link>
+      <pubDate>Tue, 12 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/04/12/dangers-of-unit-type-parameter/</guid>
+      <description>
+
+&lt;p&gt;I ran into the following Scala pitfall when refactoring some code recently.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-problem:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;The problem&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://docs.scala-lang.org/overviews/core/futures.html#futures&#34;&gt;Futures&lt;/a&gt; sometimes execute in expected order, other times not. Testing with &lt;code&gt;Await.result(f)&lt;/code&gt; didn&amp;rsquo;t block. The world was no longer deterministic. Why? Unit.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-code:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;The code&lt;/h2&gt;
+
+&lt;p&gt;This was the code before:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def makeFut1():Future[Int] = Future.successful( 1 + 1) 
+def makeFut2():Future[String] = Future.successful( &amp;quot;foo&amp;quot; + &amp;quot;bar&amp;quot; )
+def doSideEffect(a:Int,b:String):Unit = println(s&amp;quot;[$a] [$b]&amp;quot;)
+
+def doWork():Future[Unit] = 
+  for {
+    futA &amp;lt;- makeFut1()
+    futB &amp;lt;- makeFut2()
+  } yield doSideEffect(futA,futB)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Alas synchronous &lt;code&gt;doSideEffect(...)&lt;/code&gt; method was refactored to be async, becoming:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def doSideEffect(a:Int,b:String):Unit = Future { println(s&amp;quot;[$a] [$b]&amp;quot;) }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;What broke? Nothing. Scala compiled and ran it just fine. But, WFT? We&amp;rsquo;re yielding a &lt;code&gt;Future[Unit]&lt;/code&gt; not a &lt;code&gt;Unit&lt;/code&gt;, shouldn&amp;rsquo;t that make &lt;code&gt;doWork()&lt;/code&gt; return a &lt;code&gt;Future[Future[Unit]]&lt;/code&gt; and fail type checking?&lt;/p&gt;
+
+&lt;h2 id=&#34;unit-and-value-discarding:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;Unit and Value Discarding&lt;/h2&gt;
+
+&lt;p&gt;In short, the &lt;a href=&#34;http://www.scala-lang.org/docu/files/ScalaReference.pdf&#34;&gt;Scala Spec&lt;/a&gt; section 6.26.1 says,&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;If e has some value type and the expected type is Unit, e is converted
+to the expected type by embedding it in the term { e; () }.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The following code would be transformed accordingly:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def intUnit(n:Int):Unit = n*2        // pre-compile
+def intUnit(n:Int):Unit = {n*2; ()}  // post-compile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This gets tricky with type parameters. If you returned &lt;code&gt;Future[Future[Unit]]&lt;/code&gt;, you&amp;rsquo;re really returning &lt;code&gt;Future[Unit]&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;compiler-don-t-care-bout-unit:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;Compiler Don&amp;rsquo;t Care `bout Unit&lt;/h2&gt;
+
+&lt;p&gt;Thus, we see that by returning the Unit type, we&amp;rsquo;re really returning Void, and lose any type checking of the return type at all. As such, the compiler doesn&amp;rsquo;t give a damn&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:0f7ca2f56d5a07b83a78e2aa186b1719:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:0f7ca2f56d5a07b83a78e2aa186b1719:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; what we return.  Any &lt;code&gt;Future&lt;/code&gt; executed in said yield will probably be invoked, but not as this flatmapping chain of futures, and not in the order you&amp;rsquo;d expect.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;doSideEffect(...)&lt;/code&gt; is invoked, and it&amp;rsquo;s Future created, but said Future isn&amp;rsquo;t tied to this sequence of Futures. Thus, the Future returned by &lt;code&gt;doWork()&lt;/code&gt; won&amp;rsquo;t wait for it, returning &lt;code&gt;Unit&lt;/code&gt; immeadiately.&lt;/p&gt;
+
+&lt;h2 id=&#34;don-t-return-unit:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;Don&amp;rsquo;t Return Unit&lt;/h2&gt;
+
+&lt;p&gt;Only use return type Unit for Void functions (a.k.a. Procedures). Using Unit to parameterize a type effectively negates type checking on that type, and loses the guarantees you&amp;rsquo;ve come to expect from the type system and compiler.&lt;/p&gt;
+
+&lt;p&gt;An alternative to the above example, using a sealed algebra for return state, would be:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;sealed trait Result
+object Good extends Result
+object Bad extends Result
+
+def makeFut1():Future[Int] = Future.successful( 1 + 1) 
+def makeFut2():Future[String] = Future.successful( &amp;quot;foo&amp;quot; + &amp;quot;bar&amp;quot; )
+def doSideEffectB(a:Int,b:String):Future[Result] 
+  = Future { println(s&amp;quot;[$a] [$b]&amp;quot;); Good }
+
+def doWork():Future[Result] = {
+    for {
+        futA &amp;lt;- makeFut1()
+        futB &amp;lt;- makeFut2()
+    } yield doSideEffectB(futA,futB)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And failed to compile, as we&amp;rsquo;d hope!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Sample.scala:55: error: type mismatch;
+ found   : scala.concurrent.Future[Result]
+ required: Result
+        } yield doSideEffectB(futA,futB)
+                             ^
+one error found
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Horay for types!&lt;/p&gt;
+
+&lt;h2 id=&#34;appendix-unit-type-and-void:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;(Appendix) Unit Type and Void&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.scala-lang.org/files/archive/nightly/docs/library/index.html#scala.Unit$&#34;&gt;Unit&lt;/a&gt; is a &lt;a href=&#34;https://en.wikipedia.org/wiki/Unit_type&#34;&gt;Unit Type&lt;/a&gt; from Type Theory, meaning it&amp;rsquo;s a universal singleton instance referenced by &lt;code&gt;()&lt;/code&gt;, the zero tuple. Every &lt;code&gt;()&lt;/code&gt; in your code points to the same Unit instance. Since all Scala value types can be converted to Unit, the compiler may change them to Unit as required for return signatures to match. Any &lt;em&gt;value type&lt;/em&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:0f7ca2f56d5a07b83a78e2aa186b1719:2&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:0f7ca2f56d5a07b83a78e2aa186b1719:2&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; can be converted.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s decompile the following functions to see what Scala does to Unit returns:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def intInt(n:Int):Int = n*2
+def intUnit(n:Int):Unit = n*2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;  public int intInt(int);
+    Code:
+       0: iconst_2 // Load integer 2
+       1: iload_1  // Load another int
+       2: imul     // Multiply ints 
+       3: ireturn  // return product
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;  public void intUnit(int);
+    Code:
+       0: iconst_2 // Load integer 2
+       1: iload_1  // Load another int
+       2: imul     // Multiply ints 
+       3: pop      // Discard value
+       4: return   // Return VOID
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;a href=&#34;https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings&#34;&gt;byte code&lt;/a&gt; shows Java does the math in both cases, but the Unit return &lt;strong&gt;discards all values and returns Void.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;appendix-incorrect-unit-use:0f7ca2f56d5a07b83a78e2aa186b1719&#34;&gt;(Appendix) Incorrect Unit Use&lt;/h2&gt;
+
+&lt;p&gt;Because Unit is converted from any other &lt;em&gt;value type&lt;/em&gt;, &lt;code&gt;Unit&lt;/code&gt; can be converted to &lt;code&gt;()&lt;/code&gt;. That is, Unit can be converted from a type to an instance by the complier, sort of. This can lead to confusion in code.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def myProcedure(n:Int):Unit = {n * n; Unit}      // pre-compiled
+def myProcedure(n:Int):Unit = {n * n; Unit; ()}  // post-compiled
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Developers may explicitly return &lt;code&gt;Unit&lt;/code&gt;, but really they are returning the &lt;em&gt;Unit type&lt;/em&gt;, not the singleton Unit reference, &lt;code&gt;()&lt;/code&gt;. The reference to the actual type is being discarded.&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:0f7ca2f56d5a07b83a78e2aa186b1719:1&#34;&gt;Set the &lt;code&gt;-Ywarn-value-discard&lt;/code&gt; compiler flag to fail builds on Value Discarding
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:0f7ca2f56d5a07b83a78e2aa186b1719:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:0f7ca2f56d5a07b83a78e2aa186b1719:2&#34;&gt;value type T , &lt;code&gt;scala.Nothing &amp;lt;: T &amp;lt;: scala.Any&lt;/code&gt;
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:0f7ca2f56d5a07b83a78e2aa186b1719:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Home Cooked Apache Spark</title>
+      <link>https://lust.dev/2016/01/07/home-cooked-apache-spark/</link>
+      <pubDate>Thu, 07 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/01/07/home-cooked-apache-spark/</guid>
+      <description>
+
+&lt;p&gt;We use Apache Spark for various applications at &lt;a href=&#34;https://mc10inc.com&#34;&gt;my job&lt;/a&gt;, but Spark is still relatively unstable, as evidenced by the project&amp;rsquo;s &lt;a href=&#34;https://github.com/apache/spark/pulls&#34;&gt;11K+&lt;/a&gt; pull requests. To maintain developer velocity, we regularly patch show stopper bugs in the Spark source. The process is simple.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Install JDK 6, which is required for PySpark (or you&amp;rsquo;ll get a lengthy warning). Use the &lt;code&gt;oracle-java8-set-default&lt;/code&gt; package to switch between Java 6 and 8, or set &lt;code&gt;JAVA_HOME&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo apt-get install oracle-java6-installer
+oracle-java8-set-default # Go back to Java 8 when you&#39;re done building
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Fork the &lt;a href=&#34;https://github.com/apache/spark&#34;&gt;Apache Spark repo&lt;/a&gt; so you can submit a Pull Request later&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Clone it locally, checking out your tag of interest&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;git clone git@github.com:mc10-inc/spark.git special-spark
+cd special-spark
+git checkout v1.4.1 # Tag of interest
+JAVA_HOME=&amp;quot;/usr/lib/jvm/java-6-oracle&amp;quot; # In case you&#39;ve got 7/8/9 installed
+./make-distribution.sh --name al-dente-spark --tgz
+# Build time of 5:40.12s on my i7-4790K
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Fire up your custom spark build like any other&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;./dist/bin/spark-shell
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Copy the Spark assembly jar to your servers and reboot. Be sure to remove the old artifact, otherwise the ClassLodaer will load both versions and be vexed.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#Move original assembly to backup location
+SPK_PATH=&amp;lt;your spark path&amp;gt;
+mv $SPK_PATH/lib/spark-assembly-1.&amp;lt;spark version&amp;gt;-hadoop2.4.0.jar spark-assembly-backup.jar
+cp dist/lib/spark-assembly-&amp;lt;spark version&amp;gt;-hadoop2.2.0.jar $SPK_PATH/lib/
+./bin/spark-shell # Contact!
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;additional-tricks:4df31c08f441718271b2f3213a675cee&#34;&gt;Additional Tricks&lt;/h2&gt;
+
+&lt;p&gt;Scala 2.10 is old hat. Most people develop on Scala 2.11, and 2.12 will be released in 2 months. To run Spark on Scala 2.11, you must build it &lt;a href=&#34;https://spark.apache.org/docs/latest/building-spark.html#building-for-scala-211&#34;&gt;yourself&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;./dev/change-scala-version.sh 2.11
+./make-distribution.sh --name al-dente-spark --tgz # Build again
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;possible-failures:4df31c08f441718271b2f3213a675cee&#34;&gt;Possible Failures&lt;/h3&gt;
+
+&lt;p&gt;Possible error message below, if you don&amp;rsquo;t use Java 6. I use PySpark, so I need that integration. Why Python needs a version of Java EoL&amp;rsquo;d &lt;a href=&#34;http://www.oracle.com/technetwork/java/eol-135779.html&#34;&gt;3 years ago&lt;/a&gt; is beyond me, but then again, Python 3 split from Python 2 eight years ago.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;+ echo &#39;***NOTE***: JAVA_HOME is not set to a JDK 6 installation. The resulting&#39;
+***NOTE***: JAVA_HOME is not set to a JDK 6 installation. The resulting
++ echo &#39;            distribution may not work well with PySpark and will not run&#39;
+            distribution may not work well with PySpark and will not run
++ echo &#39;            with Java 6 (See SPARK-1703 and SPARK-1911).&#39;
+            with Java 6 (See SPARK-1703 and SPARK-1911).
++ echo &#39;            This test can be disabled by adding --skip-java-test.&#39;
+            This test can be disabled by adding --skip-java-test.
++ echo &#39;Output from &#39;\&#39;&#39;java -version&#39;\&#39;&#39; was:&#39;
+Output from &#39;java -version&#39; was:
++ echo &#39;java version &amp;quot;1.8.0_66&amp;quot;
+Java(TM) SE Runtime Environment (build 1.8.0_66-b17)
+Java HotSpot(TM) 64-Bit Server VM (build 25.66-b17, mixed mode)&#39;
+java version &amp;quot;1.8.0_66&amp;quot;
+Java(TM) SE Runtime Environment (build 1.8.0_66-b17)
+Java HotSpot(TM) 64-Bit Server VM (build 25.66-b17, mixed mode)
++ read -p &#39;Would you like to continue anyways? [y,n]: &#39; -r
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Remote Debugging Apache Spark Clusters</title>
+      <link>https://lust.dev/2016/01/01/remote-debugging-apache-spark-clusters/</link>
+      <pubDate>Fri, 01 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/01/01/remote-debugging-apache-spark-clusters/</guid>
+      <description>
+
+&lt;p&gt;Debugging Apache Spark can be tricky. Sure, everything works on your &lt;code&gt;--master local[4]&lt;/code&gt; cluster, but not when run on a real cluster. In these cases, you need to drop to a debug breakpoint in the running cluster.&lt;/p&gt;
+
+&lt;h1 id=&#34;get-debugger-listening:4f6d4ffb5de2e91f09058cc87ab666ab&#34;&gt;Get Debugger Listening&lt;/h1&gt;
+
+&lt;p&gt;Simply update the launch args wherever you start Spark like so. Note: &lt;code&gt;SPARK_JAVA_OPTS&lt;/code&gt; won&amp;rsquo;t do the trick.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;
+  export SPARK_WORKER_OPTS=&amp;quot;-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=n&amp;quot;
+  export SPARK_MASTER_OPTS=&amp;quot;-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=4000,suspend=n&amp;quot;
+  /opt/spark/sbin/start-master.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Open an SSH tunnel to your remote cluster machine, mapping &lt;code&gt;localhost:4000&lt;/code&gt; to &lt;code&gt;spark-master.foo.com:5000&lt;/code&gt;, assuming the cluster is at &lt;code&gt;spark-master.foo.com&lt;/code&gt;, listening on port &lt;code&gt;5000&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;ssh -L localhost:5000:spark-master.foo.com:4000  you@spark-master.foo.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now Eclipse will think you&amp;rsquo;re just debugging a local Spark process.&lt;/p&gt;
+
+&lt;h1 id=&#34;set-eclipse-breakpoint:4f6d4ffb5de2e91f09058cc87ab666ab&#34;&gt;Set Eclipse Breakpoint&lt;/h1&gt;
+
+&lt;p&gt;Let&amp;rsquo;s checkout the &lt;a href=&#34;https://github.com/apache/spark&#34;&gt;Spark source&lt;/a&gt; and set that breakpoint. Let&amp;rsquo;s say you want to sniff around the Spark Master when a &lt;a href=&#34;https://github.com/apache/spark/blob/v1.6.0/core/src/main/scala/org/apache/spark/deploy/master/Master.scala#L503&#34;&gt;Worker gets disconnected&lt;/a&gt;, in release v1.6.0.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;git clone https://github.com/apache/spark.git
+git checkout v1.6.0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now import the Spark &lt;code&gt;core&lt;/code&gt; module into ScalaIDE. There are a &lt;em&gt;lot&lt;/em&gt; of modules, you only need &lt;code&gt;spark-core&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Set your breakpoint and create a Remote Java Application debugger config as shown below.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/debug_config_eclipse_spark.png&#34; /&gt;
+    
+    
+    &lt;figcaption&gt;
+        &lt;h4&gt;ScalaIDE Debugger Configuration&lt;/h4&gt;
+        
+    &lt;/figcaption&gt;
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;That&amp;rsquo;s it! Now you can debug on your live cluster as if it were your desktop.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

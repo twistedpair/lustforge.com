@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Amazon Cloudwatch on lust.dev</title>
+    <link>https://lust.dev/tags/amazon-cloudwatch/</link>
+    <description>Recent content in Amazon Cloudwatch on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Sun, 22 Jul 2012 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/amazon-cloudwatch/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Custom CloudWatch Metric Tutorial: FreeMemory and Cron</title>
+      <link>https://lust.dev/2012/07/22/custom-cloudwatch-metric-tutorial-freememory-and-cron/</link>
+      <pubDate>Sun, 22 Jul 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/07/22/custom-cloudwatch-metric-tutorial-freememory-and-cron/</guid>
+      <description>
+
+&lt;h3 id=&#34;disclaimer-custom-metrics-are-0-50-usd-a-month-use-judiciously:a8cb0b42267fc4cbd5f71c5b19ff7476&#34;&gt;Disclaimer: Custom metrics are $0.50 USD a month. Use judiciously.&lt;/h3&gt;
+
+&lt;p&gt;I want to be able to set alarms when nodes are getting memory starved and to analyze memory trends. Doing this for disk space, heap space, etc is a simple modification of the below tutorial.&lt;/p&gt;
+
+&lt;p&gt;Since the AWS docs have no complete example on how to do this, I wanted to provide one. I set this up using nothing but bash and cron (&lt;a href=&#34;http://blogs.clogeny.com/custom-metrics-in-amazon-cloudwatch/&#34; target=&#34;_blank&#34;&gt;other examples&lt;/a&gt; use Python). My goal was a very simple example.&lt;/p&gt;
+
+&lt;h3 id=&#34;1-create-a-new-metric:a8cb0b42267fc4cbd5f71c5b19ff7476&#34;&gt;1. Create a new Metric&lt;/h3&gt;
+
+&lt;p&gt;We&amp;#8217;ll skip this since by virtue of putting data into your new metric, CloudWatch will create it for you.&lt;/p&gt;
+
+&lt;h3 id=&#34;2-get-the-free-memory:a8cb0b42267fc4cbd5f71c5b19ff7476&#34;&gt;2. Get the free memory&lt;/h3&gt;
+
+&lt;p&gt;Folks will tell you of &lt;code&gt;vmstat&lt;/code&gt;, &lt;code&gt;free&lt;/code&gt;, and other utilities, but if you read their &lt;em&gt;man&lt;/em&gt; files, you&amp;#8217;ll see the value comes from &lt;code&gt;/proc/meminfo&lt;/code&gt;, so go to the source. Let&amp;#8217;s grep it out of there:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;FREE_MEM_KB=$(egrep -o &amp;quot;MemFree:\s*([0-9]*)&amp;quot; /proc/meminfo | egrep -o &amp;quot;[0-9]*&amp;quot;)
+echo $FREE_MEM_KB
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The gist is that we cannot access capture groups directly in &lt;em&gt;egrep&lt;/em&gt;, but we can hit it twice with a pipe for the same effect. The &lt;code&gt;-o&lt;/code&gt; is used to only return the matching fragment.&lt;/p&gt;
+
+&lt;h3 id=&#34;3-pick-a-good-name:a8cb0b42267fc4cbd5f71c5b19ff7476&#34;&gt;3. Pick a Good Name&lt;/h3&gt;
+
+&lt;p&gt;I found the terms used in the CloudWatch docs a little confusing at first, so here it how to find them. Check on any of your metrics in the AWS CloudWatch Console as shown below:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Namespace&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;There are existing namespaces like &lt;em&gt;AWS/EC2&lt;/em&gt; and &lt;em&gt;AWS/RDS&lt;/em&gt;. Don&amp;#8217;t set metrics here, these are for AWS only. Make up a new namespace for your metric like &amp;#8220;MySite.&amp;#8221;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;MetricName&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;A short descriptive name, preferentially CamelCase. Remember, you cannot delete or change it! Think hard. Note the metric will be expelled after two weeks of disuse.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Dimensions&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#8217;s say you&amp;#8217;ve got a &lt;em&gt;FreeMemory&lt;/em&gt; metric in your MySite namespace. What if you want to add this to another instance? You need yet another degree of freedom, &lt;em&gt;Dimensions&lt;/em&gt;. In this example the &lt;em&gt;InstandId&lt;/em&gt; is the dimension being used, but you can set others if you like.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/cloud_watch_metrics.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;4-send-it-to-cloudwatch:a8cb0b42267fc4cbd5f71c5b19ff7476&#34;&gt;4. Send it to CloudWatch&lt;/h3&gt;
+
+&lt;p&gt;Make sure you&amp;#8217;ve installed the &lt;a href=&#34;http://aws.amazon.com/developertools/2534&#34; target=&#34;_blank&#34;&gt;CloudFront Commandline Tools&lt;/a&gt;. The README.txt explains it all quite well.&lt;/p&gt;
+
+&lt;p&gt;Now just fire away:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;FREEMEMKB=$(egrep -o &amp;quot;MemFree:\s*([0-9]*)&amp;quot; /proc/meminfo | egrep -o &amp;quot;[0-9]*&amp;quot;)
+echo `mon-put-data --namespace=&amp;quot;MySite&amp;quot; --metric-name=FreeMemory --dimensions=&amp;quot;InstanceId=i-d889e31d&amp;quot; --unit=Kilobytes --value=$FREEMEMKB`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you can see, we just specify the three degrees of freedom, the units, and the value. Done! And look, we just ran it twice and we&amp;#8217;ve already got a chart. Amazon says it can take 15min to see your new metric and 2min to see a new data value. I found these to all happen within a minute, but depends on the ambient CloudWatch load.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/cloud_watch_metrics_2.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;script-it:a8cb0b42267fc4cbd5f71c5b19ff7476&#34;&gt;Script It&lt;/h3&gt;
+
+&lt;p&gt;If found the my variables were not always available to my cron user, so I put them in the bash file (below).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#setup variables
+export AWS_CLOUDWATCH_HOME=/home/myuser/cloudwatch/CloudWatch-1.0.12.1
+export JAVA_HOME=/usr/lib/jvm/jre1.6.0_33
+export AWS_CREDENTIAL_FILE=$AWS_CLOUDWATCH_HOME/credential-file-path.template
+
+# get free memory and send to AWS CloudWatch
+FREEMEMKB=$(egrep -Eio &amp;quot;MemFree:\s*([0-9]*)&amp;quot; /proc/meminfo | egrep -Eio &amp;quot;[0-9]*&amp;quot;)
+echo `/home/myuser/cloudwatch/CloudWatch-1.0.12.1/mon-put-data --namespace=&amp;quot;MySite&amp;quot; --metric-name=FreeMemory --dimensions=&amp;quot;InstanceId=i-d889e31d&amp;quot; --unit=Kilobytes --value=$FREEMEMKB`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And just added the line to the cron file. Note the full paths given since cron does not know these.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Update AWS custom metric monitors every minute
+*/1     *       *       *       *       /home/myuser/scripts/cloudfront_update_metrics.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now enjoy the pretty charts! And set your alarms as needed at a given low memory threshold.&lt;/p&gt;
+
+&lt;p&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/cloud_watch_metrics_3.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,1118 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Aws on lust.dev</title>
+    <link>https://lust.dev/tags/aws/</link>
+    <description>Recent content in Aws on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Fri, 08 Jul 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>AWS Command Line Password Reset</title>
+      <link>https://lust.dev/2016/07/08/aws-cli-password-reset/</link>
+      <pubDate>Fri, 08 Jul 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/07/08/aws-cli-password-reset/</guid>
+      <description>
+
+&lt;h1 id=&#34;oh-nuts:5efceb1a28e3916f5b9c11396608079c&#34;&gt;Oh, Nuts&lt;/h1&gt;
+
+&lt;p&gt;Your AWS console login just expired, as the login prompt &lt;em&gt;has been warning for weeks&lt;/em&gt;. You need to update that Route 53 entry and your boss is waiting. Do you call the sysadmin and beg for a reset, or can you solve this yourself?&lt;/p&gt;
+
+&lt;h1 id=&#34;aws-cli-to-the-rescue:5efceb1a28e3916f5b9c11396608079c&#34;&gt;AWS CLI To the Rescue&lt;/h1&gt;
+
+&lt;p&gt;No worries, you&amp;rsquo;ve got this covered in 15 seconds.&lt;/p&gt;
+
+&lt;p&gt;Use the iam API call &lt;a href=&#34;https://docs.aws.amazon.com/cli/latest/reference/iam/update-login-profile.html&#34;&gt;update-login-profile&lt;/a&gt;&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:5efceb1a28e3916f5b9c11396608079c:2&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:5efceb1a28e3916f5b9c11396608079c:2&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; combined with your aws iam username (login name for the &lt;a href=&#34;https://console.aws.amazon.com/&#34;&gt;AWS Console Login&lt;/a&gt;).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws iam update-login-profile --user-name jsmith --password sesame --password-reset-required
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The combination is cracked. Login. Whistle innocently like this never happened.&lt;/p&gt;
+
+&lt;h1 id=&#34;other-dead-ends:5efceb1a28e3916f5b9c11396608079c&#34;&gt;Other Dead Ends&lt;/h1&gt;
+
+&lt;p&gt;The awscli has another tempting, but misleading API called &lt;a href=&#34;https://docs.aws.amazon.com/cli/latest/reference/iam/change-password.html&#34;&gt;change-password&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you tried it, you&amp;rsquo;d be saddened to see the required &lt;code&gt;--old-password&lt;/code&gt; parameter. This is a red herring. Dodge left.&lt;/p&gt;
+
+&lt;h1 id=&#34;you-don-t-have-aws-cli-password-reset-access:5efceb1a28e3916f5b9c11396608079c&#34;&gt;You Don&amp;rsquo;t Have AWS CLI Password Reset Access&lt;/h1&gt;
+
+&lt;p&gt;We got a problem here. Your choices are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Kowtow to your sysadmin for mercy&lt;/li&gt;
+&lt;li&gt;If it&amp;rsquo;s a root account, use the &lt;a href=&#34;https://www.amazon.com/ap/forgotpassword?openid.pape.preferred_auth_policies=MultifactorPhysical&amp;amp;openid.pape.max_auth_age=0&amp;amp;openid.return_to=https%3A%2F%2Fsignin.aws.amazon.com%2Foauth%3Fresponse_type%3Dcode%26client_id%3Darn%253Aaws%253Aiam%253A%253A015428540659%253Auser%252Fhomepage%26redirect_uri%3Dhttps%253A%252F%252Fconsole.aws.amazon.com%252Fconsole%252Fhome%253Fstate%253DhashArgs%252523%2526isauthcode%253Dtrue%26noAuthCookie%3Dtrue&amp;amp;prevRID=14XBRCDW9RJD7GXZ9KTP&amp;amp;openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;amp;openid.assoc_handle=aws&amp;amp;openid.mode=checkid_setup&amp;amp;openid.ns.pape=http%3A%2F%2Fspecs.openid.net%2Fextensions%2Fpape%2F1.0&amp;amp;openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&amp;amp;pageId=aws.ssop&amp;amp;openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&#34;&gt;password reset process&lt;/a&gt; to get a reset email&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:5efceb1a28e3916f5b9c11396608079c:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:5efceb1a28e3916f5b9c11396608079c:1&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;allow-users-to-reset-passwords:5efceb1a28e3916f5b9c11396608079c&#34;&gt;Allow Users to Reset Passwords&lt;/h1&gt;
+
+&lt;p&gt;If you&amp;rsquo;re a sysadmin, set the following IAM policy to enable self service user password reset.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+    &amp;quot;Version&amp;quot;: &amp;quot;2012-10-17&amp;quot;,
+    &amp;quot;Statement&amp;quot;: [
+        {
+            &amp;quot;Sid&amp;quot;: &amp;quot;Stmt1500731194000&amp;quot;,
+            &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+            &amp;quot;Action&amp;quot;: [
+                &amp;quot;iam:UpdateLoginProfile&amp;quot;
+            ],
+            &amp;quot;Resource&amp;quot;: [
+                &amp;quot;arn:aws:iam::1234567890:user/favorite_user&amp;quot;
+            ]
+        }
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:5efceb1a28e3916f5b9c11396608079c:2&#34;&gt;Password reset requires &lt;a href=&#34;https://docs.aws.amazon.com/IAM/latest/APIReference/API_UpdateLoginProfile.html&#34;&gt;UpdateLoginProfile&lt;/a&gt; IAM policy action, included in Admin role.
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:5efceb1a28e3916f5b9c11396608079c:2&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li id=&#34;fn:5efceb1a28e3916f5b9c11396608079c:1&#34;&gt;This email will be sent to the root account email only. You&amp;rsquo;ve got access, right?
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:5efceb1a28e3916f5b9c11396608079c:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Login With Broken AWS MFA Device</title>
+      <link>https://lust.dev/2016/06/14/login-broken-aws-mfa-device/</link>
+      <pubDate>Tue, 14 Jun 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/06/14/login-broken-aws-mfa-device/</guid>
+      <description>
+
+&lt;h1 id=&#34;oh-fudge:0f9727b081e90b0e13d3a31272a59d66&#34;&gt;Oh, Fudge&lt;/h1&gt;
+
+&lt;p&gt;Your dog just broken your iPhone&lt;sup class=&#34;footnote-ref&#34; id=&#34;fnref:0f9727b081e90b0e13d3a31272a59d66:1&#34;&gt;&lt;a rel=&#34;footnote&#34; href=&#34;#fn:0f9727b081e90b0e13d3a31272a59d66:1&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; and the master token for your AWS root account is locked up in the safe at work. Your boss needs an emergency update to your prod infrastructure. How do you login to your MFA protected AWS account?&lt;/p&gt;
+
+&lt;h1 id=&#34;aws-cli-to-the-rescue:0f9727b081e90b0e13d3a31272a59d66&#34;&gt;AWS CLI To the Rescue&lt;/h1&gt;
+
+&lt;p&gt;No worries, you&amp;rsquo;ve got this covered in 15 seconds.&lt;/p&gt;
+
+&lt;p&gt;Lookup the ARN of your MFA device in IAM, via the username you use for &lt;a href=&#34;https://console.aws.amazon.com/&#34;&gt;AWS Console Login&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws iam list-mfa-devices --user-name john_smith
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Outputs:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+    &amp;quot;MFADevices&amp;quot;: [
+        {
+            &amp;quot;UserName&amp;quot;: &amp;quot;john_smith&amp;quot;,
+            &amp;quot;SerialNumber&amp;quot;: &amp;quot;arn:aws:iam::1234567890123:mfa/john_smith&amp;quot;,
+            &amp;quot;EnableDate&amp;quot;: &amp;quot;2016-01-01T17:00:00Z&amp;quot;
+        }
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws iam deactivate-mfa-device --user-name john_smith --serial-number arn:aws:iam::1234567890123:mfa/john_smith
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The safe is cracked. Login. Pretend like this never happened.&lt;/p&gt;
+
+&lt;h1 id=&#34;you-don-t-have-aws-cli-admin-access:0f9727b081e90b0e13d3a31272a59d66&#34;&gt;You Don&amp;rsquo;t Have AWS CLI Admin Access&lt;/h1&gt;
+
+&lt;p&gt;We got a problem here. Your choices are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Use your root token / ask your sys admin to remove the MFA from your account&lt;/li&gt;
+&lt;li&gt;Contact &lt;a href=&#34;https://aws.amazon.com/forms/aws-mfa-support&#34;&gt;AWS MFA Device Support&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+&lt;li id=&#34;fn:0f9727b081e90b0e13d3a31272a59d66:1&#34;&gt;Consider ordering a &lt;a href=&#34;https://www.amazon.com/SafeNet-IDProve-Time-based-6-Digit-Services/dp/B002CRN5X8?ie=UTF8&amp;amp;keywords=gemalto%20aws&amp;amp;qid=1462806259&amp;amp;ref_=sr_1_1&amp;amp;sr=8-1&#34;&gt;physical token&lt;/a&gt;, inserting in mason jar, and burying in backyard
+ &lt;a class=&#34;footnote-return&#34; href=&#34;#fnref:0f9727b081e90b0e13d3a31272a59d66:1&#34;&gt;&lt;sup&gt;[return]&lt;/sup&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Deploy Hugo Files to S3</title>
+      <link>https://lust.dev/2016/02/28/deploy-hugo-files-to-s3/</link>
+      <pubDate>Sun, 28 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/02/28/deploy-hugo-files-to-s3/</guid>
+      <description>
+
+&lt;p&gt;We discussed AWS S3, CloudFront, and Route53 setup in the &lt;a href=&#34;https://lust.dev/2016/02/27/hosting-hugo-on-aws/&#34;&gt;previous post&lt;/a&gt;. The last step is to deploy those files to S3 each time you&amp;rsquo;ve made new &lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; posts.&lt;/p&gt;
+
+&lt;h2 id=&#34;site-configuration:dabd23fda0353466eed0168462515352&#34;&gt;Site Configuration&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;re going to use SSL because &lt;a href=&#34;https://en.wikipedia.org/wiki/Edward_Snowden#Technology_industry&#34;&gt;you can&amp;rsquo;t trust anyone&lt;/a&gt;. Make sure your site configuration uses &lt;strong&gt;SSL&lt;/strong&gt;. I also found you need a &lt;strong&gt;trailing slash&lt;/strong&gt;, or many templates create invalid URL&amp;rsquo;s.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;# config.toml
+baseurl = &amp;quot;https://yoursite.com/&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;deployment:dabd23fda0353466eed0168462515352&#34;&gt;Deployment&lt;/h2&gt;
+
+&lt;p&gt;This really is the easy part. We&amp;rsquo;ll:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Build a fresh copy of the blog&lt;/li&gt;
+&lt;li&gt;Sync all posts and files, ignoring duplicates in the &lt;code&gt;post&lt;/code&gt; directory&lt;/li&gt;
+&lt;li&gt;Ensure they&amp;rsquo;re marked as &lt;strong&gt;public-read&lt;/strong&gt; so folks can read them&lt;/li&gt;
+&lt;li&gt;Use S3 encryption because we&amp;rsquo;re paranoid, and it&amp;rsquo;s free&lt;/li&gt;
+&lt;li&gt;Invalidate the root page, and page listings&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;set -e # Fail fast
+
+DISTRIBUTION_ID=K823EJPPN4O2K9O
+BUCKET_NAME=mysite.com-cdn
+
+# Build a fresh copy
+hugo -v 
+
+# Copy over pages - not static js/img/css/downloads
+aws s3 sync --acl &amp;quot;public-read&amp;quot; --sse &amp;quot;AES256&amp;quot; public/ s3://$BUCKET_NAME --exclude &#39;post&#39;
+
+# Invalidate root page and page listings
+aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths /index.html / /page/*
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can turn this into a sheel script like the one that &lt;a href=&#34;https://github.com/twistedpair/lustforge.com/blob/master/deploy_site.sh&#34;&gt;deploys this blog&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;invalidation-costs:dabd23fda0353466eed0168462515352&#34;&gt;Invalidation Costs&lt;/h2&gt;
+
+&lt;p&gt;Note the CloudFront &lt;a href=&#34;https://aws.amazon.com/cloudfront/pricing/#Request_Pricing_for_All_HTTP_Methods_(per_10,000)&#34;&gt;invalidation pricing&lt;/a&gt;. An &lt;code&gt;InvalidationRequest&lt;/code&gt; is when you ask to purge the cache for a given path.&lt;/p&gt;
+
+&lt;p&gt;Some examples include:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;purge one file using &lt;code&gt;/blah/file.txt&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;purge all files at a path using &lt;code&gt;/blah/*&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;purge everything using &lt;code&gt;/*&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Though these may purge from one to thousands of files, each counts as a &lt;strong&gt;single invalidation request&lt;/strong&gt;. The first 1K monthly requests are free, but they are &lt;code&gt;¢0.5&lt;/code&gt; there after, which could rack up if you were invalidating thousands of files individually, or redeploying with a commit hook frequently.&lt;/p&gt;
+
+&lt;p&gt;While you could always invalidate the entire distribution with &lt;code&gt;/*&lt;/code&gt;, this will force all 50 worldwide edge locations to reload every file for you site on the next visit (&amp;ldquo;cache miss&amp;rdquo;), defeating the purpose of your CDN. As such, it&amp;rsquo;s often better to invalidate just the affected files, as long as there are not many. This is why I&amp;rsquo;m only invalidating about 6 files above.&lt;/p&gt;
+
+&lt;p&gt;Alternatively, use unique asset names if they will change frequently, or &lt;a href=&#34;https://developers.google.com/speed/docs/insights/LeverageBrowserCaching&#34;&gt;URL fingerprinting&lt;/a&gt; and you won&amp;rsquo;t ever need to invalidate.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>AWS Hugo Hosting, HowTo</title>
+      <link>https://lust.dev/2016/02/27/hosting-hugo-on-aws/</link>
+      <pubDate>Sat, 27 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/02/27/hosting-hugo-on-aws/</guid>
+      <description>
+
+&lt;p&gt;Running your &lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; static blog site is easy and cheap, but there are a few snags I had to solve when I deployed mine. Follow these instruction to host your Hugo blog on AWS &lt;a href=&#34;https://aws.amazon.com/s3/&#34;&gt;S3&lt;/a&gt; and &lt;a href=&#34;https://aws.amazon.com/cloudfront/&#34;&gt;Cloudfront&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;disclaimer:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Disclaimer&lt;/h2&gt;
+
+&lt;p&gt;The following works for me. If you&amp;rsquo;re not comfortable with a CLI, use the &lt;a href=&#34;console.aws.amazon.com/console/home&#34;&gt;AWS Web Console&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;bucket-configuration:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Bucket Configuration&lt;/h2&gt;
+
+&lt;p&gt;Other tutorials use the AWS web console, and feature lots of screenshots, but your&amp;rsquo;re a savvy Hugo user. We&amp;rsquo;ll use the AWS Commandline interface tool, ak.k. &lt;strong&gt;awscli&lt;/strong&gt;. You can install it with &lt;code&gt;pip&lt;/code&gt;, if you don&amp;rsquo;t already have it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo pip install awscli
+aws configure # Follow instructions to setup
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Make a bucket. The name does not matter. No one will see this. If someone is already using that name, you&amp;rsquo;ll need to pick another. We&amp;rsquo;ll also add a bucket to hold all of our &lt;strong&gt;logs&lt;/strong&gt;, so that you can know who visited.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Set your domain here
+YOUR_DOMAIN=&amp;quot;yourdomain.com&amp;quot;
+REGION=&amp;quot;us-east-1&amp;quot;
+# Don&#39;t change these
+BUCKET_NAME=&amp;quot;${YOUR_DOMAIN}-cdn&amp;quot;
+LOG_BUCKET_NAME=&amp;quot;${BUCKET_NAME}-logs&amp;quot;
+
+# One fresh bucket please!
+aws s3 mb s3://$BUCKET_NAME --region $REGION
+# And another for the logs
+aws s3 mb s3://$LOG_BUCKET_NAME --region $REGION
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;bucket-permissions-and-logging:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Bucket Permissions and Logging&lt;/h2&gt;
+
+&lt;p&gt;Give AWS the rights to insert logs into your bucket. Then tell S3 to log your website visits to that bucket.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Let AWS write the logs to this location
+aws s3api put-bucket-acl --bucket $LOG_BUCKET_NAME \
+--grant-write &#39;URI=&amp;quot;http://acs.amazonaws.com/groups/s3/LogDelivery&amp;quot;&#39; \
+--grant-read-acp &#39;URI=&amp;quot;http://acs.amazonaws.com/groups/s3/LogDelivery&amp;quot;&#39;
+
+# Setup logging
+LOG_POLICY=&amp;quot;{\&amp;quot;LoggingEnabled\&amp;quot;:{\&amp;quot;TargetBucket\&amp;quot;:\&amp;quot;$LOG_BUCKET_NAME\&amp;quot;,\&amp;quot;TargetPrefix\&amp;quot;:\&amp;quot;$BUCKET_NAME\&amp;quot;}}&amp;quot;
+aws s3api put-bucket-logging --bucket $BUCKET_NAME --bucket-logging-status $LOG_POLICY
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;create-s3-bucket-website:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Create S3 Bucket Website&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll tell S3 to turn our bucket into a website. This will give it a public URL that does redirecting for us. We need this since Hugo blog pages like &lt;strong&gt;foo.com/bob/&lt;/strong&gt; are really &lt;strong&gt;foo.com/bob/index.html&lt;/strong&gt;. We need to redirect those root paths like &lt;strong&gt;/bob/&lt;/strong&gt; to &lt;strong&gt;/bob/index.html&lt;/strong&gt;. Normally you&amp;rsquo;d need rewrite rules with Nginx or Apache, but S3 can do that too.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Create website config
+echo &amp;quot;{
+    \&amp;quot;IndexDocument\&amp;quot;: {
+        \&amp;quot;Suffix\&amp;quot;: \&amp;quot;index.html\&amp;quot;
+    },
+    \&amp;quot;ErrorDocument\&amp;quot;: {
+        \&amp;quot;Key\&amp;quot;: \&amp;quot;404.html\&amp;quot;
+    },
+    \&amp;quot;RoutingRules\&amp;quot;: [
+        {
+            \&amp;quot;Redirect\&amp;quot;: {
+                \&amp;quot;ReplaceKeyWith\&amp;quot;: \&amp;quot;index.html\&amp;quot;
+            },
+            \&amp;quot;Condition\&amp;quot;: {
+                \&amp;quot;KeyPrefixEquals\&amp;quot;: \&amp;quot;/\&amp;quot;
+            }
+        }
+    ]
+}&amp;quot; &amp;gt; website.json
+
+aws s3api put-bucket-website --bucket $BUCKET_NAME --website-configuration file://website.json
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now you can visit &lt;code&gt;http://&amp;lt;bucket_name&amp;gt;.s3-website-&amp;lt;region&amp;gt;.amazonaws.com&lt;/code&gt; to browse your site!&lt;/p&gt;
+
+&lt;h2 id=&#34;get-free-ssl-certificates:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Get Free SSL Certificates&lt;/h2&gt;
+
+&lt;p&gt;Everything should have SSL, so AWS decided to give away &lt;a href=&#34;https://aws.amazon.com/certificate-manager/pricing/&#34;&gt;FREE SSL certificates&lt;/a&gt; for all AWS users. Thanks, Jeff! Make sure you can access the admin email &lt;a href=&#34;http://www.whois-search.com/&#34;&gt;address on your domain&lt;/a&gt;, and then run the following and check your email. The email should go through instantly. Note that we&amp;rsquo;re also requesting the &lt;code&gt;www.&lt;/code&gt; variant of this domain. We&amp;rsquo;ll use this for redirecting &lt;code&gt;www.foo.com&lt;/code&gt; to &lt;code&gt;foo.com&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws acm request-certificate --domain-name $YOUR_DOMAIN --subject-alternative-names &amp;quot;www.$YOUR_DOMAIN&amp;quot; --idempotency-token &amp;quot;`date +%s`&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The idempotency token will prevent running this twice from sending two requests. Also, note that ACM will renew your certs each year automatically, so this SSL really is &lt;a href=&#34;https://en.wikipedia.org/wiki/Ron_Popeil&#34;&gt;set it and forget it&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Call ACM and get the ARN of your cert to use in the next step.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws acm list-certificates --certificate-statuses ISSUED
+# Example result
+{
+    &amp;quot;CertificateSummaryList&amp;quot;: [
+        {
+            &amp;quot;CertificateArn&amp;quot;: &amp;quot;arn:aws:acm:us-east-1:7865196219991:certificate/de305d54-75b4-431b-adb2-eb6b9e546014&amp;quot;,
+            &amp;quot;DomainName&amp;quot;: &amp;quot;yoursite.com&amp;quot;
+        }
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;cloudfront-setup:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;CloudFront Setup&lt;/h2&gt;
+
+&lt;p&gt;S3 hosts your files as a website, but we want a vanity domain and custom SSL. Plus, a &lt;a href=&#34;https://aws.amazon.com/cloudfront/details/#Detailed_Description&#34;&gt;worldwide 54 edge location CDN&lt;/a&gt; would be nice. AWS CloudFront can accomplish all of this quite easily.&lt;/p&gt;
+
+&lt;p&gt;First we&amp;rsquo;ll tell &lt;code&gt;awscli&lt;/code&gt; to enable the CloudFront tools, which are presently in &amp;ldquo;Preview Mode.&amp;rdquo;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws  configure  set preview.cloudfront true # Honey badger don&#39;t care
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is a long config, so let&amp;rsquo;s break it down:&lt;/p&gt;
+
+&lt;h4 id=&#34;origin-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Origin Config&lt;/h4&gt;
+
+&lt;p&gt;We must use the &lt;strong&gt;S3 website hosting URL&lt;/strong&gt; not simply point to the S3 bucket like regular CF setup. This allows us to get &lt;strong&gt;index.html&lt;/strong&gt; redirecting. This also means we cannot use &lt;strong&gt;HTTPS Only&lt;/strong&gt; on the origin, because its domain won&amp;rsquo;t match the generic S3 certificate AWS uses for all S3 requests.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;  &amp;quot;Origins&amp;quot;: {
+    &amp;quot;Quantity&amp;quot;: 1,
+    &amp;quot;Items&amp;quot;: [
+      {
+        &amp;quot;Id&amp;quot;: &amp;quot;$BUCKET_NAME-origin&amp;quot;,
+        &amp;quot;OriginPath&amp;quot;: &amp;quot;&amp;quot;,
+        &amp;quot;CustomOriginConfig&amp;quot;: {
+          &amp;quot;OriginProtocolPolicy&amp;quot;: &amp;quot;http-only&amp;quot;,
+          &amp;quot;HTTPPort&amp;quot;: 80,
+          &amp;quot;OriginSslProtocols&amp;quot;: {
+            &amp;quot;Quantity&amp;quot;: 3,
+            &amp;quot;Items&amp;quot;: [
+              &amp;quot;TLSv1&amp;quot;,
+              &amp;quot;TLSv1.1&amp;quot;,
+              &amp;quot;TLSv1.2&amp;quot;
+            ]
+          },
+          &amp;quot;HTTPSPort&amp;quot;: 443
+        },
+        &amp;quot;DomainName&amp;quot;: &amp;quot;$BUCKET_NAME.s3-website-$REGION.amazonaws.com&amp;quot;
+      }
+    ]
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;logging-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Logging Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Log CF hits to the buckets we already made&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;Logging&amp;quot;: {
+    &amp;quot;Bucket&amp;quot;: &amp;quot;$LOG_BUCKET_NAME.s3.amazonaws.com&amp;quot;, 
+    &amp;quot;Prefix&amp;quot;: &amp;quot;${BUCKET_NAME}-cf/&amp;quot;, 
+    &amp;quot;Enabled&amp;quot;: true
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;cache-behavior-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Cache Behavior Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;We want everyone coming to the site to use SSL, so we&amp;rsquo;ll redirect port 80 &amp;rarr; 443.&lt;/li&gt;
+&lt;li&gt;Cache content for 30min by DefaultCacheBehavior&lt;/li&gt;
+&lt;li&gt;Only forward &lt;code&gt;HEAD&lt;/code&gt; and &lt;code&gt;GET&lt;/code&gt; requests, cache them too&lt;/li&gt;
+&lt;li&gt;Gzip content if possible (reduce bandwidth usage, faster)&lt;/li&gt;
+&lt;li&gt;Don&amp;rsquo;t forward headers&lt;/li&gt;
+&lt;li&gt;Don&amp;rsquo;t trust other signers&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;DefaultCacheBehavior&amp;quot;: {
+&amp;quot;DefaultCacheBehavior&amp;quot;: {
+    &amp;quot;ViewerProtocolPolicy&amp;quot;: &amp;quot;redirect-to-https&amp;quot;,
+    &amp;quot;DefaultTTL&amp;quot;: 1800,
+    &amp;quot;AllowedMethods&amp;quot;: {
+      &amp;quot;Quantity&amp;quot;: 2,
+      &amp;quot;Items&amp;quot;: [
+        &amp;quot;HEAD&amp;quot;,&amp;quot;GET&amp;quot;
+      ],
+      &amp;quot;CachedMethods&amp;quot;: {
+        &amp;quot;Quantity&amp;quot;: 2,
+        &amp;quot;Items&amp;quot;: [
+          &amp;quot;HEAD&amp;quot;,&amp;quot;GET&amp;quot;
+        ]
+      }
+    },
+    &amp;quot;MinTTL&amp;quot;: 0,
+    &amp;quot;Compress&amp;quot;: true,
+    &amp;quot;ForwardedValues&amp;quot;: {
+      &amp;quot;Headers&amp;quot;: {
+        &amp;quot;Quantity&amp;quot;: 0
+      },
+      &amp;quot;Cookies&amp;quot;: {
+        &amp;quot;Forward&amp;quot;: &amp;quot;none&amp;quot;
+      },
+      &amp;quot;QueryString&amp;quot;: false
+    },
+    &amp;quot;TrustedSigners&amp;quot;: {
+      &amp;quot;Enabled&amp;quot;: false,
+      &amp;quot;Quantity&amp;quot;: 0
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;ssl-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;SSL Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Use the new SSL cert from ACM, referenced by the ARN&lt;/li&gt;
+&lt;li&gt;Use &lt;a href=&#34;https://en.wikipedia.org/wiki/Server_Name_Indication&#34;&gt;SNI&lt;/a&gt;, breaking wood burning browsers on WinXP, because it&amp;rsquo;s FREE&lt;/li&gt;
+&lt;li&gt;Warning: &lt;strong&gt;Not&lt;/strong&gt; using SNI &lt;a href=&#34;https://aws.amazon.com/cloudfront/pricing/#Request_Pricing_for_All_HTTP_Methods_(per_10,000)&#34;&gt;costs &lt;code&gt;$600/mo&lt;/code&gt;&lt;/a&gt;, so &lt;strong&gt;use SNI&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;ViewerCertificate&amp;quot;: {
+    &amp;quot;SSLSupportMethod&amp;quot;: &amp;quot;sni-only&amp;quot;, 
+    &amp;quot;ACMCertificateArn&amp;quot;: &amp;quot;$SSL_ARN&amp;quot;, 
+    &amp;quot;MinimumProtocolVersion&amp;quot;: &amp;quot;TLSv1&amp;quot;, 
+    &amp;quot;Certificate&amp;quot;: &amp;quot;$SSL_ARN&amp;quot;, 
+    &amp;quot;CertificateSource&amp;quot;: &amp;quot;acm&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;error-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Error Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Forward Cloudfront &lt;code&gt;Not Found&lt;/code&gt; and &lt;code&gt;Forbidden&lt;/code&gt; errors to your custom pages&lt;/li&gt;
+&lt;li&gt;Cache failures for 5min, then try the Origin again&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;CustomErrorResponses&amp;quot;: {
+    &amp;quot;Quantity&amp;quot;: 2,
+    &amp;quot;Items&amp;quot;: [
+        {
+            &amp;quot;ErrorCode&amp;quot;: 403, 
+            &amp;quot;ResponsePagePath&amp;quot;: &amp;quot;/404.html&amp;quot;, 
+            &amp;quot;ResponseCode&amp;quot;: &amp;quot;404&amp;quot;,
+            &amp;quot;ErrorCachingMinTTL&amp;quot;: 300
+        }, 
+        {
+            &amp;quot;ErrorCode&amp;quot;: 404, 
+            &amp;quot;ResponsePagePath&amp;quot;: &amp;quot;/404.html&amp;quot;, 
+            &amp;quot;ResponseCode&amp;quot;: &amp;quot;404&amp;quot;,
+            &amp;quot;ErrorCachingMinTTL&amp;quot;: 300
+        }
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;redirect-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Redirect Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mask the ugly default CF domain with your vanity domain&lt;/li&gt;
+&lt;li&gt;Accept root and &lt;code&gt;www.&lt;/code&gt; variants&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;Aliases&amp;quot;: {
+    &amp;quot;Quantity&amp;quot;: 2,
+    &amp;quot;Items&amp;quot;: [
+        &amp;quot;$YOUR_DOMAIN&amp;quot;, &amp;quot;www.$YOUR_DOMAIN&amp;quot;
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;misc-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Misc Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Serve &lt;code&gt;foo.com/index.html&lt;/code&gt; to &lt;code&gt;foo.com&lt;/code&gt; requests&lt;/li&gt;
+&lt;li&gt;Use all edge nodes worldwide&lt;/li&gt;
+&lt;li&gt;Turn it on&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+    &amp;quot;DefaultRootObject&amp;quot;: &amp;quot;index.html&amp;quot;, 
+    &amp;quot;PriceClass&amp;quot;: &amp;quot;PriceClass_All&amp;quot;, 
+    &amp;quot;Enabled&amp;quot;: true
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;making-the-distribution:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Making the Distribution&lt;/h3&gt;
+
+&lt;p&gt;Sorry, it&amp;rsquo;s really ugly, but such is bash escaping.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# From above
+SSL_ARN=&amp;quot;arn:aws:acm:us-east-1:7865196219991:certificate/de305d54-75b4-431b-adb2-eb6b9e546014&amp;quot;
+
+CALLER_REF=&amp;quot;`date +%s`&amp;quot; # current second
+echo &amp;quot;{
+    \&amp;quot;Comment\&amp;quot;: \&amp;quot;$BUCKET_NAME Static Hosting\&amp;quot;, 
+    \&amp;quot;Logging\&amp;quot;: {
+        \&amp;quot;Bucket\&amp;quot;: \&amp;quot;$LOG_BUCKET_NAME.s3.amazonaws.com\&amp;quot;, 
+        \&amp;quot;Prefix\&amp;quot;: \&amp;quot;${BUCKET_NAME}-cf/\&amp;quot;, 
+        \&amp;quot;Enabled\&amp;quot;: true,
+        \&amp;quot;IncludeCookies\&amp;quot;: false
+    }, 
+    \&amp;quot;Origins\&amp;quot;: {
+        \&amp;quot;Quantity\&amp;quot;: 1,
+        \&amp;quot;Items\&amp;quot;: [
+            {
+                \&amp;quot;Id\&amp;quot;:\&amp;quot;$BUCKET_NAME-origin\&amp;quot;,
+                \&amp;quot;OriginPath\&amp;quot;: \&amp;quot;\&amp;quot;, 
+                \&amp;quot;CustomOriginConfig\&amp;quot;: {
+                    \&amp;quot;OriginProtocolPolicy\&amp;quot;: \&amp;quot;http-only\&amp;quot;, 
+                    \&amp;quot;HTTPPort\&amp;quot;: 80, 
+                    \&amp;quot;OriginSslProtocols\&amp;quot;: {
+                        \&amp;quot;Quantity\&amp;quot;: 3,
+                        \&amp;quot;Items\&amp;quot;: [
+                            \&amp;quot;TLSv1\&amp;quot;, 
+                            \&amp;quot;TLSv1.1\&amp;quot;, 
+                            \&amp;quot;TLSv1.2\&amp;quot;
+                        ]
+                    }, 
+                    \&amp;quot;HTTPSPort\&amp;quot;: 443
+                }, 
+                \&amp;quot;DomainName\&amp;quot;: \&amp;quot;$BUCKET_NAME.s3-website-$REGION.amazonaws.com\&amp;quot;
+            }
+        ]
+    }, 
+    \&amp;quot;DefaultRootObject\&amp;quot;: \&amp;quot;index.html\&amp;quot;, 
+    \&amp;quot;PriceClass\&amp;quot;: \&amp;quot;PriceClass_All\&amp;quot;, 
+    \&amp;quot;Enabled\&amp;quot;: true, 
+    \&amp;quot;CallerReference\&amp;quot;: \&amp;quot;$CALLER_REF\&amp;quot;,
+    \&amp;quot;DefaultCacheBehavior\&amp;quot;: {
+        \&amp;quot;TargetOriginId\&amp;quot;: \&amp;quot;$BUCKET_NAME-origin\&amp;quot;,
+        \&amp;quot;ViewerProtocolPolicy\&amp;quot;: \&amp;quot;redirect-to-https\&amp;quot;, 
+        \&amp;quot;DefaultTTL\&amp;quot;: 1800,
+        \&amp;quot;AllowedMethods\&amp;quot;: {
+            \&amp;quot;Quantity\&amp;quot;: 2,
+            \&amp;quot;Items\&amp;quot;: [
+                \&amp;quot;HEAD\&amp;quot;, 
+                \&amp;quot;GET\&amp;quot;
+            ], 
+            \&amp;quot;CachedMethods\&amp;quot;: {
+                \&amp;quot;Quantity\&amp;quot;: 2,
+                \&amp;quot;Items\&amp;quot;: [
+                    \&amp;quot;HEAD\&amp;quot;, 
+                    \&amp;quot;GET\&amp;quot;
+                ]
+            }
+        }, 
+        \&amp;quot;MinTTL\&amp;quot;: 0, 
+        \&amp;quot;Compress\&amp;quot;: true,
+        \&amp;quot;ForwardedValues\&amp;quot;: {
+            \&amp;quot;Headers\&amp;quot;: {
+                \&amp;quot;Quantity\&amp;quot;: 0
+            }, 
+            \&amp;quot;Cookies\&amp;quot;: {
+                \&amp;quot;Forward\&amp;quot;: \&amp;quot;none\&amp;quot;
+            }, 
+            \&amp;quot;QueryString\&amp;quot;: false
+        },
+        \&amp;quot;TrustedSigners\&amp;quot;: {
+            \&amp;quot;Enabled\&amp;quot;: false, 
+            \&amp;quot;Quantity\&amp;quot;: 0
+        }
+    }, 
+    \&amp;quot;ViewerCertificate\&amp;quot;: {
+        \&amp;quot;SSLSupportMethod\&amp;quot;: \&amp;quot;sni-only\&amp;quot;, 
+        \&amp;quot;ACMCertificateArn\&amp;quot;: \&amp;quot;$SSL_ARN\&amp;quot;, 
+        \&amp;quot;MinimumProtocolVersion\&amp;quot;: \&amp;quot;TLSv1\&amp;quot;, 
+        \&amp;quot;Certificate\&amp;quot;: \&amp;quot;$SSL_ARN\&amp;quot;, 
+        \&amp;quot;CertificateSource\&amp;quot;: \&amp;quot;acm\&amp;quot;
+    }, 
+    \&amp;quot;CustomErrorResponses\&amp;quot;: {
+        \&amp;quot;Quantity\&amp;quot;: 2,
+        \&amp;quot;Items\&amp;quot;: [
+            {
+                \&amp;quot;ErrorCode\&amp;quot;: 403, 
+                \&amp;quot;ResponsePagePath\&amp;quot;: \&amp;quot;/404.html\&amp;quot;, 
+                \&amp;quot;ResponseCode\&amp;quot;: \&amp;quot;404\&amp;quot;,
+                \&amp;quot;ErrorCachingMinTTL\&amp;quot;: 300
+            }, 
+            {
+                \&amp;quot;ErrorCode\&amp;quot;: 404, 
+                \&amp;quot;ResponsePagePath\&amp;quot;: \&amp;quot;/404.html\&amp;quot;, 
+                \&amp;quot;ResponseCode\&amp;quot;: \&amp;quot;404\&amp;quot;,
+                \&amp;quot;ErrorCachingMinTTL\&amp;quot;: 300
+            }
+        ]
+    }, 
+    \&amp;quot;Aliases\&amp;quot;: {
+        \&amp;quot;Quantity\&amp;quot;: 2,
+        \&amp;quot;Items\&amp;quot;: [
+            \&amp;quot;$YOUR_DOMAIN\&amp;quot;, 
+            \&amp;quot;www.$YOUR_DOMAIN\&amp;quot;
+        ]
+    }
+}&amp;quot; &amp;gt; distroConfig.json
+
+# Now apply it
+aws cloudfront create-distribution --distribution-config file://distroConfig.json
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Nice. You&amp;rsquo;ve got a CloudFront distribution. Run the below to get the domain name for use next.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws cloudfront list-distributions --query &#39;DistributionList.Items[].{id:Id,comment:Comment,domain:DomainName}&#39;
+# i.e. d8ukw3iojeij2.cloudfront.net
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;route-53-domain-setup:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Route 53 Domain Setup&lt;/h2&gt;
+
+&lt;p&gt;Only one more step! We&amp;rsquo;ll point your &lt;a href=&#34;https://aws.amazon.com/route53/&#34;&gt;Route 53&lt;/a&gt; hosted domain to the CF distribution. This uses &lt;a href=&#34;https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html&#34;&gt;an alias&lt;/a&gt; for the zone apex and a CNAME for the subdomain.&lt;/p&gt;
+
+&lt;p&gt;Find your current hosted zone (domain). i.e. &lt;code&gt;/hostedzone/ZAAWZQV036URT&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws route53 list-hosted-zones
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This config alias the domain to your Cloudfront distribution.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The bare domain get&amp;rsquo;s aliased&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;www&lt;/code&gt; subdomain uses a CNAME&lt;/li&gt;
+&lt;li&gt;Aliases all refernce zone &lt;code&gt;ZAAWZQV036URT&lt;/code&gt;, because &lt;a href=&#34;https://docs.aws.amazon.com/Route53/latest/APIReference/CreateAliasRRSAPI.html&#34;&gt;AWS says so&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;UPSERT&lt;/code&gt; so that this config is applied idempotently&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;Changes&amp;quot;: [
+    {
+      &amp;quot;Action&amp;quot;: &amp;quot;UPSERT&amp;quot;,
+      &amp;quot;ResourceRecordSet&amp;quot;: {
+        &amp;quot;AliasTarget&amp;quot;: {
+          &amp;quot;HostedZoneId&amp;quot;: &amp;quot;Z2FDTNDATAQYW2&amp;quot;,
+          &amp;quot;EvaluateTargetHealth&amp;quot;: false,
+          &amp;quot;DNSName&amp;quot;: &amp;quot;d8ukw3iojeij2.cloudfront.net.&amp;quot;
+        },
+        &amp;quot;Type&amp;quot;: &amp;quot;A&amp;quot;,
+        &amp;quot;Name&amp;quot;: &amp;quot;yoursite.com.&amp;quot;
+      }
+    },
+    {
+      &amp;quot;Action&amp;quot;: &amp;quot;UPSERT&amp;quot;,
+      &amp;quot;ResourceRecordSet&amp;quot;: {
+        &amp;quot;ResourceRecords&amp;quot;: [
+          {
+            &amp;quot;Value&amp;quot;: &amp;quot;d8ukw3iojeij2.cloudfront.net&amp;quot;
+          }
+        ],
+        &amp;quot;Type&amp;quot;: &amp;quot;CNAME&amp;quot;,
+        &amp;quot;Name&amp;quot;: &amp;quot;www.yoursite.com.&amp;quot;,
+        &amp;quot;TTL&amp;quot;: 300
+      }
+    }
+  ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ok, here goes. Build the json and submit it. Note, you&amp;rsquo;ll need to wait ~TTL seconds for the DNS to propagate.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;HOSTED_ZONE_ID=&amp;quot;/hostedzone/ZAAWZQV036URT&amp;quot;
+DISTRO_URL=&amp;quot;d8ukw3iojeij2.cloudfront.net&amp;quot;
+
+echo &amp;quot;{
+    \&amp;quot;Comment\&amp;quot;: \&amp;quot;Let there be Hugo!\&amp;quot;,
+    \&amp;quot;Changes\&amp;quot;: [
+        {
+            \&amp;quot;Action\&amp;quot;:\&amp;quot;UPSERT\&amp;quot;,
+            \&amp;quot;ResourceRecordSet\&amp;quot;: {
+                \&amp;quot;AliasTarget\&amp;quot;: {
+                    \&amp;quot;HostedZoneId\&amp;quot;: \&amp;quot;Z2FDTNDATAQYW2\&amp;quot;, 
+                    \&amp;quot;EvaluateTargetHealth\&amp;quot;: false, 
+                    \&amp;quot;DNSName\&amp;quot;: \&amp;quot;$DISTRO_URL.\&amp;quot;
+                }, 
+                \&amp;quot;Type\&amp;quot;: \&amp;quot;A\&amp;quot;, 
+                \&amp;quot;Name\&amp;quot;: \&amp;quot;$YOUR_DOMAIN.\&amp;quot;
+            }
+        },{
+            \&amp;quot;Action\&amp;quot;:\&amp;quot;UPSERT\&amp;quot;,
+            \&amp;quot;ResourceRecordSet\&amp;quot;: {
+                \&amp;quot;ResourceRecords\&amp;quot;: [
+                    {
+                        \&amp;quot;Value\&amp;quot;: \&amp;quot;$DISTRO_URL\&amp;quot;
+                    }
+                ],
+                \&amp;quot;Type\&amp;quot;: \&amp;quot;CNAME\&amp;quot;,
+                \&amp;quot;Name\&amp;quot;: \&amp;quot;www.$YOUR_DOMAIN.\&amp;quot;,
+                \&amp;quot;TTL\&amp;quot;: 300
+            }
+        }
+    ]
+}&amp;quot; &amp;gt; r53Batch.json
+
+aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --change-batch file://r53Batch.json
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;deployment:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Deployment&lt;/h2&gt;
+
+&lt;p&gt;Great job, you&amp;rsquo;re an AWS API zen master now! That was &lt;em&gt;easy&lt;/em&gt;, right? At least it will be easy to redo later or script with Ansible.&lt;/p&gt;
+
+&lt;p&gt;Note, because there are 54 edge nodes worldwide, it may &lt;strong&gt;take some time&lt;/strong&gt; (i.e. 30min) for your distribtion to be complete. Go get a cup of coffee and let the interwebs stabalize.&lt;/p&gt;
+
+&lt;p&gt;See the next post to &lt;a href=&#34;https://lust.dev/2016/02/28/deploy-hugo-files-to-s3/&#34;&gt;Deploy Hugo Files to S3&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Farewell WordPress, Hello Hugo!</title>
+      <link>https://lust.dev/2016/02/21/farewell-wordpress-hello-hugo/</link>
+      <pubDate>Sun, 21 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/02/21/farewell-wordpress-hello-hugo/</guid>
+      <description>&lt;p&gt;After nearly eight years on WordPress, I finally had enough. Why wait 5 seconds to load a page of 100% static content? Why use the slow and clunky WordPress UI to mangle new posts? And why pay a host &lt;a href=&#34;https://store.wordpress.com/plans/&#34;&gt;$299/yr&lt;/a&gt; for your custom WordPress domain and theme? No sir. I had enough.&lt;/p&gt;
+
+&lt;p&gt;For years I worked on webapps where every facet was burnished to perfection. Dependencies were inlined, dead code elided, artifacts combined and compressed, and every millisecond of load time scrutinized. Blogging about such practices on a WP blog was always a comedic foil. I could go on ad nauseum disparaging WordPress and PHP, but I&amp;rsquo;ll not. It is a tool that works well for many, providing them a functional presence online. WordPress simply didn&amp;rsquo;t meet my needs.&lt;/p&gt;
+
+&lt;p&gt;Today &lt;strong&gt;LustForge.com&lt;/strong&gt; now runs from &lt;a href=&#34;https://aws.amazon.com/cloudfront/&#34;&gt;AWS CloudFront&lt;/a&gt;, backed by &lt;a href=&#34;https://aws.amazon.com/s3/&#34;&gt;S3&lt;/a&gt;, rather than &lt;a href=&#34;https://www.dreamhost.com/&#34;&gt;DreamHost LLC&lt;/a&gt; where it lived since 2008. Instead of costing $119/yr, the blog now costs me &lt;code&gt;¢0.3/yr&lt;/code&gt; in storage, and &lt;code&gt;¢12/yr&lt;/code&gt; in bandwidth. If we count the domain, that&amp;rsquo;s &lt;code&gt;$12.12/yr&lt;/code&gt;. Not bad for a superior product, served from 45 edge nodes worldwide and backed with 11 nines durability. Read &lt;a href=&#34;https://lust.dev/2016/02/27/hosting-hugo-on-aws/&#34;&gt;the complete howto&lt;/a&gt;, order use my &lt;a href=&#34;https://docs.google.com/spreadsheets/d/1-ymzKpTd6M1AYvTrfCGxEt5u6fr4zHim3tSqz1qk94c/edit?usp=sharing&#34;&gt;AWS Blog Hosting Calculator&lt;/a&gt; to see what your blog would cost to hose.&lt;/p&gt;
+
+&lt;p&gt;Farewell WordPress. Hello, &lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Why I Chose AWS Over Digital Ocean</title>
+      <link>https://lust.dev/2014/10/29/why-choose-aws-over-digital-ocean/</link>
+      <pubDate>Wed, 29 Oct 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2014/10/29/why-choose-aws-over-digital-ocean/</guid>
+      <description>
+
+&lt;p&gt;There&amp;rsquo;s no shortage of &lt;a href=&#34;https://news.ycombinator.com/item?id=7720134&#34;&gt;shills&lt;/a&gt; for Digital Ocean VM hosting on &lt;a href=&#34;https://news.ycombinator.com/item?id=8926631&#34;&gt;HackerNews&lt;/a&gt; lately. They &lt;a href=&#34;https://news.ycombinator.com/item?id=9522486&#34;&gt;extol&lt;/a&gt; the wonder of DO and disparage AWS. I view these accumulations of calumnies with curiosity, searching for the cogent retorts from AWS mavens. Finally, I broke down and threw &lt;a href=&#34;https://www.digitalocean.com/pricing/&#34;&gt;$5&lt;/a&gt; at a DO plan to see what I was missing. Turns out I&amp;rsquo;m not missing a thing.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-good:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;The Good&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Modern CSS feel with candy buttons and very simple, limited UI&lt;/li&gt;
+&lt;li&gt;Grandma could launch a VM&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;expense:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;Expense&lt;/h2&gt;
+
+&lt;p&gt;How do the shills keep yowling that DO is cheaper than EC2? The 8GB ram DO &amp;ldquo;droplet&amp;rdquo; is presently &lt;code&gt;¢11.9/hr&lt;/code&gt;. On EC2 you can get a spot instance with that ram for &lt;code&gt;¢0.3/hr&lt;/code&gt;. That&amp;rsquo;s right, for &lt;sup&gt;1&lt;/sup&gt;&amp;frasl;&lt;sub&gt;3&lt;/sub&gt; of a penny per hour, I can get something bigger than the most powerful droplet on DO. &lt;strong&gt;Clearly DO is not &amp;ldquo;cheaper.&amp;rdquo;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Also, DO does not have a spot market. Cloud computing is about ephemeral resources. Spin them up when you need them (i.e. when you get to the office) and discard them when you&amp;rsquo;re done (i.e. catching the train home). I can get a comperable AWS VM (m3.medium) for &lt;code&gt;¢0.3/hr&lt;/code&gt;. You&amp;rsquo;ll not get these savings with DO.&lt;/p&gt;
+
+&lt;p&gt;Oh, and you know how you can turn off your EC2 instance and stop being billed? DO bills you for as long as your droplet exists. You&amp;rsquo;ve got to either destroy it, or pay for it, running or not. Ouch.&lt;/p&gt;
+
+&lt;h2 id=&#34;ssd-s:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;SSD&amp;rsquo;s&lt;/h2&gt;
+
+&lt;p&gt;Three cheers for SSD&amp;rsquo;s! Oh, wait&amp;hellip; I get those with my EC2 VM&amp;rsquo;s as well, for cheaper. If you didn&amp;rsquo;t know there were there, you&amp;rsquo;d best &lt;a href=&#34;https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ssd-instance-store.html&#34;&gt;RTFM&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;more-bandwidth:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;More Bandwidth&lt;/h2&gt;
+
+&lt;p&gt;DO gives you 5TB of &amp;ldquo;bandwidth&amp;rdquo; with that 8GB of ram droplet. How can AWS charge me for bandwidth &lt;strong&gt;out&lt;/strong&gt; by the GB? Here&amp;rsquo;s a hint, you get what you pay for. AWS has some nice peerings.&lt;/p&gt;
+
+&lt;p&gt;For example, I tried downloading a 150MB file from a server in Atlanta using &lt;code&gt;wget&lt;/code&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;AWS &lt;code&gt;m3.medium&lt;/code&gt; instance - 2.6s (54.7MB/s)&lt;/li&gt;
+&lt;li&gt;DO $20/mo droplet - 16s (8.8MB/s)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Wow, the &lt;strong&gt;DO instance had a 615% slower download time&lt;/strong&gt;, despite having double the provisioned resources as the AWS instance. Perhaps the dataset was hosted in AWS us-1east? Nope. Tracepath shows the server is in Atlanta, and the route runs through NYC, the location of the DO datacenter! So, you get what you pay for here with DO&amp;hellip; but, hold on, &lt;strong&gt;AWS inbound bandwidth is&lt;/strong&gt; &lt;a href=&#34;https://aws.amazon.com/ec2/pricing/#Data_Transfer&#34;&gt;FREE&lt;/a&gt;, so you&amp;rsquo;re really paying more for less with DO.&lt;/p&gt;
+
+&lt;h2 id=&#34;aws-charges-for-everything:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;AWS Charges For Everything&lt;/h2&gt;
+
+&lt;p&gt;Can you believe that greedy MoneyBags Bezeos charges for every API call on AWS? Turns out you get what you pay for, plus lots of free ancilary services, and they don&amp;rsquo;t g et &lt;a href=&#34;https://news.ycombinator.com/item?id=6447152&#34;&gt;hacked&lt;/a&gt; to boot.&lt;/p&gt;
+
+&lt;h2 id=&#34;limits:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;Limits&lt;/h2&gt;
+
+&lt;p&gt;I tried to launch a second droplet&amp;hellip; oh no you don&amp;rsquo;t. &amp;ldquo;You&amp;rsquo;ve exceeded your droplet limit,&amp;rdquo; said the console. What? I can only have ONE droplet? I paid you. I&amp;rsquo;ve got $15 in this account. Can&amp;rsquo;t I launch &lt;code&gt;¢3/hr&lt;/code&gt; worth of VM&amp;rsquo;s. Nope. You&amp;rsquo;ll need to request permission from DO for that. Clearly not a host for serious devs that need dozens of instances, or real companies that will need thousands.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusions:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;p&gt;A good place for script kiddies, but not a place for real applications.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>AWS EC2 Spot Market Volatility</title>
+      <link>https://lust.dev/2013/11/16/aws-ec2-spot-market-volatility/</link>
+      <pubDate>Sat, 16 Nov 2013 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2013/11/16/aws-ec2-spot-market-volatility/</guid>
+      <description>
+
+&lt;p&gt;The spot instance market does not often make sense. You first learn of it and think &amp;#8220;Wow! Why did I waste that money on a reserved instance when I can get the same price on demand?!?!?!&amp;#8221; Then you see pricing curves like this:&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/aws_price_curve.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;$6/hr for an instance!? &lt;strong&gt;5000% markup!&lt;/strong&gt; That is stultifying. This &lt;code&gt;m1.medium&lt;/code&gt; is a perfectly fungible resource. You can:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Pay on-demand rate of &lt;strong&gt;$0.12/hr&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Reserve it for 3 years and pay a combined rate (amortizing down payment) of &lt;strong&gt;$0.042/hr&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Rent it at the median Spot Market rate of &lt;strong&gt;$0.013/hr&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;$6/hr is 30% more than that most expensive instance AWS sells (&lt;code&gt;hs1.8xlarge&lt;/code&gt;, $4.60/hr), and this instance is puny by comparison.&lt;/p&gt;
+
+&lt;p&gt;So, what gives? Are there really people that are so gormless they shovel money to Amazon? Impossible. Perhaps one foolhardy API consumer put in too high a bid, but we&amp;#8217;re talking a &lt;strong&gt;$6 market clearing price&lt;/strong&gt;. That means the &lt;strong&gt;entire market&lt;/strong&gt; is going for $6. You can&amp;#8217;t get any instance for less. Also note that the price is always going to $6 in a step function, while in a real market, with sentient traders, we&amp;#8217;d expect to just barely outbid our competitors as anything else is waste. You don&amp;#8217;t see people winning an auction by 5000% do you? You pay $0.01+ and call it a victory.&lt;/p&gt;
+
+&lt;p&gt;The only explanation is that during these hours Amazon (or someone with money to burn) is shutting down the market. They don&amp;#8217;t want the spot pool available, perhaps for maintenance reasons or some internal load shaping. Regardless, it renders much of the market useless and highly inefficient.&lt;/p&gt;
+
+&lt;h3 id=&#34;other-observations-8211-highly-non-correlated-market-demand:69d49a87d884be20f9eec90424a302e9&#34;&gt;Other Observations &amp;#8211; Highly Non-Correlated Market Demand&lt;/h3&gt;
+
+&lt;p&gt;Markets are often correlated. If the price for beer in a 1 liter container is up, we&amp;#8217;d expect to see a similar rise in demand for beer in the 2 liter container. However, demand for compute is oddly inconsistent across regions, zones, and instance type.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Highly different demand between AZ&amp;rsquo;s (i.e. &lt;code&gt;us-east-1d&lt;/code&gt; is low, &lt;code&gt;us-east-1c&lt;/code&gt; is high)&lt;/li&gt;
+&lt;li&gt;Highly different demand between instance types (&lt;code&gt;c3.large&lt;/code&gt; low, &lt;code&gt;m1.medium&lt;/code&gt; high)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If the price for work in one AZ is much higher than another, near by AZ, we&amp;#8217;d expect to see work migrate there. Sure, some jobs might need very high intra-AZ networking speeds, but most can (and should) be spread across AZ&amp;#8217;s. In the 3 months of data analyzed we see notable spot price disparities between neighboring zones.&lt;/p&gt;
+
+&lt;p&gt;Instance demand is also illogical. For example, why is the &lt;code&gt;c3.large&lt;/code&gt; instance, which is far better than a &lt;code&gt;m1.large&lt;/code&gt; instance, always available for $0.032/hr? Over the last three months, there is not a spike to be seen. This makes the &lt;strong&gt;average clearing price for a &lt;code&gt;c3.large&lt;/code&gt;&lt;/strong&gt; ($0.032/hr) &lt;strong&gt;97% lower&lt;/strong&gt; &lt;strong&gt;than an &lt;em&gt;m1.medium&lt;/em&gt;&lt;/strong&gt; ($1.26). That&amp;#8217;s odd, given this is a compute node, of which you&amp;#8217;d expect to see large numbers being recruited and released for brief computation cluster bursts. For your shillings, you&amp;#8217;d likely be better with a &lt;code&gt;c3.large&lt;/code&gt; than a &lt;code&gt;m1.medium&lt;/code&gt;, but the market data does not indicate consumers realize this as the price for &lt;code&gt;c3.large&lt;/code&gt; instances is a flatline.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/aws_price_curve_2.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;conclusions:69d49a87d884be20f9eec90424a302e9&#34;&gt;Conclusions&lt;/h3&gt;
+
+&lt;p&gt;AWS originally marketed the spot market as allowing you to run work at &lt;em&gt;different times&lt;/em&gt; for more optimal pricing. But, you should also ask yourself:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Do you need an on-demand instance when a spot will do?&lt;/li&gt;
+&lt;li&gt;Do you really need your spot in the same AZ or region?&lt;/li&gt;
+&lt;li&gt;Can you run your AMI on a different instance type?&lt;/li&gt;
+&lt;li&gt;Will someone manipulating the market price, pushing it beyond reasonable viability?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Now if only EC2 would allow bidding across a range of instance types to run your jobs, folks could get more done with less.&lt;/p&gt;
+
+&lt;p&gt;P.S. These are just some observations from poking around the data a couple minutes. If you have more piercing insights, please elaborate below.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Custom CloudWatch Metric Tutorial: FreeMemory and Cron</title>
+      <link>https://lust.dev/2012/07/22/custom-cloudwatch-metric-tutorial-freememory-and-cron/</link>
+      <pubDate>Sun, 22 Jul 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/07/22/custom-cloudwatch-metric-tutorial-freememory-and-cron/</guid>
+      <description>
+
+&lt;h3 id=&#34;disclaimer-custom-metrics-are-0-50-usd-a-month-use-judiciously:a8cb0b42267fc4cbd5f71c5b19ff7476&#34;&gt;Disclaimer: Custom metrics are $0.50 USD a month. Use judiciously.&lt;/h3&gt;
+
+&lt;p&gt;I want to be able to set alarms when nodes are getting memory starved and to analyze memory trends. Doing this for disk space, heap space, etc is a simple modification of the below tutorial.&lt;/p&gt;
+
+&lt;p&gt;Since the AWS docs have no complete example on how to do this, I wanted to provide one. I set this up using nothing but bash and cron (&lt;a href=&#34;http://blogs.clogeny.com/custom-metrics-in-amazon-cloudwatch/&#34; target=&#34;_blank&#34;&gt;other examples&lt;/a&gt; use Python). My goal was a very simple example.&lt;/p&gt;
+
+&lt;h3 id=&#34;1-create-a-new-metric:a8cb0b42267fc4cbd5f71c5b19ff7476&#34;&gt;1. Create a new Metric&lt;/h3&gt;
+
+&lt;p&gt;We&amp;#8217;ll skip this since by virtue of putting data into your new metric, CloudWatch will create it for you.&lt;/p&gt;
+
+&lt;h3 id=&#34;2-get-the-free-memory:a8cb0b42267fc4cbd5f71c5b19ff7476&#34;&gt;2. Get the free memory&lt;/h3&gt;
+
+&lt;p&gt;Folks will tell you of &lt;code&gt;vmstat&lt;/code&gt;, &lt;code&gt;free&lt;/code&gt;, and other utilities, but if you read their &lt;em&gt;man&lt;/em&gt; files, you&amp;#8217;ll see the value comes from &lt;code&gt;/proc/meminfo&lt;/code&gt;, so go to the source. Let&amp;#8217;s grep it out of there:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;FREE_MEM_KB=$(egrep -o &amp;quot;MemFree:\s*([0-9]*)&amp;quot; /proc/meminfo | egrep -o &amp;quot;[0-9]*&amp;quot;)
+echo $FREE_MEM_KB
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The gist is that we cannot access capture groups directly in &lt;em&gt;egrep&lt;/em&gt;, but we can hit it twice with a pipe for the same effect. The &lt;code&gt;-o&lt;/code&gt; is used to only return the matching fragment.&lt;/p&gt;
+
+&lt;h3 id=&#34;3-pick-a-good-name:a8cb0b42267fc4cbd5f71c5b19ff7476&#34;&gt;3. Pick a Good Name&lt;/h3&gt;
+
+&lt;p&gt;I found the terms used in the CloudWatch docs a little confusing at first, so here it how to find them. Check on any of your metrics in the AWS CloudWatch Console as shown below:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Namespace&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;There are existing namespaces like &lt;em&gt;AWS/EC2&lt;/em&gt; and &lt;em&gt;AWS/RDS&lt;/em&gt;. Don&amp;#8217;t set metrics here, these are for AWS only. Make up a new namespace for your metric like &amp;#8220;MySite.&amp;#8221;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;MetricName&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;A short descriptive name, preferentially CamelCase. Remember, you cannot delete or change it! Think hard. Note the metric will be expelled after two weeks of disuse.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Dimensions&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#8217;s say you&amp;#8217;ve got a &lt;em&gt;FreeMemory&lt;/em&gt; metric in your MySite namespace. What if you want to add this to another instance? You need yet another degree of freedom, &lt;em&gt;Dimensions&lt;/em&gt;. In this example the &lt;em&gt;InstandId&lt;/em&gt; is the dimension being used, but you can set others if you like.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/cloud_watch_metrics.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;4-send-it-to-cloudwatch:a8cb0b42267fc4cbd5f71c5b19ff7476&#34;&gt;4. Send it to CloudWatch&lt;/h3&gt;
+
+&lt;p&gt;Make sure you&amp;#8217;ve installed the &lt;a href=&#34;http://aws.amazon.com/developertools/2534&#34; target=&#34;_blank&#34;&gt;CloudFront Commandline Tools&lt;/a&gt;. The README.txt explains it all quite well.&lt;/p&gt;
+
+&lt;p&gt;Now just fire away:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;FREEMEMKB=$(egrep -o &amp;quot;MemFree:\s*([0-9]*)&amp;quot; /proc/meminfo | egrep -o &amp;quot;[0-9]*&amp;quot;)
+echo `mon-put-data --namespace=&amp;quot;MySite&amp;quot; --metric-name=FreeMemory --dimensions=&amp;quot;InstanceId=i-d889e31d&amp;quot; --unit=Kilobytes --value=$FREEMEMKB`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As you can see, we just specify the three degrees of freedom, the units, and the value. Done! And look, we just ran it twice and we&amp;#8217;ve already got a chart. Amazon says it can take 15min to see your new metric and 2min to see a new data value. I found these to all happen within a minute, but depends on the ambient CloudWatch load.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/cloud_watch_metrics_2.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;h3 id=&#34;script-it:a8cb0b42267fc4cbd5f71c5b19ff7476&#34;&gt;Script It&lt;/h3&gt;
+
+&lt;p&gt;If found the my variables were not always available to my cron user, so I put them in the bash file (below).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#setup variables
+export AWS_CLOUDWATCH_HOME=/home/myuser/cloudwatch/CloudWatch-1.0.12.1
+export JAVA_HOME=/usr/lib/jvm/jre1.6.0_33
+export AWS_CREDENTIAL_FILE=$AWS_CLOUDWATCH_HOME/credential-file-path.template
+
+# get free memory and send to AWS CloudWatch
+FREEMEMKB=$(egrep -Eio &amp;quot;MemFree:\s*([0-9]*)&amp;quot; /proc/meminfo | egrep -Eio &amp;quot;[0-9]*&amp;quot;)
+echo `/home/myuser/cloudwatch/CloudWatch-1.0.12.1/mon-put-data --namespace=&amp;quot;MySite&amp;quot; --metric-name=FreeMemory --dimensions=&amp;quot;InstanceId=i-d889e31d&amp;quot; --unit=Kilobytes --value=$FREEMEMKB`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And just added the line to the cron file. Note the full paths given since cron does not know these.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Update AWS custom metric monitors every minute
+*/1     *       *       *       *       /home/myuser/scripts/cloudfront_update_metrics.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now enjoy the pretty charts! And set your alarms as needed at a given low memory threshold.&lt;/p&gt;
+
+&lt;p&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/cloud_watch_metrics_3.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Easy Bulk CloudFront Invalidations vis AWS Console</title>
+      <link>https://lust.dev/2012/07/20/easy-bulk-cloudfront-invalidations-vis-aws-console/</link>
+      <pubDate>Fri, 20 Jul 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/07/20/easy-bulk-cloudfront-invalidations-vis-aws-console/</guid>
+      <description>&lt;p&gt;Google for invalidating a bunk of CloudFront files and you&amp;#8217;ll find many utilities to help you, but did you know you can do it easily through the AWS Console?&lt;/p&gt;
+
+&lt;p&gt;Just visit &lt;strong&gt;CloudFront &amp;gt; Distribution Settings &amp;gt; Invalidations &amp;gt; Create Invalidation&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Now provide the folder and wildcard to blow away a bunch of files!&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;i.e. images/*
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/cloudfront_invalidations.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;See, and you did not need to write a rate controlled script, pay a 3rd party monthly website, or enter your secret AWS credentials into some shady webapp!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>LogRotate Apache Logs to Amazon S3</title>
+      <link>https://lust.dev/2012/07/15/logrotate-apache-logs-to-amazon-s3/</link>
+      <pubDate>Sun, 15 Jul 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/07/15/logrotate-apache-logs-to-amazon-s3/</guid>
+      <description>
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/logrotate.png&#34; /&gt;
+    
+    
+    &lt;figcaption&gt;
+        &lt;h4&gt;Legacy Log Rotation before gzip &amp;amp; scp&lt;/h4&gt;
+        
+    &lt;/figcaption&gt;
+    
+&lt;/figure&gt;
+
+
+&lt;p&gt;I recently moved my site &lt;a href=&#34;www.runpartner.com&#34;&gt;RunPartner&lt;/a&gt; to Amazon Web Services (AWS) from DreamHost because for just a few more peanuts a month I got a ton of enterprise grade services, and the server does not crash randomly any more. 😊&lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;m loving AWS, but one thing I wanted to do was consolidate all logs to S3. Let&amp;#8217;s say your site gets SlashDotted or Pinned. One of the first failure modes is that your logs swell up, and you&amp;#8217;re out of disk space. Since my EC2 instance has just 8GB, this is possible. But why not use that infinite storage pool in the sky, S3? Perfect.&lt;/p&gt;
+
+&lt;h2 id=&#34;logrotate:d6ae9d679337e62320eea662108a42c7&#34;&gt;LogRotate&lt;/h2&gt;
+
+&lt;p&gt;A long time fixture of the log rotation scene is &lt;a title=&#34;Man page&#34; href=&#34;http://linux.die.net/man/8/logrotate&#34; target=&#34;_blank&#34;&gt;LogRotate&lt;/a&gt;, not to be confused with Apache&amp;#8217;s &lt;a href=&#34;http://httpd.apache.org/docs/2.0/programs/rotatelogs.html&#34; target=&#34;_blank&#34;&gt;RotateLogs&lt;/a&gt;. The following script works well for me (two years and counting).&lt;/p&gt;
+
+&lt;p&gt;The script assumes you&amp;#8217;ve installed the amazing command line package, &lt;a href=&#34;http://s3tools.org/s3cmd&#34;&gt;s3cmd&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# rotate the logs!
+# common settings
+compress
+compresscmd /bin/gzip
+compressoptions -9
+compressext .gz
+
+dateext
+dateformat -%Y-%m-%d-%s
+
+rotate 3
+nomail
+missingok
+daily
+size 5k
+create 640 username username
+
+/var/logs/www.runpartner.com/*.log {
+sharedscripts
+postrotate
+sudo /usr/sbin/apache2ctl graceful
+
+/usr/bin/s3cmd sync /var/logs/www.runpartner.com/*.gz s3://bucket-logs/www.runpartner.com/
+endscript
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;how-it-works:d6ae9d679337e62320eea662108a42c7&#34;&gt;How It Works&lt;/h2&gt;
+
+&lt;p&gt;It took me a few hours to get everything tweaked just right, so I&amp;#8217;ll break down the commands for your edification and so that you can customize the script for yourself.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;compress
+compresscmd /bin/gzip
+compressoptions -9
+compressext .gz
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;compress&lt;/code&gt; - enables compression&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;compresscmd&lt;/code&gt; - determines the path to the utility used to compress&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;compressoptions&lt;/code&gt; - command line switches passed to the compression utility&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;compressext&lt;/code&gt; - this suffix will be used to determine if files have been compressed&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;dateext
+dateformat -%Y-%m-%d-%s
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;dateext&lt;/code&gt; - enables adding dates to the log file names&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;dateformat&lt;/code&gt; - &lt;code&gt;%Y-%m-%d-%s&lt;/code&gt; provides the format for the log file name dates&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;rotate 3
+nomail
+missingok
+daily
+size 5k
+create 640 username username
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;rotate 3&lt;/code&gt; - how many logs to keep locally before deleting. The more, the more space used&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;nomail&lt;/code&gt; - don&amp;#8217;t try to mail the logs to any body&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;missingok&lt;/code&gt; - tells script not to freak out that there are no files on first run&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;daily&lt;/code&gt; - rollover logs on a daily basis (&lt;strong&gt;still must call from Cron though&lt;/strong&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;size 5K&lt;/code&gt; - set minimum size of log rollover. If file is smaller than this, it will not be rolled.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;create 640 username username&lt;/code&gt; - add any permissions the files should be given on creation. I needed these, or the compression utility did not have the right to compress them.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/var/logs/www.runpartner.com/*.log {
+sharedscripts
+postrotate
+sudo /usr/sbin/apache2ctl graceful
+
+/usr/bin/s3cmd sync /var/logs/www.runpartner.com/*.gz s3://bucket-logs/www.runpartner.com/
+endscript
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;/var/logs/www.runpartner.com/*.log&lt;/code&gt; - file selector, can contain wildcards, or can be explicit&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sharedscripts&lt;/code&gt; - only run the code between &lt;em&gt;postrotate&lt;/em&gt; &amp;amp; &lt;em&gt;endscript&lt;/em&gt; &lt;strong&gt;once&lt;/strong&gt;, even if multiple files rotated&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;postrotate...endscript&lt;/code&gt; -code to send logs to S3
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;sudo /usr/sbin/apache2ctl graceful&lt;/code&gt; gracefully resets the logs on the apache server, otherwise logging stops because LogRotate removed the log file! Some people just kill the pid, but this is much cleaner.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/usr/bin/s3cmd sync /var/logs/www.runpartner.com/*.gz s3://bucket-logs/www.runpartner.com/&lt;/code&gt; use s3cmd to sync your logs (not many of them, so goes fast) to your log bucket on S3.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;cron-it:d6ae9d679337e62320eea662108a42c7&#34;&gt;Cron it&lt;/h2&gt;
+
+&lt;p&gt;Now just don&amp;#8217;t forget the last step!!! You need to add your LogRotate command to cron, so it can run each day. If you have a lot of traffic, you might want to run it on the hour, with your &lt;em&gt;size&lt;/em&gt; attribute set so that large logs get moved to S3 quickly, freeing up space on your instance.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Backup activities
+0 0 * * * /usr/sbin/logrotate --state /home/username/scripts/log_rotate.state /home/username/scripts/log_rotate.config
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Notice the below I run the rollover at midnight. This way all entries in the log for a given date are really for that date. Also, &lt;strong&gt;don&amp;#8217;t forget the state file&lt;/strong&gt;. This is how LogRotate knows what it did last time, so it can decide what to do this time. Finally, notice that cron needs the full path to everything, including the executables and the config/state files.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

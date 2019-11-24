@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ec2 on lust.dev</title>
+    <link>https://lust.dev/tags/ec2/</link>
+    <description>Recent content in Ec2 on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Wed, 29 Oct 2014 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/ec2/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Why I Chose AWS Over Digital Ocean</title>
+      <link>https://lust.dev/2014/10/29/why-choose-aws-over-digital-ocean/</link>
+      <pubDate>Wed, 29 Oct 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2014/10/29/why-choose-aws-over-digital-ocean/</guid>
+      <description>
+
+&lt;p&gt;There&amp;rsquo;s no shortage of &lt;a href=&#34;https://news.ycombinator.com/item?id=7720134&#34;&gt;shills&lt;/a&gt; for Digital Ocean VM hosting on &lt;a href=&#34;https://news.ycombinator.com/item?id=8926631&#34;&gt;HackerNews&lt;/a&gt; lately. They &lt;a href=&#34;https://news.ycombinator.com/item?id=9522486&#34;&gt;extol&lt;/a&gt; the wonder of DO and disparage AWS. I view these accumulations of calumnies with curiosity, searching for the cogent retorts from AWS mavens. Finally, I broke down and threw &lt;a href=&#34;https://www.digitalocean.com/pricing/&#34;&gt;$5&lt;/a&gt; at a DO plan to see what I was missing. Turns out I&amp;rsquo;m not missing a thing.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-good:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;The Good&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Modern CSS feel with candy buttons and very simple, limited UI&lt;/li&gt;
+&lt;li&gt;Grandma could launch a VM&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;expense:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;Expense&lt;/h2&gt;
+
+&lt;p&gt;How do the shills keep yowling that DO is cheaper than EC2? The 8GB ram DO &amp;ldquo;droplet&amp;rdquo; is presently &lt;code&gt;¢11.9/hr&lt;/code&gt;. On EC2 you can get a spot instance with that ram for &lt;code&gt;¢0.3/hr&lt;/code&gt;. That&amp;rsquo;s right, for &lt;sup&gt;1&lt;/sup&gt;&amp;frasl;&lt;sub&gt;3&lt;/sub&gt; of a penny per hour, I can get something bigger than the most powerful droplet on DO. &lt;strong&gt;Clearly DO is not &amp;ldquo;cheaper.&amp;rdquo;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Also, DO does not have a spot market. Cloud computing is about ephemeral resources. Spin them up when you need them (i.e. when you get to the office) and discard them when you&amp;rsquo;re done (i.e. catching the train home). I can get a comperable AWS VM (m3.medium) for &lt;code&gt;¢0.3/hr&lt;/code&gt;. You&amp;rsquo;ll not get these savings with DO.&lt;/p&gt;
+
+&lt;p&gt;Oh, and you know how you can turn off your EC2 instance and stop being billed? DO bills you for as long as your droplet exists. You&amp;rsquo;ve got to either destroy it, or pay for it, running or not. Ouch.&lt;/p&gt;
+
+&lt;h2 id=&#34;ssd-s:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;SSD&amp;rsquo;s&lt;/h2&gt;
+
+&lt;p&gt;Three cheers for SSD&amp;rsquo;s! Oh, wait&amp;hellip; I get those with my EC2 VM&amp;rsquo;s as well, for cheaper. If you didn&amp;rsquo;t know there were there, you&amp;rsquo;d best &lt;a href=&#34;https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ssd-instance-store.html&#34;&gt;RTFM&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;more-bandwidth:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;More Bandwidth&lt;/h2&gt;
+
+&lt;p&gt;DO gives you 5TB of &amp;ldquo;bandwidth&amp;rdquo; with that 8GB of ram droplet. How can AWS charge me for bandwidth &lt;strong&gt;out&lt;/strong&gt; by the GB? Here&amp;rsquo;s a hint, you get what you pay for. AWS has some nice peerings.&lt;/p&gt;
+
+&lt;p&gt;For example, I tried downloading a 150MB file from a server in Atlanta using &lt;code&gt;wget&lt;/code&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;AWS &lt;code&gt;m3.medium&lt;/code&gt; instance - 2.6s (54.7MB/s)&lt;/li&gt;
+&lt;li&gt;DO $20/mo droplet - 16s (8.8MB/s)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Wow, the &lt;strong&gt;DO instance had a 615% slower download time&lt;/strong&gt;, despite having double the provisioned resources as the AWS instance. Perhaps the dataset was hosted in AWS us-1east? Nope. Tracepath shows the server is in Atlanta, and the route runs through NYC, the location of the DO datacenter! So, you get what you pay for here with DO&amp;hellip; but, hold on, &lt;strong&gt;AWS inbound bandwidth is&lt;/strong&gt; &lt;a href=&#34;https://aws.amazon.com/ec2/pricing/#Data_Transfer&#34;&gt;FREE&lt;/a&gt;, so you&amp;rsquo;re really paying more for less with DO.&lt;/p&gt;
+
+&lt;h2 id=&#34;aws-charges-for-everything:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;AWS Charges For Everything&lt;/h2&gt;
+
+&lt;p&gt;Can you believe that greedy MoneyBags Bezeos charges for every API call on AWS? Turns out you get what you pay for, plus lots of free ancilary services, and they don&amp;rsquo;t g et &lt;a href=&#34;https://news.ycombinator.com/item?id=6447152&#34;&gt;hacked&lt;/a&gt; to boot.&lt;/p&gt;
+
+&lt;h2 id=&#34;limits:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;Limits&lt;/h2&gt;
+
+&lt;p&gt;I tried to launch a second droplet&amp;hellip; oh no you don&amp;rsquo;t. &amp;ldquo;You&amp;rsquo;ve exceeded your droplet limit,&amp;rdquo; said the console. What? I can only have ONE droplet? I paid you. I&amp;rsquo;ve got $15 in this account. Can&amp;rsquo;t I launch &lt;code&gt;¢3/hr&lt;/code&gt; worth of VM&amp;rsquo;s. Nope. You&amp;rsquo;ll need to request permission from DO for that. Clearly not a host for serious devs that need dozens of instances, or real companies that will need thousands.&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusions:79e96683f0ba745c8d74841bb35e8a07&#34;&gt;Conclusions&lt;/h2&gt;
+
+&lt;p&gt;A good place for script kiddies, but not a place for real applications.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

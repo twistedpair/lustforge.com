@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Eclipse on lust.dev</title>
+    <link>https://lust.dev/tags/eclipse/</link>
+    <description>Recent content in Eclipse on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Sun, 07 Apr 2013 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/eclipse/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Disable JavaScript validation in Eclipse</title>
+      <link>https://lust.dev/2013/04/07/disable-javascript-validation-in-eclipse/</link>
+      <pubDate>Sun, 07 Apr 2013 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2013/04/07/disable-javascript-validation-in-eclipse/</guid>
+      <description>&lt;p&gt;Ever seen this gem before popup when working on a Google Web Toolkit project?&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Errors running builder &#39;JavaScript Validator&#39; on project &#39;com.your.project&#39;.1&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here is the trouble. Let&amp;#8217;s say you&amp;#8217;ve not marked your &lt;code&gt;target/&lt;/code&gt; directory as &lt;code&gt;derived&lt;/code&gt;, so that the GWT Eclipse plugin can launch DevMode from there. Since Eclipse can see these files, it will try to validate that compile, minified JS that GWT created and sometimes die. You don&amp;#8217;t want this.&lt;/p&gt;
+
+&lt;p&gt;So, disable JS validation on your GWT project since the GWT Compiler will take care of that validation for you. Just visit:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Window &amp;gt; Preferences&amp;#8230; &amp;gt; JavaScript &amp;gt; Validator &amp;gt; Errors/Warnings&lt;/strong&gt; and uncheck the box.&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/disable_eclipse_js_validation.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+
+</description>
+    </item>
+    
+    <item>
+      <title>Ctrl&#43;Alt&#43;Arrow Broken (and fixed) in Eclipse</title>
+      <link>https://lust.dev/2012/10/24/ctrlaltarrow-broken-and-fixed-in-eclipse/</link>
+      <pubDate>Wed, 24 Oct 2012 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2012/10/24/ctrlaltarrow-broken-and-fixed-in-eclipse/</guid>
+      <description>
+
+&lt;p&gt;If you&amp;#8217;re a &lt;em&gt;pragmatic programmer&lt;/em&gt;, then you&amp;#8217;ve learned all the shortcuts you can to make your coding day easier. I&amp;#8217;ve been a fan of the numerous shortcuts in Eclipse such as &lt;strong&gt;Alt+Shift+S,R&lt;/strong&gt; to create all class accessors/mutators. Still, my favorite has been &lt;strong&gt;Ctrl+Alt+⇑/⇓&lt;/strong&gt; and &lt;strong&gt;Ctrl+⇑/⇓&lt;/strong&gt; to instantly duplicate a line above or below the current line and to move it around. Who has time to select, copy, move, paste? Plus, you can now save your copy/paste buffer for more important things, like that LinkedIn password you keep changing &lt;a href=&#34;http://www.pcworld.com/article/257045/6_5m_linkedin_passwords_posted_online_after_apparent_hack.html&#34;&gt;each time they&amp;#8217;re hacked&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;But on my new X220 ThinkPad, the shortcut just does not work in Eclipse. I was pulling my hair out. Of course I disabled graphics rotation hotkeys from the desktop context menu, but it kept failing to work in Eclipse. WTF? I even double checked the shortcut configurations in Eclipse to ensure it was not changed. No dice.&lt;/p&gt;
+
+&lt;p&gt;While pulling my hair out, and killing random processes, I found the SOB. Lenovo, in their great wisdom, has also used the &lt;em&gt;very same key bindings as their graphics driver&lt;/em&gt; to rotate the screen in the &lt;strong&gt;Lenovo Reading Optimizer&lt;/strong&gt;. Pull your hair out all night, you&amp;#8217;ll just be bald and angry in the morning.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-fix:81a7ce3259a296a66e838c95e548a376&#34;&gt;The Fix&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Disable hotkey rotation on the desktop context menu&lt;/p&gt;
+
+
+&lt;figure &gt;
+    
+        &lt;img src=&#34;https://lust.dev/img/eclipse_copy_shortcut_fix.png&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Uninstall Lenovo Reading Optimizer&lt;/p&gt;
+
+&lt;p&gt;(from Add and Remove Programs) &lt;/li&gt; &lt;/ol&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

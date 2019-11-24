@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Javascript on lust.dev</title>
+    <link>https://lust.dev/tags/javascript/</link>
+    <description>Recent content in Javascript on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Tue, 24 May 2011 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/javascript/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>YUI Compressor CSS Barfs on Unclosed Apostrophe</title>
+      <link>https://lust.dev/2011/05/24/yui-compressor-css-barfs-on-unclosed-apostrophe/</link>
+      <pubDate>Tue, 24 May 2011 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2011/05/24/yui-compressor-css-barfs-on-unclosed-apostrophe/</guid>
+      <description>&lt;p&gt;I was running my deployment script last night, which includes the &lt;a href=&#34;https://yui.github.io/yuicompressor&#34;&gt;YUI compressor&lt;/a&gt;, and it went KABOOM! Not good.&lt;/p&gt;
+
+&lt;p&gt;I knew from the massive stack trace that it failed during YUI CSS processing. The stacktrace was a mile long, too long to be contained in the 5000 line terminal buffer, so I did a quick binary search removing files from the include list, and then lines from the culprit CSS file. This was the problem:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-css&#34;&gt;background-image: url(http://foo.com/img.gif&#39;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Obvious, right? The lack of a closing &amp;#8216; made YUI go ape and give a useless stack track. However, my pain is your gain! If only PDT had syntax checking for CSS.&lt;/p&gt;
+
+&lt;p&gt;If you have such an error, just run the following regex search on your code base:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;rgrep &amp;quot;url([^’].*?’)|url(‘[^’)]*)|url([^\”].*?”)|url(\“[^\”)]*)&amp;quot; .
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The stack track in question:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;at java.util.regex.Pattern$GroupHead.match(Unknown Source)
+at java.util.regex.Pattern$Loop.match(Unknown Source)
+at java.util.regex.Pattern$GroupTail.match(Unknown Source)
+at java.util.regex.Pattern$BranchConn.match(Unknown Source)
+at java.util.regex.Pattern$CharProperty.match(Unknown Source)
+at java.util.regex.Pattern$Branch.match(Unknown Source)
+at java.util.regex.Pattern$GroupHead.match(Unknown Source)
+at java.util.regex.Pattern$Loop.match(Unknown Source)
+at java.util.regex.Pattern$GroupTail.match(Unknown Source)
+at java.util.regex.Pattern$BranchConn.match(Unknown Source)
+at java.util.regex.Pattern$CharProperty.match(Unknown Source)
+at java.util.regex.Pattern$Branch.match(Unknown Source)
+at java.util.regex.Pattern$GroupHead.match(Unknown Source)
+at java.util.regex.Pattern$Loop.match(Unknown Source)
+at java.util.regex.Pattern$GroupTail.match(Unknown Source)
+at java.util.regex.Pattern$BranchConn.match(Unknown Source)
+at java.util.regex.Pattern$CharProperty.match(Unknown Source)
+at java.util.regex.Pattern$Branch.match(Unknown Source)
+at java.util.regex.Pattern$GroupHead.match(Unknown Source)
+at java.util.regex.Pattern$Loop.match(Unknown Source)
+at java.util.regex.Pattern$GroupTail.match(Unknown Source)
+at java.util.regex.Pattern$BranchConn.match(Unknown Source)
+at java.util.regex.Pattern$CharProperty.match(Unknown Source)
+at java.util.regex.Pattern$Branch.match(Unknown Source)
+at java.util.regex.Pattern$GroupHead.match(Unknown Source)
+at java.util.regex.Pattern$Loop.match(Unknown Source)
+at java.util.regex.Pattern$GroupTail.match(Unknown Source)
+at java.util.regex.Pattern$BranchConn.match(Unknown Source)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

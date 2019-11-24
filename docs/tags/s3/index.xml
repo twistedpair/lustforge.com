@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>S3 on lust.dev</title>
+    <link>https://lust.dev/tags/s3/</link>
+    <description>Recent content in S3 on lust.dev</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Joseph Lust</copyright>
+    <lastBuildDate>Sat, 27 Feb 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://lust.dev/tags/s3/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>AWS Hugo Hosting, HowTo</title>
+      <link>https://lust.dev/2016/02/27/hosting-hugo-on-aws/</link>
+      <pubDate>Sat, 27 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://lust.dev/2016/02/27/hosting-hugo-on-aws/</guid>
+      <description>
+
+&lt;p&gt;Running your &lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; static blog site is easy and cheap, but there are a few snags I had to solve when I deployed mine. Follow these instruction to host your Hugo blog on AWS &lt;a href=&#34;https://aws.amazon.com/s3/&#34;&gt;S3&lt;/a&gt; and &lt;a href=&#34;https://aws.amazon.com/cloudfront/&#34;&gt;Cloudfront&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;disclaimer:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Disclaimer&lt;/h2&gt;
+
+&lt;p&gt;The following works for me. If you&amp;rsquo;re not comfortable with a CLI, use the &lt;a href=&#34;console.aws.amazon.com/console/home&#34;&gt;AWS Web Console&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;bucket-configuration:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Bucket Configuration&lt;/h2&gt;
+
+&lt;p&gt;Other tutorials use the AWS web console, and feature lots of screenshots, but your&amp;rsquo;re a savvy Hugo user. We&amp;rsquo;ll use the AWS Commandline interface tool, ak.k. &lt;strong&gt;awscli&lt;/strong&gt;. You can install it with &lt;code&gt;pip&lt;/code&gt;, if you don&amp;rsquo;t already have it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo pip install awscli
+aws configure # Follow instructions to setup
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Make a bucket. The name does not matter. No one will see this. If someone is already using that name, you&amp;rsquo;ll need to pick another. We&amp;rsquo;ll also add a bucket to hold all of our &lt;strong&gt;logs&lt;/strong&gt;, so that you can know who visited.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Set your domain here
+YOUR_DOMAIN=&amp;quot;yourdomain.com&amp;quot;
+REGION=&amp;quot;us-east-1&amp;quot;
+# Don&#39;t change these
+BUCKET_NAME=&amp;quot;${YOUR_DOMAIN}-cdn&amp;quot;
+LOG_BUCKET_NAME=&amp;quot;${BUCKET_NAME}-logs&amp;quot;
+
+# One fresh bucket please!
+aws s3 mb s3://$BUCKET_NAME --region $REGION
+# And another for the logs
+aws s3 mb s3://$LOG_BUCKET_NAME --region $REGION
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;bucket-permissions-and-logging:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Bucket Permissions and Logging&lt;/h2&gt;
+
+&lt;p&gt;Give AWS the rights to insert logs into your bucket. Then tell S3 to log your website visits to that bucket.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Let AWS write the logs to this location
+aws s3api put-bucket-acl --bucket $LOG_BUCKET_NAME \
+--grant-write &#39;URI=&amp;quot;http://acs.amazonaws.com/groups/s3/LogDelivery&amp;quot;&#39; \
+--grant-read-acp &#39;URI=&amp;quot;http://acs.amazonaws.com/groups/s3/LogDelivery&amp;quot;&#39;
+
+# Setup logging
+LOG_POLICY=&amp;quot;{\&amp;quot;LoggingEnabled\&amp;quot;:{\&amp;quot;TargetBucket\&amp;quot;:\&amp;quot;$LOG_BUCKET_NAME\&amp;quot;,\&amp;quot;TargetPrefix\&amp;quot;:\&amp;quot;$BUCKET_NAME\&amp;quot;}}&amp;quot;
+aws s3api put-bucket-logging --bucket $BUCKET_NAME --bucket-logging-status $LOG_POLICY
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;create-s3-bucket-website:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Create S3 Bucket Website&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll tell S3 to turn our bucket into a website. This will give it a public URL that does redirecting for us. We need this since Hugo blog pages like &lt;strong&gt;foo.com/bob/&lt;/strong&gt; are really &lt;strong&gt;foo.com/bob/index.html&lt;/strong&gt;. We need to redirect those root paths like &lt;strong&gt;/bob/&lt;/strong&gt; to &lt;strong&gt;/bob/index.html&lt;/strong&gt;. Normally you&amp;rsquo;d need rewrite rules with Nginx or Apache, but S3 can do that too.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# Create website config
+echo &amp;quot;{
+    \&amp;quot;IndexDocument\&amp;quot;: {
+        \&amp;quot;Suffix\&amp;quot;: \&amp;quot;index.html\&amp;quot;
+    },
+    \&amp;quot;ErrorDocument\&amp;quot;: {
+        \&amp;quot;Key\&amp;quot;: \&amp;quot;404.html\&amp;quot;
+    },
+    \&amp;quot;RoutingRules\&amp;quot;: [
+        {
+            \&amp;quot;Redirect\&amp;quot;: {
+                \&amp;quot;ReplaceKeyWith\&amp;quot;: \&amp;quot;index.html\&amp;quot;
+            },
+            \&amp;quot;Condition\&amp;quot;: {
+                \&amp;quot;KeyPrefixEquals\&amp;quot;: \&amp;quot;/\&amp;quot;
+            }
+        }
+    ]
+}&amp;quot; &amp;gt; website.json
+
+aws s3api put-bucket-website --bucket $BUCKET_NAME --website-configuration file://website.json
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now you can visit &lt;code&gt;http://&amp;lt;bucket_name&amp;gt;.s3-website-&amp;lt;region&amp;gt;.amazonaws.com&lt;/code&gt; to browse your site!&lt;/p&gt;
+
+&lt;h2 id=&#34;get-free-ssl-certificates:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Get Free SSL Certificates&lt;/h2&gt;
+
+&lt;p&gt;Everything should have SSL, so AWS decided to give away &lt;a href=&#34;https://aws.amazon.com/certificate-manager/pricing/&#34;&gt;FREE SSL certificates&lt;/a&gt; for all AWS users. Thanks, Jeff! Make sure you can access the admin email &lt;a href=&#34;http://www.whois-search.com/&#34;&gt;address on your domain&lt;/a&gt;, and then run the following and check your email. The email should go through instantly. Note that we&amp;rsquo;re also requesting the &lt;code&gt;www.&lt;/code&gt; variant of this domain. We&amp;rsquo;ll use this for redirecting &lt;code&gt;www.foo.com&lt;/code&gt; to &lt;code&gt;foo.com&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws acm request-certificate --domain-name $YOUR_DOMAIN --subject-alternative-names &amp;quot;www.$YOUR_DOMAIN&amp;quot; --idempotency-token &amp;quot;`date +%s`&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The idempotency token will prevent running this twice from sending two requests. Also, note that ACM will renew your certs each year automatically, so this SSL really is &lt;a href=&#34;https://en.wikipedia.org/wiki/Ron_Popeil&#34;&gt;set it and forget it&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Call ACM and get the ARN of your cert to use in the next step.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws acm list-certificates --certificate-statuses ISSUED
+# Example result
+{
+    &amp;quot;CertificateSummaryList&amp;quot;: [
+        {
+            &amp;quot;CertificateArn&amp;quot;: &amp;quot;arn:aws:acm:us-east-1:7865196219991:certificate/de305d54-75b4-431b-adb2-eb6b9e546014&amp;quot;,
+            &amp;quot;DomainName&amp;quot;: &amp;quot;yoursite.com&amp;quot;
+        }
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;cloudfront-setup:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;CloudFront Setup&lt;/h2&gt;
+
+&lt;p&gt;S3 hosts your files as a website, but we want a vanity domain and custom SSL. Plus, a &lt;a href=&#34;https://aws.amazon.com/cloudfront/details/#Detailed_Description&#34;&gt;worldwide 54 edge location CDN&lt;/a&gt; would be nice. AWS CloudFront can accomplish all of this quite easily.&lt;/p&gt;
+
+&lt;p&gt;First we&amp;rsquo;ll tell &lt;code&gt;awscli&lt;/code&gt; to enable the CloudFront tools, which are presently in &amp;ldquo;Preview Mode.&amp;rdquo;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws  configure  set preview.cloudfront true # Honey badger don&#39;t care
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is a long config, so let&amp;rsquo;s break it down:&lt;/p&gt;
+
+&lt;h4 id=&#34;origin-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Origin Config&lt;/h4&gt;
+
+&lt;p&gt;We must use the &lt;strong&gt;S3 website hosting URL&lt;/strong&gt; not simply point to the S3 bucket like regular CF setup. This allows us to get &lt;strong&gt;index.html&lt;/strong&gt; redirecting. This also means we cannot use &lt;strong&gt;HTTPS Only&lt;/strong&gt; on the origin, because its domain won&amp;rsquo;t match the generic S3 certificate AWS uses for all S3 requests.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;  &amp;quot;Origins&amp;quot;: {
+    &amp;quot;Quantity&amp;quot;: 1,
+    &amp;quot;Items&amp;quot;: [
+      {
+        &amp;quot;Id&amp;quot;: &amp;quot;$BUCKET_NAME-origin&amp;quot;,
+        &amp;quot;OriginPath&amp;quot;: &amp;quot;&amp;quot;,
+        &amp;quot;CustomOriginConfig&amp;quot;: {
+          &amp;quot;OriginProtocolPolicy&amp;quot;: &amp;quot;http-only&amp;quot;,
+          &amp;quot;HTTPPort&amp;quot;: 80,
+          &amp;quot;OriginSslProtocols&amp;quot;: {
+            &amp;quot;Quantity&amp;quot;: 3,
+            &amp;quot;Items&amp;quot;: [
+              &amp;quot;TLSv1&amp;quot;,
+              &amp;quot;TLSv1.1&amp;quot;,
+              &amp;quot;TLSv1.2&amp;quot;
+            ]
+          },
+          &amp;quot;HTTPSPort&amp;quot;: 443
+        },
+        &amp;quot;DomainName&amp;quot;: &amp;quot;$BUCKET_NAME.s3-website-$REGION.amazonaws.com&amp;quot;
+      }
+    ]
+  }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;logging-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Logging Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Log CF hits to the buckets we already made&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;Logging&amp;quot;: {
+    &amp;quot;Bucket&amp;quot;: &amp;quot;$LOG_BUCKET_NAME.s3.amazonaws.com&amp;quot;, 
+    &amp;quot;Prefix&amp;quot;: &amp;quot;${BUCKET_NAME}-cf/&amp;quot;, 
+    &amp;quot;Enabled&amp;quot;: true
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;cache-behavior-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Cache Behavior Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;We want everyone coming to the site to use SSL, so we&amp;rsquo;ll redirect port 80 &amp;rarr; 443.&lt;/li&gt;
+&lt;li&gt;Cache content for 30min by DefaultCacheBehavior&lt;/li&gt;
+&lt;li&gt;Only forward &lt;code&gt;HEAD&lt;/code&gt; and &lt;code&gt;GET&lt;/code&gt; requests, cache them too&lt;/li&gt;
+&lt;li&gt;Gzip content if possible (reduce bandwidth usage, faster)&lt;/li&gt;
+&lt;li&gt;Don&amp;rsquo;t forward headers&lt;/li&gt;
+&lt;li&gt;Don&amp;rsquo;t trust other signers&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;DefaultCacheBehavior&amp;quot;: {
+&amp;quot;DefaultCacheBehavior&amp;quot;: {
+    &amp;quot;ViewerProtocolPolicy&amp;quot;: &amp;quot;redirect-to-https&amp;quot;,
+    &amp;quot;DefaultTTL&amp;quot;: 1800,
+    &amp;quot;AllowedMethods&amp;quot;: {
+      &amp;quot;Quantity&amp;quot;: 2,
+      &amp;quot;Items&amp;quot;: [
+        &amp;quot;HEAD&amp;quot;,&amp;quot;GET&amp;quot;
+      ],
+      &amp;quot;CachedMethods&amp;quot;: {
+        &amp;quot;Quantity&amp;quot;: 2,
+        &amp;quot;Items&amp;quot;: [
+          &amp;quot;HEAD&amp;quot;,&amp;quot;GET&amp;quot;
+        ]
+      }
+    },
+    &amp;quot;MinTTL&amp;quot;: 0,
+    &amp;quot;Compress&amp;quot;: true,
+    &amp;quot;ForwardedValues&amp;quot;: {
+      &amp;quot;Headers&amp;quot;: {
+        &amp;quot;Quantity&amp;quot;: 0
+      },
+      &amp;quot;Cookies&amp;quot;: {
+        &amp;quot;Forward&amp;quot;: &amp;quot;none&amp;quot;
+      },
+      &amp;quot;QueryString&amp;quot;: false
+    },
+    &amp;quot;TrustedSigners&amp;quot;: {
+      &amp;quot;Enabled&amp;quot;: false,
+      &amp;quot;Quantity&amp;quot;: 0
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;ssl-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;SSL Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Use the new SSL cert from ACM, referenced by the ARN&lt;/li&gt;
+&lt;li&gt;Use &lt;a href=&#34;https://en.wikipedia.org/wiki/Server_Name_Indication&#34;&gt;SNI&lt;/a&gt;, breaking wood burning browsers on WinXP, because it&amp;rsquo;s FREE&lt;/li&gt;
+&lt;li&gt;Warning: &lt;strong&gt;Not&lt;/strong&gt; using SNI &lt;a href=&#34;https://aws.amazon.com/cloudfront/pricing/#Request_Pricing_for_All_HTTP_Methods_(per_10,000)&#34;&gt;costs &lt;code&gt;$600/mo&lt;/code&gt;&lt;/a&gt;, so &lt;strong&gt;use SNI&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;ViewerCertificate&amp;quot;: {
+    &amp;quot;SSLSupportMethod&amp;quot;: &amp;quot;sni-only&amp;quot;, 
+    &amp;quot;ACMCertificateArn&amp;quot;: &amp;quot;$SSL_ARN&amp;quot;, 
+    &amp;quot;MinimumProtocolVersion&amp;quot;: &amp;quot;TLSv1&amp;quot;, 
+    &amp;quot;Certificate&amp;quot;: &amp;quot;$SSL_ARN&amp;quot;, 
+    &amp;quot;CertificateSource&amp;quot;: &amp;quot;acm&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;error-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Error Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Forward Cloudfront &lt;code&gt;Not Found&lt;/code&gt; and &lt;code&gt;Forbidden&lt;/code&gt; errors to your custom pages&lt;/li&gt;
+&lt;li&gt;Cache failures for 5min, then try the Origin again&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;CustomErrorResponses&amp;quot;: {
+    &amp;quot;Quantity&amp;quot;: 2,
+    &amp;quot;Items&amp;quot;: [
+        {
+            &amp;quot;ErrorCode&amp;quot;: 403, 
+            &amp;quot;ResponsePagePath&amp;quot;: &amp;quot;/404.html&amp;quot;, 
+            &amp;quot;ResponseCode&amp;quot;: &amp;quot;404&amp;quot;,
+            &amp;quot;ErrorCachingMinTTL&amp;quot;: 300
+        }, 
+        {
+            &amp;quot;ErrorCode&amp;quot;: 404, 
+            &amp;quot;ResponsePagePath&amp;quot;: &amp;quot;/404.html&amp;quot;, 
+            &amp;quot;ResponseCode&amp;quot;: &amp;quot;404&amp;quot;,
+            &amp;quot;ErrorCachingMinTTL&amp;quot;: 300
+        }
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;redirect-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Redirect Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mask the ugly default CF domain with your vanity domain&lt;/li&gt;
+&lt;li&gt;Accept root and &lt;code&gt;www.&lt;/code&gt; variants&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;&amp;quot;Aliases&amp;quot;: {
+    &amp;quot;Quantity&amp;quot;: 2,
+    &amp;quot;Items&amp;quot;: [
+        &amp;quot;$YOUR_DOMAIN&amp;quot;, &amp;quot;www.$YOUR_DOMAIN&amp;quot;
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;misc-config:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Misc Config&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Serve &lt;code&gt;foo.com/index.html&lt;/code&gt; to &lt;code&gt;foo.com&lt;/code&gt; requests&lt;/li&gt;
+&lt;li&gt;Use all edge nodes worldwide&lt;/li&gt;
+&lt;li&gt;Turn it on&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+    &amp;quot;DefaultRootObject&amp;quot;: &amp;quot;index.html&amp;quot;, 
+    &amp;quot;PriceClass&amp;quot;: &amp;quot;PriceClass_All&amp;quot;, 
+    &amp;quot;Enabled&amp;quot;: true
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;making-the-distribution:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Making the Distribution&lt;/h3&gt;
+
+&lt;p&gt;Sorry, it&amp;rsquo;s really ugly, but such is bash escaping.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# From above
+SSL_ARN=&amp;quot;arn:aws:acm:us-east-1:7865196219991:certificate/de305d54-75b4-431b-adb2-eb6b9e546014&amp;quot;
+
+CALLER_REF=&amp;quot;`date +%s`&amp;quot; # current second
+echo &amp;quot;{
+    \&amp;quot;Comment\&amp;quot;: \&amp;quot;$BUCKET_NAME Static Hosting\&amp;quot;, 
+    \&amp;quot;Logging\&amp;quot;: {
+        \&amp;quot;Bucket\&amp;quot;: \&amp;quot;$LOG_BUCKET_NAME.s3.amazonaws.com\&amp;quot;, 
+        \&amp;quot;Prefix\&amp;quot;: \&amp;quot;${BUCKET_NAME}-cf/\&amp;quot;, 
+        \&amp;quot;Enabled\&amp;quot;: true,
+        \&amp;quot;IncludeCookies\&amp;quot;: false
+    }, 
+    \&amp;quot;Origins\&amp;quot;: {
+        \&amp;quot;Quantity\&amp;quot;: 1,
+        \&amp;quot;Items\&amp;quot;: [
+            {
+                \&amp;quot;Id\&amp;quot;:\&amp;quot;$BUCKET_NAME-origin\&amp;quot;,
+                \&amp;quot;OriginPath\&amp;quot;: \&amp;quot;\&amp;quot;, 
+                \&amp;quot;CustomOriginConfig\&amp;quot;: {
+                    \&amp;quot;OriginProtocolPolicy\&amp;quot;: \&amp;quot;http-only\&amp;quot;, 
+                    \&amp;quot;HTTPPort\&amp;quot;: 80, 
+                    \&amp;quot;OriginSslProtocols\&amp;quot;: {
+                        \&amp;quot;Quantity\&amp;quot;: 3,
+                        \&amp;quot;Items\&amp;quot;: [
+                            \&amp;quot;TLSv1\&amp;quot;, 
+                            \&amp;quot;TLSv1.1\&amp;quot;, 
+                            \&amp;quot;TLSv1.2\&amp;quot;
+                        ]
+                    }, 
+                    \&amp;quot;HTTPSPort\&amp;quot;: 443
+                }, 
+                \&amp;quot;DomainName\&amp;quot;: \&amp;quot;$BUCKET_NAME.s3-website-$REGION.amazonaws.com\&amp;quot;
+            }
+        ]
+    }, 
+    \&amp;quot;DefaultRootObject\&amp;quot;: \&amp;quot;index.html\&amp;quot;, 
+    \&amp;quot;PriceClass\&amp;quot;: \&amp;quot;PriceClass_All\&amp;quot;, 
+    \&amp;quot;Enabled\&amp;quot;: true, 
+    \&amp;quot;CallerReference\&amp;quot;: \&amp;quot;$CALLER_REF\&amp;quot;,
+    \&amp;quot;DefaultCacheBehavior\&amp;quot;: {
+        \&amp;quot;TargetOriginId\&amp;quot;: \&amp;quot;$BUCKET_NAME-origin\&amp;quot;,
+        \&amp;quot;ViewerProtocolPolicy\&amp;quot;: \&amp;quot;redirect-to-https\&amp;quot;, 
+        \&amp;quot;DefaultTTL\&amp;quot;: 1800,
+        \&amp;quot;AllowedMethods\&amp;quot;: {
+            \&amp;quot;Quantity\&amp;quot;: 2,
+            \&amp;quot;Items\&amp;quot;: [
+                \&amp;quot;HEAD\&amp;quot;, 
+                \&amp;quot;GET\&amp;quot;
+            ], 
+            \&amp;quot;CachedMethods\&amp;quot;: {
+                \&amp;quot;Quantity\&amp;quot;: 2,
+                \&amp;quot;Items\&amp;quot;: [
+                    \&amp;quot;HEAD\&amp;quot;, 
+                    \&amp;quot;GET\&amp;quot;
+                ]
+            }
+        }, 
+        \&amp;quot;MinTTL\&amp;quot;: 0, 
+        \&amp;quot;Compress\&amp;quot;: true,
+        \&amp;quot;ForwardedValues\&amp;quot;: {
+            \&amp;quot;Headers\&amp;quot;: {
+                \&amp;quot;Quantity\&amp;quot;: 0
+            }, 
+            \&amp;quot;Cookies\&amp;quot;: {
+                \&amp;quot;Forward\&amp;quot;: \&amp;quot;none\&amp;quot;
+            }, 
+            \&amp;quot;QueryString\&amp;quot;: false
+        },
+        \&amp;quot;TrustedSigners\&amp;quot;: {
+            \&amp;quot;Enabled\&amp;quot;: false, 
+            \&amp;quot;Quantity\&amp;quot;: 0
+        }
+    }, 
+    \&amp;quot;ViewerCertificate\&amp;quot;: {
+        \&amp;quot;SSLSupportMethod\&amp;quot;: \&amp;quot;sni-only\&amp;quot;, 
+        \&amp;quot;ACMCertificateArn\&amp;quot;: \&amp;quot;$SSL_ARN\&amp;quot;, 
+        \&amp;quot;MinimumProtocolVersion\&amp;quot;: \&amp;quot;TLSv1\&amp;quot;, 
+        \&amp;quot;Certificate\&amp;quot;: \&amp;quot;$SSL_ARN\&amp;quot;, 
+        \&amp;quot;CertificateSource\&amp;quot;: \&amp;quot;acm\&amp;quot;
+    }, 
+    \&amp;quot;CustomErrorResponses\&amp;quot;: {
+        \&amp;quot;Quantity\&amp;quot;: 2,
+        \&amp;quot;Items\&amp;quot;: [
+            {
+                \&amp;quot;ErrorCode\&amp;quot;: 403, 
+                \&amp;quot;ResponsePagePath\&amp;quot;: \&amp;quot;/404.html\&amp;quot;, 
+                \&amp;quot;ResponseCode\&amp;quot;: \&amp;quot;404\&amp;quot;,
+                \&amp;quot;ErrorCachingMinTTL\&amp;quot;: 300
+            }, 
+            {
+                \&amp;quot;ErrorCode\&amp;quot;: 404, 
+                \&amp;quot;ResponsePagePath\&amp;quot;: \&amp;quot;/404.html\&amp;quot;, 
+                \&amp;quot;ResponseCode\&amp;quot;: \&amp;quot;404\&amp;quot;,
+                \&amp;quot;ErrorCachingMinTTL\&amp;quot;: 300
+            }
+        ]
+    }, 
+    \&amp;quot;Aliases\&amp;quot;: {
+        \&amp;quot;Quantity\&amp;quot;: 2,
+        \&amp;quot;Items\&amp;quot;: [
+            \&amp;quot;$YOUR_DOMAIN\&amp;quot;, 
+            \&amp;quot;www.$YOUR_DOMAIN\&amp;quot;
+        ]
+    }
+}&amp;quot; &amp;gt; distroConfig.json
+
+# Now apply it
+aws cloudfront create-distribution --distribution-config file://distroConfig.json
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Nice. You&amp;rsquo;ve got a CloudFront distribution. Run the below to get the domain name for use next.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws cloudfront list-distributions --query &#39;DistributionList.Items[].{id:Id,comment:Comment,domain:DomainName}&#39;
+# i.e. d8ukw3iojeij2.cloudfront.net
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;route-53-domain-setup:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Route 53 Domain Setup&lt;/h2&gt;
+
+&lt;p&gt;Only one more step! We&amp;rsquo;ll point your &lt;a href=&#34;https://aws.amazon.com/route53/&#34;&gt;Route 53&lt;/a&gt; hosted domain to the CF distribution. This uses &lt;a href=&#34;https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html&#34;&gt;an alias&lt;/a&gt; for the zone apex and a CNAME for the subdomain.&lt;/p&gt;
+
+&lt;p&gt;Find your current hosted zone (domain). i.e. &lt;code&gt;/hostedzone/ZAAWZQV036URT&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;aws route53 list-hosted-zones
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This config alias the domain to your Cloudfront distribution.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The bare domain get&amp;rsquo;s aliased&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;www&lt;/code&gt; subdomain uses a CNAME&lt;/li&gt;
+&lt;li&gt;Aliases all refernce zone &lt;code&gt;ZAAWZQV036URT&lt;/code&gt;, because &lt;a href=&#34;https://docs.aws.amazon.com/Route53/latest/APIReference/CreateAliasRRSAPI.html&#34;&gt;AWS says so&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;UPSERT&lt;/code&gt; so that this config is applied idempotently&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;Changes&amp;quot;: [
+    {
+      &amp;quot;Action&amp;quot;: &amp;quot;UPSERT&amp;quot;,
+      &amp;quot;ResourceRecordSet&amp;quot;: {
+        &amp;quot;AliasTarget&amp;quot;: {
+          &amp;quot;HostedZoneId&amp;quot;: &amp;quot;Z2FDTNDATAQYW2&amp;quot;,
+          &amp;quot;EvaluateTargetHealth&amp;quot;: false,
+          &amp;quot;DNSName&amp;quot;: &amp;quot;d8ukw3iojeij2.cloudfront.net.&amp;quot;
+        },
+        &amp;quot;Type&amp;quot;: &amp;quot;A&amp;quot;,
+        &amp;quot;Name&amp;quot;: &amp;quot;yoursite.com.&amp;quot;
+      }
+    },
+    {
+      &amp;quot;Action&amp;quot;: &amp;quot;UPSERT&amp;quot;,
+      &amp;quot;ResourceRecordSet&amp;quot;: {
+        &amp;quot;ResourceRecords&amp;quot;: [
+          {
+            &amp;quot;Value&amp;quot;: &amp;quot;d8ukw3iojeij2.cloudfront.net&amp;quot;
+          }
+        ],
+        &amp;quot;Type&amp;quot;: &amp;quot;CNAME&amp;quot;,
+        &amp;quot;Name&amp;quot;: &amp;quot;www.yoursite.com.&amp;quot;,
+        &amp;quot;TTL&amp;quot;: 300
+      }
+    }
+  ]
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ok, here goes. Build the json and submit it. Note, you&amp;rsquo;ll need to wait ~TTL seconds for the DNS to propagate.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;HOSTED_ZONE_ID=&amp;quot;/hostedzone/ZAAWZQV036URT&amp;quot;
+DISTRO_URL=&amp;quot;d8ukw3iojeij2.cloudfront.net&amp;quot;
+
+echo &amp;quot;{
+    \&amp;quot;Comment\&amp;quot;: \&amp;quot;Let there be Hugo!\&amp;quot;,
+    \&amp;quot;Changes\&amp;quot;: [
+        {
+            \&amp;quot;Action\&amp;quot;:\&amp;quot;UPSERT\&amp;quot;,
+            \&amp;quot;ResourceRecordSet\&amp;quot;: {
+                \&amp;quot;AliasTarget\&amp;quot;: {
+                    \&amp;quot;HostedZoneId\&amp;quot;: \&amp;quot;Z2FDTNDATAQYW2\&amp;quot;, 
+                    \&amp;quot;EvaluateTargetHealth\&amp;quot;: false, 
+                    \&amp;quot;DNSName\&amp;quot;: \&amp;quot;$DISTRO_URL.\&amp;quot;
+                }, 
+                \&amp;quot;Type\&amp;quot;: \&amp;quot;A\&amp;quot;, 
+                \&amp;quot;Name\&amp;quot;: \&amp;quot;$YOUR_DOMAIN.\&amp;quot;
+            }
+        },{
+            \&amp;quot;Action\&amp;quot;:\&amp;quot;UPSERT\&amp;quot;,
+            \&amp;quot;ResourceRecordSet\&amp;quot;: {
+                \&amp;quot;ResourceRecords\&amp;quot;: [
+                    {
+                        \&amp;quot;Value\&amp;quot;: \&amp;quot;$DISTRO_URL\&amp;quot;
+                    }
+                ],
+                \&amp;quot;Type\&amp;quot;: \&amp;quot;CNAME\&amp;quot;,
+                \&amp;quot;Name\&amp;quot;: \&amp;quot;www.$YOUR_DOMAIN.\&amp;quot;,
+                \&amp;quot;TTL\&amp;quot;: 300
+            }
+        }
+    ]
+}&amp;quot; &amp;gt; r53Batch.json
+
+aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --change-batch file://r53Batch.json
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;deployment:dbd0bcf413e4dc3b1882a25383e97315&#34;&gt;Deployment&lt;/h2&gt;
+
+&lt;p&gt;Great job, you&amp;rsquo;re an AWS API zen master now! That was &lt;em&gt;easy&lt;/em&gt;, right? At least it will be easy to redo later or script with Ansible.&lt;/p&gt;
+
+&lt;p&gt;Note, because there are 54 edge nodes worldwide, it may &lt;strong&gt;take some time&lt;/strong&gt; (i.e. 30min) for your distribtion to be complete. Go get a cup of coffee and let the interwebs stabalize.&lt;/p&gt;
+
+&lt;p&gt;See the next post to &lt;a href=&#34;https://lust.dev/2016/02/28/deploy-hugo-files-to-s3/&#34;&gt;Deploy Hugo Files to S3&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

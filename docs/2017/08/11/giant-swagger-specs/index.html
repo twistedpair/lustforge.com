@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Handling Giant Swagger Specs &middot; Joseph Lust</title>
+        <meta name="description" content="what Lust hath wrought">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="MobileOptimized" content="320">
+        <meta name="generator" content="Hugo 0.16-DEV" />
+        <meta name="robots" content="index,follow">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="https://lust.dev/favicon.png">
+        <link rel="stylesheet" href="https://lust.dev/css/normalize.css">
+	<link rel="stylesheet" href="https://lust.dev/css/highlight/obsidian.css">
+        <link rel="stylesheet" href="https://lust.dev/css/style.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        
+        
+
+            
+            <meta property="og:type"   content="article" />
+            <meta property="og:url"    content="https://lust.dev/2017/08/11/giant-swagger-specs/" />
+            <meta property="og:title"  content="Handling Giant Swagger Specs" />
+
+            <meta name="twitter:domain" value="lustforge.com" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" value="Handling Giant Swagger Specs" />
+            
+             <meta name="twitter:description" value="Three quick tips to wrangle giant Swagger files"/>
+            
+
+            
+            <meta name="twitter:url" value="https://lust.dev/2017/08/11/giant-swagger-specs/"/>
+
+            
+            <meta property="og:image"  content="https://lust.dev/img/swagger_jenkins_post_image.png">
+            <meta property="twitter:image"  content="https://lust.dev/img/swagger_jenkins_post_image.png">
+            
+        
+        
+    </head>
+    <body>
+        
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-17498476-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+        <div id="wrapper">
+            <header class="site-header">
+                <div class="container">
+                    <div class="site-title-wrapper">
+                        
+                            <h1 class="site-title">
+                                <a title="lust.dev" href="https://lust.dev/">lust.dev</a>
+                            </h1>
+                        
+			
+                        	<a class="button-square" href="https://lust.dev/index.xml"><i title="RSS Feed" class="fa fa-rss"></i></a>
+			
+                        
+                            <a class="button-square button-social hint--top" data-hint="Twitter" title="Twitter" href="https://twitter.com/lustcoder">
+                                <i class="fa fa-twitter"></i>
+                            </a>
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/twistedpair">
+                                <i class="fa fa-github-alt"></i>
+                            </a>
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="Stack Overflow" title="Stack Overflow" href="https://stackoverflow.com/users/564157/joseph-lust">
+                                <i class="fa fa-stack-overflow"></i>
+                            </a>
+                        
+                        
+                            <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://www.linkedin.com/in/josephlust">
+                                <i class="fa fa-linkedin"></i>
+                            </a>
+                        
+                        
+			
+			<h1 class="site-title" style="margin-left:10px;">
+                            <a class="site-title" data-hint="Lust" title="Meet the groundskeeper" href="https://lust.dev/about/">J. Lust &#8250;</a>
+                        </h1>
+                    </div>
+
+                    <ul class="site-nav">
+                        
+                    </ul>
+                </div>
+            </header>
+
+            <div id="container">
+
+
+<div class="container">
+    <article class="post-container">
+        <header class="post-header">
+    <h1 class="post-title">Handling Giant Swagger Specs</h1>
+    
+</header>
+
+        
+<div class="post-content clearfix">
+
+        
+    
+    
+    <script type="application/ld+json">
+    {
+        "@context" : "http://schema.org",
+        "@type" : "BlogPosting",
+        "articleSection" : "post",
+        "name" : "Handling Giant Swagger Specs",
+        "headline" : "Handling Giant Swagger Specs",
+        "description" : "Swagger Spec: An Embarrassment of Riches Swagger Spec is a great way to define and document API projects. Your code and documentation live and ship together, allowing for rapid documentation and development. However, you might say it\x26rsquo;s too good. As your team and APIs using Swagger grow, so too do the challenges of wrangling that giant spec without breaking your APIs or driving your developers bonkers. Unfortinately, tools like the Swagger Validator start to break down for large, real worls specs 1.",
+        "inLanguage" : "en-US",
+        "author" : "Joseph Lust",
+        "creator" : "Joseph Lust",
+        "accountablePerson" : "Joseph Lust",
+        "copyrightHolder" : "Joseph Lust",
+        "copyrightYear" : "2017",
+        "datePublished" : "",
+        "publisher": "LustForge.com",
+        "logo": "https:\/\/lust.dev\/favicon.png",
+        "url" : "https:\/\/lust.dev\/2017\/08\/11\/giant-swagger-specs\/",
+        "wordCount" : "305",
+        "image" : "https:\/\/lust.dev\/img\/swagger_jenkins_post_image.png",
+        "keywords" : [ "swagger, python, ci, jenkins" ]
+    }
+    </script>
+    
+    
+
+
+<div itemscope itemtype="http://schema.org/BlogPosting" style="display:none;">
+     <meta itemprop="mainEntityOfPage" content="https://lust.dev/2017/08/11/giant-swagger-specs/" />
+     <meta itemprop="inLanguage" content="en-US" />
+     <h1 itemprop="headline">Handling Giant Swagger Specs</h1>
+     <meta itemprop="name" content="Handling Giant Swagger Specs" />
+     <meta itemprop="description" content="Three quick tips to wrangle giant Swagger files" />
+     <meta itemprop="wordCount" content="305" />
+     <meta itemprop="keywords" content="swagger,python,ci,jenkins" />
+     
+     <meta itemprop="copyrightYear" content="2017" />
+    <div itemprop="copyrightHolder" itemscope itemtype="http://schema.org/Person">
+        <meta itemprop="name" content="Joseph Lust">
+    </div>
+    
+    
+     <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
+         <img  itemprop="url" src="https://lust.dev/img/swagger_jenkins_post_image.png" alt="thumbnail">
+         <meta itemprop="width" content="220" >
+         <meta itemprop="height" content="220" >
+    </div>
+    
+    <meta itemprop="datePublished" content="2017-08-11">
+    <meta itemprop="dateModified" content="2017-08-11">
+    <a itemprop="mainEntityOfPage" href="/ArticleLink"></a>
+    <div itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <meta itemprop="name" content="Joseph Lust">
+    </div>
+    <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="LustForge.com">
+      <a itemprop="url" href="/"> 
+      <span itemprop="logo" itemscope itemtype="http://schema.org/ImageObject"  >
+      <img itemprop="image" src="https://lust.dev/favicon.png" />
+      <link itemprop="url" href="https://lust.dev/favicon.png" />
+      </span>
+      </a>
+    </div>
+</div>
+
+    
+
+    
+
+<h1 id="swagger-spec-an-embarrassment-of-riches:09ac5e77c9181fef9c7e835ef4126d81">Swagger Spec: An Embarrassment of Riches</h1>
+
+<p><a href="https://swagger.io/specification/">Swagger Spec</a> is a great way to define and document API projects. Your code and documentation live and ship together, allowing for rapid documentation and development. However, you might say it&rsquo;s too good.</p>
+
+<p>As your team and APIs using Swagger grow, so too do the challenges of wrangling that giant spec without breaking your APIs or driving your developers bonkers. Unfortinately, tools like the Swagger Validator start to break down for large, real worls specs <sup class="footnote-ref" id="fnref:09ac5e77c9181fef9c7e835ef4126d81:2"><a rel="footnote" href="#fn:09ac5e77c9181fef9c7e835ef4126d81:2">1</a></sup>. Here are some lessons I learned productionizing such large specs <sup class="footnote-ref" id="fnref:09ac5e77c9181fef9c7e835ef4126d81:1"><a rel="footnote" href="#fn:09ac5e77c9181fef9c7e835ef4126d81:1">2</a></sup>.</p>
+
+<h1 id="1-use-yaml-not-json:09ac5e77c9181fef9c7e835ef4126d81">1. Use YAML, Not JSON</h1>
+
+<p>JSON is hard to read and easy to corrupt in large file sizes. YAML has:</p>
+
+<ul>
+<li>Better readability</li>
+<li>Intellij, Atom, and SubLime <a href="https://github.com/pkkid/sublime-swagger-nav/blob/master/Swagger.sublime-syntax">editor support</a></li>
+<li>IDE (and vim) <a href="https://plugins.jetbrains.com/plugin/8347-swagger">schema auto complete</a></li>
+</ul>
+
+<h1 id="2-break-up-your-spec:09ac5e77c9181fef9c7e835ef4126d81">2. Break Up Your Spec</h1>
+
+<p>Use the <a href="http://azimi.me/2015/07/16/split-swagger-into-smaller-files.html">$ref includes</a> functionality to compose multiple files into one spec. Break your spec into relevant sub sections (e.g. by entity type, department, etc). This will:</p>
+
+<ul>
+<li>Reduce checkin conflicts between developers</li>
+<li>Increase readability and maintainabilty</li>
+<li>More easily isolate spec errors</li>
+</ul>
+
+<h1 id="3-dry-don-t-repeat-yaml:09ac5e77c9181fef9c7e835ef4126d81">3. DRY: Don&rsquo;t Repeat YAML</h1>
+
+<p>Swagger allows reuse of <a href="https://swagger.io/docs/specification/data-models/enums/">enums</a>, so don&rsquo;t repeat them in the <code>GET</code> &amp; <code>POST</code> endpoints, and inside the data objects. <code>$ref</code> references work for enums just like other Swagger object references.</p>
+
+<pre><code class="language-yaml">paths:
+  /widgets:
+    get:
+      parameters:
+      - in: query
+        name: shape
+        required: true
+        schema:
+          $ref: '#/components/schemas/Shape'
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    Shape:
+      type: string
+      enum:
+        - round
+        - square
+        - triangle
+</code></pre>
+
+<h1 id="4-automate-swagger-spec-validation:09ac5e77c9181fef9c7e835ef4126d81">4. Automate Swagger Spec Validation</h1>
+
+<p>Preemptively validate your spec, rather than wait until your API fails to start or object mapping errors throw 500&rsquo;s in production.</p>
+
+<p>See my <a href="https://lust.dev/2017/06/17/swagger-jenkins-validation/">Automating Swagger Spec validation post</a> on using Yelp&rsquo;s <a href="https://github.com/Yelp/swagger_spec_validator">Swagger Spec Validator</a>.</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:09ac5e77c9181fef9c7e835ef4126d81:2">Running Swagger Editor locally is slow (e.g. 6min npm install/start), consider the <a href="http://halyph.com/talks/2016-swagger-slides/Run%20Swagger%20Editor%20Locally.html">prebuilt Docker image</a>.
+ <a class="footnote-return" href="#fnref:09ac5e77c9181fef9c7e835ef4126d81:2"><sup>[return]</sup></a></li>
+<li id="fn:09ac5e77c9181fef9c7e835ef4126d81:1">I&rsquo;ve wrangled 10K and 11K spec files at work. 😢
+ <a class="footnote-return" href="#fnref:09ac5e77c9181fef9c7e835ef4126d81:1"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+</div>
+
+	
+    <div class="comments">
+        <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'lustforge';
+    var disqus_identifier = 'https:\/\/lust.dev\/2017\/08\/11\/giant-swagger-specs\/';
+    var disqus_title = 'Handling Giant Swagger Specs';
+    var disqus_url = 'https:\/\/lust.dev\/2017\/08\/11\/giant-swagger-specs\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+
+
+        <footer class="post-footer clearfix">
+    
+        <p class="post-tags">
+            <span>Tagged:</span>
+            
+                 <a href="/tags/swagger/">swagger</a>
+            
+                 <a href="/tags/python/">python</a>
+            
+                 <a href="/tags/ci/">ci</a>
+            
+                 <a href="/tags/jenkins/">jenkins</a>
+            
+	    <a href="/tags/">[all]</a>
+        </p>
+    
+
+    <div class="share">
+        <a class="icon-twitter" href="https://twitter.com/share?text=Handling%20Giant%20Swagger%20Specs&url=https%3a%2f%2flust.dev%2f2017%2f08%2f11%2fgiant-swagger-specs%2f"
+            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+            <i class="fa fa-twitter"></i>
+            <span class="hidden">Twitter</span>
+        </a>
+
+        <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2flust.dev%2f2017%2f08%2f11%2fgiant-swagger-specs%2f"
+            onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+            <i class="fa fa-facebook"></i>
+            <span class="hidden">Facebook</span>
+        </a>
+
+        <a class="icon-google-plus" href="https://plus.google.com/share?url=https%3a%2f%2flust.dev%2f2017%2f08%2f11%2fgiant-swagger-specs%2f"
+           onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+           <i class="fa fa-google-plus"></i>
+            <span class="hidden">Google+</span>
+        </a>
+    </div>
+</footer>
+
+    </article>
+</div>
+
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="site-title-wrapper">
+                    <h1 class="site-title">
+                        <a title="lust.dev" href="https://lust.dev/">lust.dev</a>
+                    </h1>
+                    <a class="button-square button-jump-top js-jump-top" href="#">
+                        <i class="fa fa-angle-up"></i>
+                    </a>
+                </div>
+
+                <p class="footer-copyright">
+                    <span>&copy; 2009 - 2018 / Powered by <a href="http://gohugo.io/">Hugo</a></span>
+                </p>
+                <p class="footer-copyright">
+                    <span><a href="https://github.com/twistedpair/ghostwriter">Lustwriter theme</a> By J. Lust</span>
+                    <span>/ Forked from <a href="https://github.com/jbub/ghostwriter">Ghostwriter</a></span>
+                </p>
+            </div>
+        </footer>
+
+        <script src="https://lust.dev/js/jquery-1.11.3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
+        <script src="https://lust.dev/js/jquery.fitvids.js"></script>
+        <script src="https://lust.dev/js/scripts.js"></script>
+    </body>
+</html>
+
