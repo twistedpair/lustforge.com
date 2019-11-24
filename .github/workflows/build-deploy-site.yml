@@ -27,4 +27,9 @@ jobs:
       run: hugo --minify -v -d docs/
 
     - name: Deploy Site
+      env:
+        # place AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY into your GH repo secrets
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: ./deploy_site.sh
+
