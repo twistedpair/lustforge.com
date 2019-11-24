@@ -1,0 +1,167 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>GWT Maps API v3 and Maven &middot; Joseph Lust</title><meta name=description content="drive to develop"><meta name=HandheldFriendly content="True"><meta name=MobileOptimized content="320"><meta name=generator content="Hugo 0.59.1"><meta name=robots content="index,follow"><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" href=https://lust.dev/favicon.png><link rel=stylesheet href=https://lust.dev/css/normalize.css><link rel=stylesheet href=https://lust.dev/css/highlight/obsidian.css><link rel=stylesheet href=https://lust.dev/css/style.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic"><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css></head><body><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-17498476-1','auto');ga('send','pageview');}</script><div id=wrapper><header class=site-header><div class=container><div class=site-title-wrapper><h1 class=site-title><a title=lust.dev href=https://lust.dev/>lust.dev</a></h1><a class=button-square href=https://lust.dev/index.xml><i title="RSS Feed" class="fa fa-rss"></i></a><a class="button-square button-social hint--top" data-hint=Twitter title=Twitter href=https://twitter.com/lustcoder><i class="fa fa-twitter"></i></a><a class="button-square button-social hint--top" data-hint=Github title=Github href=https://github.com/twistedpair><i class="fa fa-github-alt"></i></a><a class="button-square button-social hint--top" data-hint="Stack Overflow" title="Stack Overflow" href=https://stackoverflow.com/users/564157/joseph-lust><i class="fa fa-stack-overflow"></i></a><a class="button-square button-social hint--top" data-hint=LinkedIn title=LinkedIn href=https://www.linkedin.com/in/josephlust><i class="fa fa-linkedin"></i></a><h1 class=site-title style=margin-left:10px><a class=site-title data-hint=Lust title="Meet the groundskeeper" href=https://lust.dev/about/>J. Lust &#8250;</a></h1></div><ul class=site-nav></ul></div></header><div id=container><div class=container><article class=post-container><header class=post-header><h1 class=post-title>GWT Maps API v3 and Maven</h1></header><div class="post-content clearfix"><div itemscope itemtype=http://schema.org/BlogPosting style=display:none><meta itemprop=mainEntityOfPage content="https://lust.dev/2012/01/29/gwt-maps-api-v3-and-maven/"><meta itemprop=inLanguage content="en-US"><h1 itemprop=headline>GWT Maps API v3 and Maven</h1><meta itemprop=name content="GWT Maps API v3 and Maven"><meta itemprop=description content><meta itemprop=wordCount content="861"><meta itemprop=keywords content="Google Web Toolkit (GWT),Maven"><meta itemprop=copyrightYear content="2012"><div itemprop=copyrightHolder itemscope itemtype=http://schema.org/Person><meta itemprop=name content="Joseph Lust"></div><div itemprop=image itemscope itemtype=http://schema.org/ImageObject><img itemprop=url src=https://lust.dev/img/lustforge_key_default.png alt=thumbnail><meta itemprop=width content="200"><meta itemprop=height content="200"></div><meta itemprop=datePublished content="2012-01-29"><meta itemprop=dateModified content="2012-01-29"><a itemprop=mainEntityOfPage href=../../../../ArticleLink></a><div itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=name content="Joseph Lust"></div><div itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="lust.dev"><a itemprop=url href=../../../../><span itemprop=logo itemscope itemtype=http://schema.org/ImageObject><img itemprop=image src=https://lust.dev/favicon.png>
+<link itemprop=url href=https://lust.dev/favicon.png></span></a></div></div><h3 id=deprecated>Deprecated</h3><p>This post was for building the pre-alpha version of the<a href=https://github.com/branflake2267/GWT-Maps-V3-Api>GWT-Maps-V3-API</a>. However, it&#8217;s now fully Mavenized and hosted on <a href=https://github.com/branflake2267/GWT-Maps-V3-Api>GitHib</a>. Please check it out from there and simply build it.</p><h3 id=original-post>Original Post</h3><p>I&#8217;ve been a great fan of <a href=https://plus.google.com/u/1/111739836936169749229/posts>Brandon Donnelson&#8217;s</a> ongoing <a href=http://code.google.com/p/gwt-maps-api/>gwt-maps-api</a> project. However, I also love the simplicity Maven brings to my projects and life as a whole. The following is how to build the <em>gwt-maps-api</em> project using Maven (m2e) and Eclipse (Indigo). Note that since the project is still prebeta, the below are subject to change. Post a comment if you have an issue or suggestion.</p><h2 id=assumptions>Assumptions:</h2><ul><li>Eclipse Indigo installed w/ Maven integration.</li><li>GWT Eclipse plugin installed (for Indigo 3.7).</li></ul><p>Google how to do these tasks if unsure. They should be straight forward.</p><h2 id=checkout-the-project>Checkout the project</h2><p>Using Tortoise or your subversion client of choice, check out</p><pre><code class=language-bash>http://gwt-maps-api.googlecode.com/svn/trunk/Apis_Google_Maps/
+</code></pre><h2 id=import-to-eclipse>Import to Eclipse</h2><ol><li>From the Eclipse Project Explorer: <strong>Right Click &gt; Import&#8230; &gt; General &gt; Existing Projects into Workspace.</strong></li><li>Click <strong>Browse</strong> and find the location you checked the source out to under <strong>Selected root directory.</strong></li><li>Click <strong>Finish</strong> on the Import Wizard.</li></ol><h2 id=prune-missing-dependencies>Prune Missing Dependencies</h2><p>First let&#8217;s get rid of the hardcoded references to missing external libraries in the project since these are making Eclipse give your error messages.</p><ol><li><strong>Right Click</strong> your project on the <strong>Projects Explorer &gt; Build Path &gt; Configure Build Path&#8230;</strong> .</li><li>Remove the links to other projects under <strong>Projects</strong> tab.</li><li>Remove links to external <em>ajaxloader</em>, <em>gwt-user</em>, <em>gwt-dev</em>, and <em>validation-api</em> jars under the <strong>Libraries</strong> tab.</li></ol><h3 id=mavenize-the-project>Mavenize the Project</h3><p>The project is not currently under Maven dependency control. How sad :(. Let&#8217;s fix that.</p><ol><li><strong>Right Click</strong> on the project in the Project Explorer and click <strong>Maven2 &gt; Enable Dependency Management</strong> (and <strong>Finish</strong>, ignore config options). Now Maven will try to resolve dependencies.</li><li><p>You&#8217;ll need to give it a POM  file to tell it the dependencies and configure the build process. Replace the contents of <strong>pom.xml</strong> in your project root with the below xml and save. Maven will now download and configure the dependencies.</p><pre><code class=language-xml>&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+
+&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+&lt;scm&gt;
+    &lt;url&gt;http://gwt-maps-api.googlecode.com/svn&lt;/url&gt;
+    &lt;connection&gt;scm:svn:http://gwt-maps-api.googlecode.com/svn/trunk/&lt;/connection&gt;
+    &lt;developerConnection&gt;scm:svn:http://gwt-maps-api.googlecode.com/svn/trunk/&lt;/developerConnection&gt;
+&lt;/scm&gt;
+
+&lt;!-- Artifact details that people will use search for this project --&gt;
+&lt;groupId&gt;com.google.gwt.maps&lt;/groupId&gt;
+&lt;artifactId&gt;gwt-maps-api-v3&lt;/artifactId&gt;
+&lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
+&lt;name&gt;Google Web Toolkit Maps API V3&lt;/name&gt;
+&lt;url&gt;http://code.google.com/p/gwt-maps-api/&lt;/url&gt;
+
+&lt;!-- Example license --&gt;
+&lt;licenses&gt;
+    &lt;license&gt;
+        &lt;!-- &lt;name&gt;LGPLv3&lt;/name&gt; &lt;url&gt;http://www.gnu.org/licenses/lgpl-3.0.txt&lt;/url&gt; --&gt;
+    &lt;/license&gt;
+&lt;/licenses&gt;
+
+&lt;!-- Dev info --&gt;
+&lt;developers&gt;
+    &lt;developer&gt;
+        &lt;name&gt;Brandon Donnelson&lt;/name&gt;
+        &lt;email&gt;branflake2267@gmail.com&lt;/email&gt;
+        &lt;organization&gt;Gone Vertical LLC&lt;/organization&gt;
+        &lt;url&gt;http://gonevertical.com/&lt;/url&gt;
+    &lt;/developer&gt;
+&lt;/developers&gt;
+
+&lt;properties&gt;
+    &lt;!-- Java props --&gt;
+    &lt;javaVersion&gt;1.6&lt;/javaVersion&gt;
+    &lt;no.unittests&gt;false&lt;/no.unittests&gt;
+    &lt;webappDirectory&gt;${project.build.directory}/${project.build.finalName}&lt;/webappDirectory&gt;
+    &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+
+    &lt;!-- GWT props --&gt;
+    &lt;gwt.version&gt;2.4.0&lt;/gwt.version&gt;
+    &lt;gwt.extraJvmArgs&gt;-Xmx1024m -Xss8m&lt;/gwt.extraJvmArgs&gt;
+    &lt;gwt.test.skip&gt;false&lt;/gwt.test.skip&gt;
+&lt;/properties&gt;
+
+&lt;!-- Actual build instructions and sequences --&gt;
+&lt;build&gt;
+
+    &lt;!-- Generate compiled stuff in the folder used for developing mode --&gt;
+    &lt;!--&lt;outputDirectory&gt;${project.build.directory}/war/WEB-INF/classes&lt;/outputDirectory&gt; --&gt;
+    &lt;outputDirectory&gt;${basedir}/war/WEB-INF/classes&lt;/outputDirectory&gt;
+    &lt;testOutputDirectory&gt;${basedir}/target/test-classes&lt;/testOutputDirectory&gt;
+
+    &lt;!-- Build this code --&gt;
+    &lt;sourceDirectory&gt;src&lt;/sourceDirectory&gt;
+    &lt;testSourceDirectory&gt;test&lt;/testSourceDirectory&gt;
+
+    &lt;!-- Plugins needed for building --&gt;
+    &lt;plugins&gt;
+        &lt;!-- Build and package module as GWT jar w/ .gwt inside --&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
+            &lt;artifactId&gt;gwt-maven-plugin&lt;/artifactId&gt;
+            &lt;version&gt;2.4.0&lt;/version&gt;
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;resources&lt;/goal&gt;
+                    &lt;/goals&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+            &lt;configuration&gt;
+                &lt;module&gt;com.google.gwt.maps.Apis_Google_Maps&lt;/module&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+        &lt;!-- Build using java 1.6. GWT requires at least Java 1.5 --&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+            &lt;version&gt;2.3.2&lt;/version&gt;
+
+            &lt;configuration&gt;
+                &lt;source&gt;${javaVersion}&lt;/source&gt;
+                &lt;target&gt;${javaVersion}&lt;/target&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+        &lt;!-- Deploy source code in the repository --&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-source-plugin&lt;/artifactId&gt;
+            &lt;version&gt;2.1.2&lt;/version&gt;
+
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;jar&lt;/goal&gt;
+                    &lt;/goals&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+        &lt;!-- Deploy javadoc in the repository --&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-javadoc-plugin&lt;/artifactId&gt;
+            &lt;version&gt;2.8&lt;/version&gt;
+
+            &lt;executions&gt;
+                &lt;execution&gt;
+                    &lt;id&gt;attach-javadocs&lt;/id&gt;
+                    &lt;goals&gt;
+                        &lt;goal&gt;jar&lt;/goal&gt;
+                    &lt;/goals&gt;
+                &lt;/execution&gt;
+            &lt;/executions&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+
+&lt;/build&gt;
+
+&lt;!-- External project dependencies --&gt;
+&lt;dependencies&gt;
+
+    &lt;!-- Other Google --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.google.gwt.google-apis&lt;/groupId&gt;
+        &lt;artifactId&gt;gwt-ajaxloader&lt;/artifactId&gt;
+        &lt;version&gt;1.1.0&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;!-- Just the necessary GWT bits --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.google.gwt&lt;/groupId&gt;
+        &lt;artifactId&gt;gwt-user&lt;/artifactId&gt;
+        &lt;version&gt;${gwt.version}&lt;/version&gt;
+        &lt;scope&gt;provided&lt;/scope&gt; &lt;!-- don't copy to jar --&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.google.gwt&lt;/groupId&gt;
+        &lt;artifactId&gt;gwt-dev&lt;/artifactId&gt;
+        &lt;version&gt;${gwt.version}&lt;/version&gt; &lt;!-- don't copy to jar --&gt;
+    &lt;/dependency&gt;
+    &lt;!-- Testing --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;junit&lt;/groupId&gt;
+        &lt;artifactId&gt;junit&lt;/artifactId&gt;
+        &lt;version&gt;4.7&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt; &lt;!-- don't copy to jar --&gt;
+    &lt;/dependency&gt;
+
+&lt;/dependencies&gt;
+
+&lt;/project&gt;
+</code></pre></li></ol><h2 id=make-project-a-gwt-project>Make Project a GWT Project</h2><p>This will enable the GWT Eclipse plugin functionality for this project.</p><ol><li><strong>Right Click</strong> project from <strong>Project Explorer &gt; Google &gt; Google Web Toolkit Settings&#8230;</strong> .</li><li>Check (or uncheck and recheck) <strong>Use Google Web Toolkit</strong> checkbox. It should be using the second radio button <strong>Use specific SDK</strong> which is the maven GWT  jar.</li></ol><h2 id=build-and-install-project>Build and Install Project</h2><p>Now we&#8217;ll build the project and package it into a GWT Library.</p><ol><li><strong>Right Click</strong> project from <strong>Project Explorer &gt; Run as &gt; Run Configurations&#8230;</strong> .</li><li><strong>Right Click</strong> on <strong>Maven Build</strong> and click <strong>New</strong>.</li><li>Under <strong>Name</strong> give your this configuration a name like &#8220;<em>Build gwt-maps-api Library.</em>&#8220;</li><li>Under <strong>Base Directory</strong> click <strong>Browse Worldspace&#8230;</strong> and select the current project.</li><li>Under <strong>Goals</strong> enter <em>clean compile package install</em>. This will clean out the project, compile it, package it into a jar and install it in your local Maven repo.</li><li>Click <strong>Apply</strong> and click <strong>Run</strong>. Now you should see a bunch of output ending in <em>BUILD SUCCESS.</em></li></ol><p>Horay!</p><p>You&#8217;ve now built the API and can use it. To stay up today, update your project via Subversion and just rebuild it! That was easy.</p><h2 id=using-the-library-in-your-project>Using the Library in your Project</h2><p>For your new map API consuming GWT project, either add the above jar file into your <strong>Build Path</strong> as an <strong>External JAR</strong> or add the following dependency if it is a Maven project (easier, Maven rocks!).</p><pre><code class=language-xml>&lt;dependency&gt;
+ &lt;groupId&gt;com.google.gwt.maps&lt;/groupId&gt;
+ &lt;artifactId&gt;gwt-maps-api-v3&lt;/artifactId&gt;
+ &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre><p>Now just inheirt this in your module that uses it. In the <em>yourModule.gwt.xml</em> add:</p><pre><code class=language-xml>...
+  &lt;!-- Load the gwt maps api --&gt;
+  &lt;inherits name='com.google.gwt.maps.Apis_Google_Maps'/&gt;
+...
+</code></pre></div></article></div></div></div><footer class=footer><div class=container><div class=site-title-wrapper><h1 class=site-title><a title=lust.dev href=https://lust.dev/>lust.dev</a></h1><a class="button-square button-jump-top js-jump-top" href=#><i class="fa fa-angle-up"></i></a></div><p class=footer-copyright><span>&copy; 2009 - 2018 / Powered by <a href=http://gohugo.io/>Hugo</a></span></p><p class=footer-copyright><span><a href=https://github.com/twistedpair/ghostwriter>Lustwriter theme</a> By J. Lust</span>
+<span>/ Forked from <a href=https://github.com/jbub/ghostwriter>Ghostwriter</a></span></p></div></footer><script src=https://lust.dev/js/jquery-1.11.3.min.js></script><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js></script><script src=https://lust.dev/js/jquery.fitvids.js></script><script src=https://lust.dev/js/scripts.js></script></body></html>

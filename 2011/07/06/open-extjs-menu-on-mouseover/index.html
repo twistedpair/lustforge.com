@@ -1,0 +1,82 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Open ExtJs Menu on Mouseover &middot; Joseph Lust</title><meta name=description content="drive to develop"><meta name=HandheldFriendly content="True"><meta name=MobileOptimized content="320"><meta name=generator content="Hugo 0.59.1"><meta name=robots content="index,follow"><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" href=https://lust.dev/favicon.png><link rel=stylesheet href=https://lust.dev/css/normalize.css><link rel=stylesheet href=https://lust.dev/css/highlight/obsidian.css><link rel=stylesheet href=https://lust.dev/css/style.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic"><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css></head><body><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-17498476-1','auto');ga('send','pageview');}</script><div id=wrapper><header class=site-header><div class=container><div class=site-title-wrapper><h1 class=site-title><a title=lust.dev href=https://lust.dev/>lust.dev</a></h1><a class=button-square href=https://lust.dev/index.xml><i title="RSS Feed" class="fa fa-rss"></i></a><a class="button-square button-social hint--top" data-hint=Twitter title=Twitter href=https://twitter.com/lustcoder><i class="fa fa-twitter"></i></a><a class="button-square button-social hint--top" data-hint=Github title=Github href=https://github.com/twistedpair><i class="fa fa-github-alt"></i></a><a class="button-square button-social hint--top" data-hint="Stack Overflow" title="Stack Overflow" href=https://stackoverflow.com/users/564157/joseph-lust><i class="fa fa-stack-overflow"></i></a><a class="button-square button-social hint--top" data-hint=LinkedIn title=LinkedIn href=https://www.linkedin.com/in/josephlust><i class="fa fa-linkedin"></i></a><h1 class=site-title style=margin-left:10px><a class=site-title data-hint=Lust title="Meet the groundskeeper" href=https://lust.dev/about/>J. Lust &#8250;</a></h1></div><ul class=site-nav></ul></div></header><div id=container><div class=container><article class=post-container><header class=post-header><h1 class=post-title>Open ExtJs Menu on Mouseover</h1></header><div class="post-content clearfix"><div itemscope itemtype=http://schema.org/BlogPosting style=display:none><meta itemprop=mainEntityOfPage content="https://lust.dev/2011/07/06/open-extjs-menu-on-mouseover/"><meta itemprop=inLanguage content="en-US"><h1 itemprop=headline>Open ExtJs Menu on Mouseover</h1><meta itemprop=name content="Open ExtJs Menu on Mouseover"><meta itemprop=description content><meta itemprop=wordCount content="352"><meta itemprop=keywords content="ExtJs"><meta itemprop=copyrightYear content="2011"><div itemprop=copyrightHolder itemscope itemtype=http://schema.org/Person><meta itemprop=name content="Joseph Lust"></div><div itemprop=image itemscope itemtype=http://schema.org/ImageObject><img itemprop=url src=https://lust.dev/img/lustforge_key_default.png alt=thumbnail><meta itemprop=width content="200"><meta itemprop=height content="200"></div><meta itemprop=datePublished content="2011-07-06"><meta itemprop=dateModified content="2011-07-06"><a itemprop=mainEntityOfPage href=../../../../ArticleLink></a><div itemprop=author itemscope itemtype=http://schema.org/Person><meta itemprop=name content="Joseph Lust"></div><div itemprop=publisher itemscope itemtype=http://schema.org/Organization><meta itemprop=name content="lust.dev"><a itemprop=url href=../../../../><span itemprop=logo itemscope itemtype=http://schema.org/ImageObject><img itemprop=image src=https://lust.dev/favicon.png>
+<link itemprop=url href=https://lust.dev/favicon.png></span></a></div></div><p>Would you believe there is no way to open an ExtJs toolbar menu when you hover over the corresponding button? This functionality is all over the ExtJs <a href=https://www.sencha.com>homepage</a>, but not in their framework. Boo! Nope, nothing without pulling the buttons out of the toolbar (see <a title="ExtJs Forum Topic" href=http://www.sencha.com/forum/showthread.php?69931-toolbar-menu-open-on-hover target=_blank>here</a>), which is a no go for existing applications.</p><p>So, I present you with the <strong>HoverButton</strong>. It is just like the standard button, but hides after <code>250ms</code> of mouseout from the button or the opened menu. Just use the <code>xtype</code> of <strong>hoverButton</strong> where you used <strong>button</strong> before. That was easy!</p><p>To achieve this, listeners check for mouseover/out of the button and set a <a href=http://www.objis.com/formationextjs/lib/extjs-4.0.0/docs/api/Ext.util.DelayedTask.html>Ext.util.DelayedTask</a>, and if the user moves to the menulist, the close is delayed until they leave. Pretty simple. Enjoy.</p><pre><code class=language-javascript>/**
+ * Add autoShow on mouseover option to buttons with menus
+ * @copyright LustForge.com 2011
+ * @author J.Lust
+ * @version ExtJs 3.3.4
+ */
+Ext.HoverButton = Ext.extend( Ext.Button, {
+
+    // hide task properties and helpers
+    hideTask : null,
+    hideTaskMs : 250, // timeout in ms
+    hideTaskFn : function() {
+        if( this.hideTask !== null ) {
+            this.hideTask.cancel();
+        }
+        this.hideTask = new Ext.util.DelayedTask(this.hideMenu,this);
+        this.hideTask.delay( this.hideTaskMs );
+    },
+
+    // extend init props
+    initComponent : function (  ) {
+
+        // add hide/show, if this is a button with menu
+        var config = {}, menuConfig = {};
+        if( Ext.isDefined(this.initialConfig.menu) ) {
+            config = {
+                listeners : {
+                    menutriggerover : {
+                        fn: function(b) {
+                            //console.log('menutriggerOver');
+                            b.showMenu();
+                        },
+                        scope:this
+                    },
+                    menutriggerout : {
+                        fn: function(b) {
+                            //console.log('menutriggerOut');
+                            this.hideTaskFn();
+                        },
+                        scope:this
+                    }
+                }
+            };
+            // add listeners to see if user is over extended menu list
+            menuConfig = {
+                listeners : {
+                    // if mousing over menu list, disable timeout
+                    mouseover : {
+                        fn: function(b) {
+                            // cancel hide if they went away and came back
+                            if( this.hideTask !== null ) {
+                                //console.log('menu mouseOver');
+                                this.hideTask.cancel();
+                                this.hideTask = null;
+                            }
+                        },
+                        scope:this
+                    },
+                    // on mousing out of menu list, resume timeout
+                    mouseout: {
+                        fn: function(b) {
+                            //console.log('menu mouseOut');
+                            this.hideTaskFn();
+                        },
+                        scope:this
+                    }
+                }
+            };
+
+            Ext.apply( this.menu, menuConfig );
+        }
+
+        // apply config
+        Ext.apply(this, Ext.apply(this.initialConfig, config));
+        // call parent
+        Ext.HoverButton.superclass.initComponent.apply(this,arguments);
+    }
+});
+Ext.reg('hoverButton', Ext.HoverButton );
+</code></pre></div></article></div></div></div><footer class=footer><div class=container><div class=site-title-wrapper><h1 class=site-title><a title=lust.dev href=https://lust.dev/>lust.dev</a></h1><a class="button-square button-jump-top js-jump-top" href=#><i class="fa fa-angle-up"></i></a></div><p class=footer-copyright><span>&copy; 2009 - 2018 / Powered by <a href=http://gohugo.io/>Hugo</a></span></p><p class=footer-copyright><span><a href=https://github.com/twistedpair/ghostwriter>Lustwriter theme</a> By J. Lust</span>
+<span>/ Forked from <a href=https://github.com/jbub/ghostwriter>Ghostwriter</a></span></p></div></footer><script src=https://lust.dev/js/jquery-1.11.3.min.js></script><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js></script><script src=https://lust.dev/js/jquery.fitvids.js></script><script src=https://lust.dev/js/scripts.js></script></body></html>
