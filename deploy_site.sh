@@ -2,7 +2,7 @@
 set -eu
 
 # These are mine. They won't work for you :)
-DISTRIBUTION_ID=E2BRJGICC6S6CS
+DISTRIBUTION_ID=E3JOZXINTYN59S
 BUCKET_NAME=lustforge-cdn
 
 # place AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY into your GH repo secrets
