@@ -6,6 +6,7 @@ description = "drive to develope"
 theme = "ghostwriter"
 googleAnalytics = "UA-17498476-1"
 disqusShortname = "lustforge"
+relativeURLs = "true"
 
 [Author]
     name = "Joseph Lust"
@@ -29,9 +30,6 @@ disqusShortname = "lustforge"
     stackoverflow = "https://stackoverflow.com/users/564157/joseph-lust"
     rss = true
 
-#    highlight = "atelier-forest.dark"
-#    highlight = "atelier-dune.dark"
-#    highlight = "monokai"
     highlight = "obsidian"
     pygmentsCodeFences = true
 

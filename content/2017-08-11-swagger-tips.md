@@ -73,7 +73,7 @@ See my [Automating Swagger Spec validation post][9] on using Yelp's [Swagger Spe
  [^1]: I've wrangled 10K and 11K spec files at work. 😢 
  [^2]: Running Swagger Editor locally is slow (e.g. 6min npm install/start), consider the [prebuilt Docker image][14].
 
- [9]: {{< ref "post/2017-06-17-swagger-ci-checkin-validation.md" >}}
+ [9]: {{< ref "2017-06-17-swagger-ci-checkin-validation.md" >}}
  [10]: https://swagger.io/specification/
  [11]: http://petstore.swagger.io/
  [12]: http://editor.swagger.io/
