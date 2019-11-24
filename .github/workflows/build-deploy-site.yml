@@ -2,6 +2,9 @@ name: Build and Deploy Blog
 
 on:
   push:
+    # Ignore GH Pages updates (prevent actions recursion)
+    paths-ignore:
+      - 'docs/**'
     branches:
       - master
       - enable-auto-deploy-action # TODO remove
@@ -22,3 +25,6 @@ jobs:
 
     - name: Build Site
       run: hugo --minify -v -d docs/
+
+    - name: Deploy Site
+      run: ./deploy_site.sh
