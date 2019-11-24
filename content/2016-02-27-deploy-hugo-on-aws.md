@@ -504,7 +504,7 @@ See the next post to [Deploy Hugo Files to S3][12].
  [9]: https://en.wikipedia.org/wiki/Server_Name_Indication
  [10]: https://aws.amazon.com/route53/
  [11]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html
- [12]: {{< ref "post/2016-02-28-deploy-hugo-files-to-s3.md" >}}
+ [12]: {{< ref "2016-02-28-deploy-hugo-files-to-s3.md" >}}
  [13]: http://www.whois-search.com/
  [14]: https://aws.amazon.com/cloudfront/pricing/#Request_Pricing_for_All_HTTP_Methods_(per_10,000)
  [15]: https://docs.aws.amazon.com/Route53/latest/APIReference/CreateAliasRRSAPI.html

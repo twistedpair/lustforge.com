@@ -1,205 +1,8 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>AWS Hugo Hosting, HowTo &middot; Joseph Lust</title>
-        <meta name="description" content="drive to develop">
-        <meta name="HandheldFriendly" content="True">
-        <meta name="MobileOptimized" content="320">
-        <meta name="generator" content="Hugo 0.16-DEV" />
-        <meta name="robots" content="index,follow">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="shortcut icon" href="https://lust.dev/favicon.png">
-        <link rel="stylesheet" href="https://lust.dev/css/normalize.css">
-	<link rel="stylesheet" href="https://lust.dev/css/highlight/obsidian.css">
-        <link rel="stylesheet" href="https://lust.dev/css/style.css">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
-        
-        
-
-            
-            <meta property="og:type"   content="article" />
-            <meta property="og:url"    content="https://lust.dev/2016/02/27/hosting-hugo-on-aws/" />
-            <meta property="og:title"  content="AWS Hugo Hosting, HowTo" />
-
-            <meta name="twitter:domain" value="lustforge.com" />
-            <meta name="twitter:card" content="summary_large_image" />
-            <meta name="twitter:title" value="AWS Hugo Hosting, HowTo" />
-            
-             <meta name="twitter:description" value="Easily Host your Hugo static website on CloudFront with AWS CLI"/>
-            
-
-            
-            <meta name="twitter:url" value="https://lust.dev/2016/02/27/hosting-hugo-on-aws/"/>
-
-            
-        
-        
-    </head>
-    <body>
-        
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-17498476-1', 'auto');
-ga('send', 'pageview');
-</script>
-
-
-        <div id="wrapper">
-            <header class="site-header">
-                <div class="container">
-                    <div class="site-title-wrapper">
-                        
-                            <h1 class="site-title">
-                                <a title="lust.dev" href="https://lust.dev/">lust.dev</a>
-                            </h1>
-                        
-			
-                        	<a class="button-square" href="https://lust.dev/index.xml"><i title="RSS Feed" class="fa fa-rss"></i></a>
-			
-                        
-                            <a class="button-square button-social hint--top" data-hint="Twitter" title="Twitter" href="https://twitter.com/lustcoder">
-                                <i class="fa fa-twitter"></i>
-                            </a>
-                        
-                        
-                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/twistedpair">
-                                <i class="fa fa-github-alt"></i>
-                            </a>
-                        
-                        
-                            <a class="button-square button-social hint--top" data-hint="Stack Overflow" title="Stack Overflow" href="https://stackoverflow.com/users/564157/joseph-lust">
-                                <i class="fa fa-stack-overflow"></i>
-                            </a>
-                        
-                        
-                            <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://www.linkedin.com/in/josephlust">
-                                <i class="fa fa-linkedin"></i>
-                            </a>
-                        
-                        
-			
-			<h1 class="site-title" style="margin-left:10px;">
-                            <a class="site-title" data-hint="Lust" title="Meet the groundskeeper" href="https://lust.dev/about/">J. Lust &#8250;</a>
-                        </h1>
-                    </div>
-
-                    <ul class="site-nav">
-                        
-                    </ul>
-                </div>
-            </header>
-
-            <div id="container">
-
-
-<div class="container">
-    <article class="post-container">
-        <header class="post-header">
-    <h1 class="post-title">AWS Hugo Hosting, HowTo</h1>
-    
-</header>
-
-        
-<div class="post-content clearfix">
-
-        
-    
-    
-    <script type="application/ld+json">
-    {
-        "@context" : "http://schema.org",
-        "@type" : "BlogPosting",
-        "articleSection" : "post",
-        "name" : "AWS Hugo Hosting, HowTo",
-        "headline" : "AWS Hugo Hosting, HowTo",
-        "description" : "Running your Hugo static blog site is easy and cheap, but there are a few snags I had to solve when I deployed mine. Follow these instruction to host your Hugo blog on AWS S3 and Cloudfront. Disclaimer The following works for me. If you\x26rsquo;re not comfortable with a CLI, use the AWS Web Console. Bucket Configuration Other tutorials use the AWS web console, and feature lots of screenshots, but your\x26rsquo;re a savvy Hugo user.",
-        "inLanguage" : "en-US",
-        "author" : "Joseph Lust",
-        "creator" : "Joseph Lust",
-        "accountablePerson" : "Joseph Lust",
-        "copyrightHolder" : "Joseph Lust",
-        "copyrightYear" : "2016",
-        "datePublished" : "",
-        "publisher": "LustForge.com",
-        "logo": "https:\/\/lust.dev\/favicon.png",
-        "url" : "https:\/\/lust.dev\/2016\/02\/27\/hosting-hugo-on-aws\/",
-        "wordCount" : "1433",
-        "image" : ,
-        "keywords" : [ "Go, CloudFront, AWS, Hugo, S3" ]
-    }
-    </script>
-    
-    
-
-
-<div itemscope itemtype="http://schema.org/BlogPosting" style="display:none;">
-     <meta itemprop="mainEntityOfPage" content="https://lust.dev/2016/02/27/hosting-hugo-on-aws/" />
-     <meta itemprop="inLanguage" content="en-US" />
-     <h1 itemprop="headline">AWS Hugo Hosting, HowTo</h1>
-     <meta itemprop="name" content="AWS Hugo Hosting, HowTo" />
-     <meta itemprop="description" content="Easily Host your Hugo static website on CloudFront with AWS CLI" />
-     <meta itemprop="wordCount" content="1433" />
-     <meta itemprop="keywords" content="Go,CloudFront,AWS,Hugo,S3" />
-     
-     <meta itemprop="copyrightYear" content="2016" />
-    <div itemprop="copyrightHolder" itemscope itemtype="http://schema.org/Person">
-        <meta itemprop="name" content="Joseph Lust">
-    </div>
-    
-    
-    
-    <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
-         <img  itemprop="url" src="https://lust.dev/img/lustforge_key_default.png" alt="thumbnail">
-         <meta itemprop="width" content="200" >
-         <meta itemprop="height" content="200" >
-    </div>
-    
-    <meta itemprop="datePublished" content="2016-02-27">
-    <meta itemprop="dateModified" content="2016-02-27">
-    <a itemprop="mainEntityOfPage" href="/ArticleLink"></a>
-    <div itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <meta itemprop="name" content="Joseph Lust">
-    </div>
-    <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lust.dev">
-      <a itemprop="url" href="/"> 
-      <span itemprop="logo" itemscope itemtype="http://schema.org/ImageObject"  >
-      <img itemprop="image" src="https://lust.dev/favicon.png" />
-      <link itemprop="url" href="https://lust.dev/favicon.png" />
-      </span>
-      </a>
-    </div>
-</div>
-
-    
-
-    
-
-<p>Running your <a href="https://gohugo.io/">Hugo</a> static blog site is easy and cheap, but there are a few snags I had to solve when I deployed mine. Follow these instruction to host your Hugo blog on AWS <a href="https://aws.amazon.com/s3/">S3</a> and <a href="https://aws.amazon.com/cloudfront/">Cloudfront</a>.</p>
-
-<h2 id="disclaimer:dbd0bcf413e4dc3b1882a25383e97315">Disclaimer</h2>
-
-<p>The following works for me. If you&rsquo;re not comfortable with a CLI, use the <a href="console.aws.amazon.com/console/home">AWS Web Console</a>.</p>
-
-<h2 id="bucket-configuration:dbd0bcf413e4dc3b1882a25383e97315">Bucket Configuration</h2>
-
-<p>Other tutorials use the AWS web console, and feature lots of screenshots, but your&rsquo;re a savvy Hugo user. We&rsquo;ll use the AWS Commandline interface tool, ak.k. <strong>awscli</strong>. You can install it with <code>pip</code>, if you don&rsquo;t already have it.</p>
-
-<pre><code class="language-bash">sudo pip install awscli
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>AWS Hugo Hosting, HowTo &middot; Joseph Lust</title><meta name=description content="drive to develop"><meta name=HandheldFriendly content="True"><meta name=MobileOptimized content="320"><meta name=generator content="Hugo 0.59.1"><meta name=robots content="index,follow"><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" href=https://lust.dev/favicon.png><link rel=stylesheet href=https://lust.dev/css/normalize.css><link rel=stylesheet href=https://lust.dev/css/highlight/obsidian.css><link rel=stylesheet href=https://lust.dev/css/style.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic"><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css><meta property="og:type" content="article"><meta property="og:url" content="https://lust.dev/2016/02/27/hosting-hugo-on-aws/"><meta property="og:title" content="AWS Hugo Hosting, HowTo"><meta name=twitter:domain value=lustforge.com><meta name=twitter:card content="summary_large_image"><meta name=twitter:title value="AWS Hugo Hosting, HowTo"><meta name=twitter:description value="Easily Host your Hugo static website on CloudFront with AWS CLI"><meta name=twitter:url value=https://lust.dev/2016/02/27/hosting-hugo-on-aws/></head><body><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-17498476-1','auto');ga('send','pageview');}</script><div id=wrapper><header class=site-header><div class=container><div class=site-title-wrapper><h1 class=site-title><a title=lust.dev href=https://lust.dev/>lust.dev</a></h1><a class=button-square href=https://lust.dev/index.xml><i title="RSS Feed" class="fa fa-rss"></i></a><a class="button-square button-social hint--top" data-hint=Twitter title=Twitter href=https://twitter.com/lustcoder><i class="fa fa-twitter"></i></a><a class="button-square button-social hint--top" data-hint=Github title=Github href=https://github.com/twistedpair><i class="fa fa-github-alt"></i></a><a class="button-square button-social hint--top" data-hint="Stack Overflow" title="Stack Overflow" href=https://stackoverflow.com/users/564157/joseph-lust><i class="fa fa-stack-overflow"></i></a><a class="button-square button-social hint--top" data-hint=LinkedIn title=LinkedIn href=https://www.linkedin.com/in/josephlust><i class="fa fa-linkedin"></i></a><h1 class=site-title style=margin-left:10px><a class=site-title data-hint=Lust title="Meet the groundskeeper" href=https://lust.dev/about/>J. Lust &#8250;</a></h1></div><ul class=site-nav></ul></div></header><div id=container><div class=container><article class=post-container itemscope itemtype=http://schema.org/BlogPosting><header class=post-header><h1 class=post-title itemprop="name headline">AWS Hugo Hosting, HowTo</h1><p class=post-date><span>Published <time datetime=2016-02-27 itemprop=datePublished>Sat, Feb 27, 2016</time></span>
+<span>by</span>
+<span itemscope itemprop=author itemtype=http://schema.org/Person><span itemprop=name><a href=https://stackoverflow.com/users/564157/joseph-lust itemprop=url rel=author>Joseph Lust</a></span></span></p></header><div class="post-content clearfix" itemprop=articleBody><p>Running your <a href=https://gohugo.io/>Hugo</a> static blog site is easy and cheap, but there are a few snags I had to solve when I deployed mine. Follow these instruction to host your Hugo blog on AWS <a href=https://aws.amazon.com/s3/>S3</a> and <a href=https://aws.amazon.com/cloudfront/>Cloudfront</a>.</p><h2 id=disclaimer>Disclaimer</h2><p>The following works for me. If you&rsquo;re not comfortable with a CLI, use the <a href=console.aws.amazon.com/console/home>AWS Web Console</a>.</p><h2 id=bucket-configuration>Bucket Configuration</h2><p>Other tutorials use the AWS web console, and feature lots of screenshots, but your&rsquo;re a savvy Hugo user. We&rsquo;ll use the AWS Commandline interface tool, ak.k. <strong>awscli</strong>. You can install it with <code>pip</code>, if you don&rsquo;t already have it.</p><pre><code class=language-bash>sudo pip install awscli
 aws configure # Follow instructions to setup
-</code></pre>
-
-<p>Make a bucket. The name does not matter. No one will see this. If someone is already using that name, you&rsquo;ll need to pick another. We&rsquo;ll also add a bucket to hold all of our <strong>logs</strong>, so that you can know who visited.</p>
-
-<pre><code class="language-bash"># Set your domain here
+</code></pre><p>Make a bucket. The name does not matter. No one will see this. If someone is already using that name, you&rsquo;ll need to pick another. We&rsquo;ll also add a bucket to hold all of our <strong>logs</strong>, so that you can know who visited.</p><pre><code class=language-bash># Set your domain here
 YOUR_DOMAIN=&quot;yourdomain.com&quot;
 REGION=&quot;us-east-1&quot;
 # Don't change these
@@ -210,13 +13,7 @@ LOG_BUCKET_NAME=&quot;${BUCKET_NAME}-logs&quot;
 aws s3 mb s3://$BUCKET_NAME --region $REGION
 # And another for the logs
 aws s3 mb s3://$LOG_BUCKET_NAME --region $REGION
-</code></pre>
-
-<h2 id="bucket-permissions-and-logging:dbd0bcf413e4dc3b1882a25383e97315">Bucket Permissions and Logging</h2>
-
-<p>Give AWS the rights to insert logs into your bucket. Then tell S3 to log your website visits to that bucket.</p>
-
-<pre><code class="language-bash"># Let AWS write the logs to this location
+</code></pre><h2 id=bucket-permissions-and-logging>Bucket Permissions and Logging</h2><p>Give AWS the rights to insert logs into your bucket. Then tell S3 to log your website visits to that bucket.</p><pre><code class=language-bash># Let AWS write the logs to this location
 aws s3api put-bucket-acl --bucket $LOG_BUCKET_NAME \
 --grant-write 'URI=&quot;http://acs.amazonaws.com/groups/s3/LogDelivery&quot;' \
 --grant-read-acp 'URI=&quot;http://acs.amazonaws.com/groups/s3/LogDelivery&quot;'
@@ -224,13 +21,7 @@ aws s3api put-bucket-acl --bucket $LOG_BUCKET_NAME \
 # Setup logging
 LOG_POLICY=&quot;{\&quot;LoggingEnabled\&quot;:{\&quot;TargetBucket\&quot;:\&quot;$LOG_BUCKET_NAME\&quot;,\&quot;TargetPrefix\&quot;:\&quot;$BUCKET_NAME\&quot;}}&quot;
 aws s3api put-bucket-logging --bucket $BUCKET_NAME --bucket-logging-status $LOG_POLICY
-</code></pre>
-
-<h2 id="create-s3-bucket-website:dbd0bcf413e4dc3b1882a25383e97315">Create S3 Bucket Website</h2>
-
-<p>We&rsquo;ll tell S3 to turn our bucket into a website. This will give it a public URL that does redirecting for us. We need this since Hugo blog pages like <strong>foo.com/bob/</strong> are really <strong>foo.com/bob/index.html</strong>. We need to redirect those root paths like <strong>/bob/</strong> to <strong>/bob/index.html</strong>. Normally you&rsquo;d need rewrite rules with Nginx or Apache, but S3 can do that too.</p>
-
-<pre><code class="language-bash"># Create website config
+</code></pre><h2 id=create-s3-bucket-website>Create S3 Bucket Website</h2><p>We&rsquo;ll tell S3 to turn our bucket into a website. This will give it a public URL that does redirecting for us. We need this since Hugo blog pages like <strong>foo.com/bob/</strong> are really <strong>foo.com/bob/index.html</strong>. We need to redirect those root paths like <strong>/bob/</strong> to <strong>/bob/index.html</strong>. Normally you&rsquo;d need rewrite rules with Nginx or Apache, but S3 can do that too.</p><pre><code class=language-bash># Create website config
 echo &quot;{
     \&quot;IndexDocument\&quot;: {
         \&quot;Suffix\&quot;: \&quot;index.html\&quot;
@@ -251,22 +42,8 @@ echo &quot;{
 }&quot; &gt; website.json
 
 aws s3api put-bucket-website --bucket $BUCKET_NAME --website-configuration file://website.json
-</code></pre>
-
-<p>Now you can visit <code>http://&lt;bucket_name&gt;.s3-website-&lt;region&gt;.amazonaws.com</code> to browse your site!</p>
-
-<h2 id="get-free-ssl-certificates:dbd0bcf413e4dc3b1882a25383e97315">Get Free SSL Certificates</h2>
-
-<p>Everything should have SSL, so AWS decided to give away <a href="https://aws.amazon.com/certificate-manager/pricing/">FREE SSL certificates</a> for all AWS users. Thanks, Jeff! Make sure you can access the admin email <a href="http://www.whois-search.com/">address on your domain</a>, and then run the following and check your email. The email should go through instantly. Note that we&rsquo;re also requesting the <code>www.</code> variant of this domain. We&rsquo;ll use this for redirecting <code>www.foo.com</code> to <code>foo.com</code>.</p>
-
-<pre><code class="language-bash">aws acm request-certificate --domain-name $YOUR_DOMAIN --subject-alternative-names &quot;www.$YOUR_DOMAIN&quot; --idempotency-token &quot;`date +%s`&quot;
-</code></pre>
-
-<p>The idempotency token will prevent running this twice from sending two requests. Also, note that ACM will renew your certs each year automatically, so this SSL really is <a href="https://en.wikipedia.org/wiki/Ron_Popeil">set it and forget it</a>.</p>
-
-<p>Call ACM and get the ARN of your cert to use in the next step.</p>
-
-<pre><code class="language-bash">aws acm list-certificates --certificate-statuses ISSUED
+</code></pre><p>Now you can visit <code>http://&lt;bucket_name&gt;.s3-website-&lt;region&gt;.amazonaws.com</code> to browse your site!</p><h2 id=get-free-ssl-certificates>Get Free SSL Certificates</h2><p>Everything should have SSL, so AWS decided to give away <a href=https://aws.amazon.com/certificate-manager/pricing/>FREE SSL certificates</a> for all AWS users. Thanks, Jeff! Make sure you can access the admin email <a href=http://www.whois-search.com/>address on your domain</a>, and then run the following and check your email. The email should go through instantly. Note that we&rsquo;re also requesting the <code>www.</code> variant of this domain. We&rsquo;ll use this for redirecting <code>www.foo.com</code> to <code>foo.com</code>.</p><pre><code class=language-bash>aws acm request-certificate --domain-name $YOUR_DOMAIN --subject-alternative-names &quot;www.$YOUR_DOMAIN&quot; --idempotency-token &quot;`date +%s`&quot;
+</code></pre><p>The idempotency token will prevent running this twice from sending two requests. Also, note that ACM will renew your certs each year automatically, so this SSL really is <a href=https://en.wikipedia.org/wiki/Ron_Popeil>set it and forget it</a>.</p><p>Call ACM and get the ARN of your cert to use in the next step.</p><pre><code class=language-bash>aws acm list-certificates --certificate-statuses ISSUED
 # Example result
 {
     &quot;CertificateSummaryList&quot;: [
@@ -276,24 +53,8 @@ aws s3api put-bucket-website --bucket $BUCKET_NAME --website-configuration file:
         }
     ]
 }
-</code></pre>
-
-<h2 id="cloudfront-setup:dbd0bcf413e4dc3b1882a25383e97315">CloudFront Setup</h2>
-
-<p>S3 hosts your files as a website, but we want a vanity domain and custom SSL. Plus, a <a href="https://aws.amazon.com/cloudfront/details/#Detailed_Description">worldwide 54 edge location CDN</a> would be nice. AWS CloudFront can accomplish all of this quite easily.</p>
-
-<p>First we&rsquo;ll tell <code>awscli</code> to enable the CloudFront tools, which are presently in &ldquo;Preview Mode.&rdquo;</p>
-
-<pre><code class="language-bash">aws  configure  set preview.cloudfront true # Honey badger don't care
-</code></pre>
-
-<p>This is a long config, so let&rsquo;s break it down:</p>
-
-<h4 id="origin-config:dbd0bcf413e4dc3b1882a25383e97315">Origin Config</h4>
-
-<p>We must use the <strong>S3 website hosting URL</strong> not simply point to the S3 bucket like regular CF setup. This allows us to get <strong>index.html</strong> redirecting. This also means we cannot use <strong>HTTPS Only</strong> on the origin, because its domain won&rsquo;t match the generic S3 certificate AWS uses for all S3 requests.</p>
-
-<pre><code class="language-json">  &quot;Origins&quot;: {
+</code></pre><h2 id=cloudfront-setup>CloudFront Setup</h2><p>S3 hosts your files as a website, but we want a vanity domain and custom SSL. Plus, a <a href=https://aws.amazon.com/cloudfront/details/#Detailed_Description>worldwide 54 edge location CDN</a> would be nice. AWS CloudFront can accomplish all of this quite easily.</p><p>First we&rsquo;ll tell <code>awscli</code> to enable the CloudFront tools, which are presently in &ldquo;Preview Mode.&rdquo;</p><pre><code class=language-bash>aws  configure  set preview.cloudfront true # Honey badger don't care
+</code></pre><p>This is a long config, so let&rsquo;s break it down:</p><h4 id=origin-config>Origin Config</h4><p>We must use the <strong>S3 website hosting URL</strong> not simply point to the S3 bucket like regular CF setup. This allows us to get <strong>index.html</strong> redirecting. This also means we cannot use <strong>HTTPS Only</strong> on the origin, because its domain won&rsquo;t match the generic S3 certificate AWS uses for all S3 requests.</p><pre><code class=language-json>  &quot;Origins&quot;: {
     &quot;Quantity&quot;: 1,
     &quot;Items&quot;: [
       {
@@ -316,145 +77,80 @@ aws s3api put-bucket-website --bucket $BUCKET_NAME --website-configuration file:
       }
     ]
   }
-</code></pre>
-
-<h4 id="logging-config:dbd0bcf413e4dc3b1882a25383e97315">Logging Config</h4>
-
-<ul>
-<li>Log CF hits to the buckets we already made</li>
-</ul>
-
-<pre><code class="language-json">&quot;Logging&quot;: {
-    &quot;Bucket&quot;: &quot;$LOG_BUCKET_NAME.s3.amazonaws.com&quot;, 
-    &quot;Prefix&quot;: &quot;${BUCKET_NAME}-cf/&quot;, 
-    &quot;Enabled&quot;: true
+</code></pre><h4 id=logging-config>Logging Config</h4><ul><li><p>Log CF hits to the buckets we already made</p><pre><code class=language-json>&quot;Logging&quot;: {
+&quot;Bucket&quot;: &quot;$LOG_BUCKET_NAME.s3.amazonaws.com&quot;, 
+&quot;Prefix&quot;: &quot;${BUCKET_NAME}-cf/&quot;, 
+&quot;Enabled&quot;: true
 }
-</code></pre>
-
-<h4 id="cache-behavior-config:dbd0bcf413e4dc3b1882a25383e97315">Cache Behavior Config</h4>
-
-<ul>
-<li>We want everyone coming to the site to use SSL, so we&rsquo;ll redirect port 80 &rarr; 443.</li>
-<li>Cache content for 30min by DefaultCacheBehavior</li>
-<li>Only forward <code>HEAD</code> and <code>GET</code> requests, cache them too</li>
-<li>Gzip content if possible (reduce bandwidth usage, faster)</li>
-<li>Don&rsquo;t forward headers</li>
-<li>Don&rsquo;t trust other signers</li>
-</ul>
-
-<pre><code class="language-json">&quot;DefaultCacheBehavior&quot;: {
+</code></pre></li></ul><h4 id=cache-behavior-config>Cache Behavior Config</h4><ul><li>We want everyone coming to the site to use SSL, so we&rsquo;ll redirect port 80 &rarr; 443.</li><li>Cache content for 30min by DefaultCacheBehavior</li><li>Only forward <code>HEAD</code> and <code>GET</code> requests, cache them too</li><li>Gzip content if possible (reduce bandwidth usage, faster)</li><li>Don&rsquo;t forward headers</li><li><p>Don&rsquo;t trust other signers</p><pre><code class=language-json>&quot;DefaultCacheBehavior&quot;: {
 &quot;DefaultCacheBehavior&quot;: {
-    &quot;ViewerProtocolPolicy&quot;: &quot;redirect-to-https&quot;,
-    &quot;DefaultTTL&quot;: 1800,
-    &quot;AllowedMethods&quot;: {
-      &quot;Quantity&quot;: 2,
-      &quot;Items&quot;: [
-        &quot;HEAD&quot;,&quot;GET&quot;
-      ],
-      &quot;CachedMethods&quot;: {
-        &quot;Quantity&quot;: 2,
-        &quot;Items&quot;: [
-          &quot;HEAD&quot;,&quot;GET&quot;
-        ]
-      }
-    },
-    &quot;MinTTL&quot;: 0,
-    &quot;Compress&quot;: true,
-    &quot;ForwardedValues&quot;: {
-      &quot;Headers&quot;: {
-        &quot;Quantity&quot;: 0
-      },
-      &quot;Cookies&quot;: {
-        &quot;Forward&quot;: &quot;none&quot;
-      },
-      &quot;QueryString&quot;: false
-    },
-    &quot;TrustedSigners&quot;: {
-      &quot;Enabled&quot;: false,
-      &quot;Quantity&quot;: 0
-    }
+&quot;ViewerProtocolPolicy&quot;: &quot;redirect-to-https&quot;,
+&quot;DefaultTTL&quot;: 1800,
+&quot;AllowedMethods&quot;: {
+  &quot;Quantity&quot;: 2,
+  &quot;Items&quot;: [
+    &quot;HEAD&quot;,&quot;GET&quot;
+  ],
+  &quot;CachedMethods&quot;: {
+    &quot;Quantity&quot;: 2,
+    &quot;Items&quot;: [
+      &quot;HEAD&quot;,&quot;GET&quot;
+    ]
   }
+},
+&quot;MinTTL&quot;: 0,
+&quot;Compress&quot;: true,
+&quot;ForwardedValues&quot;: {
+  &quot;Headers&quot;: {
+    &quot;Quantity&quot;: 0
+  },
+  &quot;Cookies&quot;: {
+    &quot;Forward&quot;: &quot;none&quot;
+  },
+  &quot;QueryString&quot;: false
+},
+&quot;TrustedSigners&quot;: {
+  &quot;Enabled&quot;: false,
+  &quot;Quantity&quot;: 0
 }
-</code></pre>
-
-<h4 id="ssl-config:dbd0bcf413e4dc3b1882a25383e97315">SSL Config</h4>
-
-<ul>
-<li>Use the new SSL cert from ACM, referenced by the ARN</li>
-<li>Use <a href="https://en.wikipedia.org/wiki/Server_Name_Indication">SNI</a>, breaking wood burning browsers on WinXP, because it&rsquo;s FREE</li>
-<li>Warning: <strong>Not</strong> using SNI <a href="https://aws.amazon.com/cloudfront/pricing/#Request_Pricing_for_All_HTTP_Methods_(per_10,000)">costs <code>$600/mo</code></a>, so <strong>use SNI</strong></li>
-</ul>
-
-<pre><code class="language-json">&quot;ViewerCertificate&quot;: {
-    &quot;SSLSupportMethod&quot;: &quot;sni-only&quot;, 
-    &quot;ACMCertificateArn&quot;: &quot;$SSL_ARN&quot;, 
-    &quot;MinimumProtocolVersion&quot;: &quot;TLSv1&quot;, 
-    &quot;Certificate&quot;: &quot;$SSL_ARN&quot;, 
-    &quot;CertificateSource&quot;: &quot;acm&quot;
 }
-</code></pre>
-
-<h4 id="error-config:dbd0bcf413e4dc3b1882a25383e97315">Error Config</h4>
-
-<ul>
-<li>Forward Cloudfront <code>Not Found</code> and <code>Forbidden</code> errors to your custom pages</li>
-<li>Cache failures for 5min, then try the Origin again</li>
-</ul>
-
-<pre><code class="language-json">&quot;CustomErrorResponses&quot;: {
-    &quot;Quantity&quot;: 2,
-    &quot;Items&quot;: [
-        {
-            &quot;ErrorCode&quot;: 403, 
-            &quot;ResponsePagePath&quot;: &quot;/404.html&quot;, 
-            &quot;ResponseCode&quot;: &quot;404&quot;,
-            &quot;ErrorCachingMinTTL&quot;: 300
-        }, 
-        {
-            &quot;ErrorCode&quot;: 404, 
-            &quot;ResponsePagePath&quot;: &quot;/404.html&quot;, 
-            &quot;ResponseCode&quot;: &quot;404&quot;,
-            &quot;ErrorCachingMinTTL&quot;: 300
-        }
-    ]
 }
-</code></pre>
-
-<h4 id="redirect-config:dbd0bcf413e4dc3b1882a25383e97315">Redirect Config</h4>
-
-<ul>
-<li>Mask the ugly default CF domain with your vanity domain</li>
-<li>Accept root and <code>www.</code> variants</li>
-</ul>
-
-<pre><code class="language-json">&quot;Aliases&quot;: {
-    &quot;Quantity&quot;: 2,
-    &quot;Items&quot;: [
-        &quot;$YOUR_DOMAIN&quot;, &quot;www.$YOUR_DOMAIN&quot;
-    ]
+</code></pre></li></ul><h4 id=ssl-config>SSL Config</h4><ul><li>Use the new SSL cert from ACM, referenced by the ARN</li><li>Use <a href=https://en.wikipedia.org/wiki/Server_Name_Indication>SNI</a>, breaking wood burning browsers on WinXP, because it&rsquo;s FREE</li><li><p>Warning: <strong>Not</strong> using SNI <a href=https://aws.amazon.com/cloudfront/pricing/#Request_Pricing_for_All_HTTP_Methods_(per_10,000)>costs <code>$600/mo</code></a>, so <strong>use SNI</strong></p><pre><code class=language-json>&quot;ViewerCertificate&quot;: {
+&quot;SSLSupportMethod&quot;: &quot;sni-only&quot;, 
+&quot;ACMCertificateArn&quot;: &quot;$SSL_ARN&quot;, 
+&quot;MinimumProtocolVersion&quot;: &quot;TLSv1&quot;, 
+&quot;Certificate&quot;: &quot;$SSL_ARN&quot;, 
+&quot;CertificateSource&quot;: &quot;acm&quot;
 }
-</code></pre>
-
-<h4 id="misc-config:dbd0bcf413e4dc3b1882a25383e97315">Misc Config</h4>
-
-<ul>
-<li>Serve <code>foo.com/index.html</code> to <code>foo.com</code> requests</li>
-<li>Use all edge nodes worldwide</li>
-<li>Turn it on</li>
-</ul>
-
-<pre><code class="language-json">{
-    &quot;DefaultRootObject&quot;: &quot;index.html&quot;, 
-    &quot;PriceClass&quot;: &quot;PriceClass_All&quot;, 
-    &quot;Enabled&quot;: true
+</code></pre></li></ul><h4 id=error-config>Error Config</h4><ul><li>Forward Cloudfront <code>Not Found</code> and <code>Forbidden</code> errors to your custom pages</li><li><p>Cache failures for 5min, then try the Origin again</p><pre><code class=language-json>&quot;CustomErrorResponses&quot;: {
+&quot;Quantity&quot;: 2,
+&quot;Items&quot;: [
+    {
+        &quot;ErrorCode&quot;: 403, 
+        &quot;ResponsePagePath&quot;: &quot;/404.html&quot;, 
+        &quot;ResponseCode&quot;: &quot;404&quot;,
+        &quot;ErrorCachingMinTTL&quot;: 300
+    }, 
+    {
+        &quot;ErrorCode&quot;: 404, 
+        &quot;ResponsePagePath&quot;: &quot;/404.html&quot;, 
+        &quot;ResponseCode&quot;: &quot;404&quot;,
+        &quot;ErrorCachingMinTTL&quot;: 300
+    }
+]
 }
-</code></pre>
-
-<h3 id="making-the-distribution:dbd0bcf413e4dc3b1882a25383e97315">Making the Distribution</h3>
-
-<p>Sorry, it&rsquo;s really ugly, but such is bash escaping.</p>
-
-<pre><code class="language-bash"># From above
+</code></pre></li></ul><h4 id=redirect-config>Redirect Config</h4><ul><li>Mask the ugly default CF domain with your vanity domain</li><li><p>Accept root and <code>www.</code> variants</p><pre><code class=language-json>&quot;Aliases&quot;: {
+&quot;Quantity&quot;: 2,
+&quot;Items&quot;: [
+    &quot;$YOUR_DOMAIN&quot;, &quot;www.$YOUR_DOMAIN&quot;
+]
+}
+</code></pre></li></ul><h4 id=misc-config>Misc Config</h4><ul><li>Serve <code>foo.com/index.html</code> to <code>foo.com</code> requests</li><li>Use all edge nodes worldwide</li><li><p>Turn it on</p><pre><code class=language-json>{
+&quot;DefaultRootObject&quot;: &quot;index.html&quot;, 
+&quot;PriceClass&quot;: &quot;PriceClass_All&quot;, 
+&quot;Enabled&quot;: true
+}
+</code></pre></li></ul><h3 id=making-the-distribution>Making the Distribution</h3><p>Sorry, it&rsquo;s really ugly, but such is bash escaping.</p><pre><code class=language-bash># From above
 SSL_ARN=&quot;arn:aws:acm:us-east-1:7865196219991:certificate/de305d54-75b4-431b-adb2-eb6b9e546014&quot;
 
 CALLER_REF=&quot;`date +%s`&quot; # current second
@@ -562,66 +258,39 @@ echo &quot;{
 
 # Now apply it
 aws cloudfront create-distribution --distribution-config file://distroConfig.json
-</code></pre>
-
-<p>Nice. You&rsquo;ve got a CloudFront distribution. Run the below to get the domain name for use next.</p>
-
-<pre><code class="language-bash">aws cloudfront list-distributions --query 'DistributionList.Items[].{id:Id,comment:Comment,domain:DomainName}'
+</code></pre><p>Nice. You&rsquo;ve got a CloudFront distribution. Run the below to get the domain name for use next.</p><pre><code class=language-bash>aws cloudfront list-distributions --query 'DistributionList.Items[].{id:Id,comment:Comment,domain:DomainName}'
 # i.e. d8ukw3iojeij2.cloudfront.net
-</code></pre>
-
-<h2 id="route-53-domain-setup:dbd0bcf413e4dc3b1882a25383e97315">Route 53 Domain Setup</h2>
-
-<p>Only one more step! We&rsquo;ll point your <a href="https://aws.amazon.com/route53/">Route 53</a> hosted domain to the CF distribution. This uses <a href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html">an alias</a> for the zone apex and a CNAME for the subdomain.</p>
-
-<p>Find your current hosted zone (domain). i.e. <code>/hostedzone/ZAAWZQV036URT</code></p>
-
-<pre><code class="language-bash">aws route53 list-hosted-zones
-</code></pre>
-
-<p>This config alias the domain to your Cloudfront distribution.</p>
-
-<ul>
-<li>The bare domain get&rsquo;s aliased</li>
-<li>The <code>www</code> subdomain uses a CNAME</li>
-<li>Aliases all refernce zone <code>ZAAWZQV036URT</code>, because <a href="https://docs.aws.amazon.com/Route53/latest/APIReference/CreateAliasRRSAPI.html">AWS says so</a></li>
-<li><code>UPSERT</code> so that this config is applied idempotently</li>
-</ul>
-
-<pre><code class="language-json">{
-  &quot;Changes&quot;: [
-    {
-      &quot;Action&quot;: &quot;UPSERT&quot;,
-      &quot;ResourceRecordSet&quot;: {
-        &quot;AliasTarget&quot;: {
-          &quot;HostedZoneId&quot;: &quot;Z2FDTNDATAQYW2&quot;,
-          &quot;EvaluateTargetHealth&quot;: false,
-          &quot;DNSName&quot;: &quot;d8ukw3iojeij2.cloudfront.net.&quot;
-        },
-        &quot;Type&quot;: &quot;A&quot;,
-        &quot;Name&quot;: &quot;yoursite.com.&quot;
-      }
+</code></pre><h2 id=route-53-domain-setup>Route 53 Domain Setup</h2><p>Only one more step! We&rsquo;ll point your <a href=https://aws.amazon.com/route53/>Route 53</a> hosted domain to the CF distribution. This uses <a href=https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html>an alias</a> for the zone apex and a CNAME for the subdomain.</p><p>Find your current hosted zone (domain). i.e. <code>/hostedzone/ZAAWZQV036URT</code></p><pre><code class=language-bash>aws route53 list-hosted-zones
+</code></pre><p>This config alias the domain to your Cloudfront distribution.</p><ul><li>The bare domain get&rsquo;s aliased</li><li>The <code>www</code> subdomain uses a CNAME</li><li>Aliases all refernce zone <code>ZAAWZQV036URT</code>, because <a href=https://docs.aws.amazon.com/Route53/latest/APIReference/CreateAliasRRSAPI.html>AWS says so</a></li><li><p><code>UPSERT</code> so that this config is applied idempotently</p><pre><code class=language-json>{
+&quot;Changes&quot;: [
+{
+  &quot;Action&quot;: &quot;UPSERT&quot;,
+  &quot;ResourceRecordSet&quot;: {
+    &quot;AliasTarget&quot;: {
+      &quot;HostedZoneId&quot;: &quot;Z2FDTNDATAQYW2&quot;,
+      &quot;EvaluateTargetHealth&quot;: false,
+      &quot;DNSName&quot;: &quot;d8ukw3iojeij2.cloudfront.net.&quot;
     },
-    {
-      &quot;Action&quot;: &quot;UPSERT&quot;,
-      &quot;ResourceRecordSet&quot;: {
-        &quot;ResourceRecords&quot;: [
-          {
-            &quot;Value&quot;: &quot;d8ukw3iojeij2.cloudfront.net&quot;
-          }
-        ],
-        &quot;Type&quot;: &quot;CNAME&quot;,
-        &quot;Name&quot;: &quot;www.yoursite.com.&quot;,
-        &quot;TTL&quot;: 300
+    &quot;Type&quot;: &quot;A&quot;,
+    &quot;Name&quot;: &quot;yoursite.com.&quot;
+  }
+},
+{
+  &quot;Action&quot;: &quot;UPSERT&quot;,
+  &quot;ResourceRecordSet&quot;: {
+    &quot;ResourceRecords&quot;: [
+      {
+        &quot;Value&quot;: &quot;d8ukw3iojeij2.cloudfront.net&quot;
       }
-    }
-  ]
+    ],
+    &quot;Type&quot;: &quot;CNAME&quot;,
+    &quot;Name&quot;: &quot;www.yoursite.com.&quot;,
+    &quot;TTL&quot;: 300
+  }
 }
-</code></pre>
-
-<p>Ok, here goes. Build the json and submit it. Note, you&rsquo;ll need to wait ~TTL seconds for the DNS to propagate.</p>
-
-<pre><code class="language-bash">HOSTED_ZONE_ID=&quot;/hostedzone/ZAAWZQV036URT&quot;
+]
+}
+</code></pre></li></ul><p>Ok, here goes. Build the json and submit it. Note, you&rsquo;ll need to wait ~TTL seconds for the DNS to propagate.</p><pre><code class=language-bash>HOSTED_ZONE_ID=&quot;/hostedzone/ZAAWZQV036URT&quot;
 DISTRO_URL=&quot;d8ukw3iojeij2.cloudfront.net&quot;
 
 echo &quot;{
@@ -655,109 +324,14 @@ echo &quot;{
 }&quot; &gt; r53Batch.json
 
 aws route53 change-resource-record-sets --hosted-zone-id $HOSTED_ZONE_ID --change-batch file://r53Batch.json
-</code></pre>
-
-<h2 id="deployment:dbd0bcf413e4dc3b1882a25383e97315">Deployment</h2>
-
-<p>Great job, you&rsquo;re an AWS API zen master now! That was <em>easy</em>, right? At least it will be easy to redo later or script with Ansible.</p>
-
-<p>Note, because there are 54 edge nodes worldwide, it may <strong>take some time</strong> (i.e. 30min) for your distribtion to be complete. Go get a cup of coffee and let the interwebs stabalize.</p>
-
-<p>See the next post to <a href="https://lust.dev/2016/02/28/deploy-hugo-files-to-s3/">Deploy Hugo Files to S3</a>.</p>
-
-</div>
-
-	
-    <div class="comments">
-        <div id="disqus_thread"></div>
-<script type="text/javascript">
-    var disqus_shortname = 'lustforge';
-    var disqus_identifier = 'https:\/\/lust.dev\/2016\/02\/27\/hosting-hugo-on-aws\/';
-    var disqus_title = 'AWS Hugo Hosting, HowTo';
-    var disqus_url = 'https:\/\/lust.dev\/2016\/02\/27\/hosting-hugo-on-aws\/';
-
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    </div>
-
-
-        <footer class="post-footer clearfix">
-    
-        <p class="post-tags">
-            <span>Tagged:</span>
-            
-                 <a href="/tags/go/">Go</a>
-            
-                 <a href="/tags/cloudfront/">CloudFront</a>
-            
-                 <a href="/tags/aws/">AWS</a>
-            
-                 <a href="/tags/hugo/">Hugo</a>
-            
-                 <a href="/tags/s3/">S3</a>
-            
-	    <a href="/tags/">[all]</a>
-        </p>
-    
-
-    <div class="share">
-        <a class="icon-twitter" href="https://twitter.com/share?text=AWS%20Hugo%20Hosting%2c%20HowTo&url=https%3a%2f%2flust.dev%2f2016%2f02%2f27%2fhosting-hugo-on-aws%2f"
-            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
-            <i class="fa fa-twitter"></i>
-            <span class="hidden">Twitter</span>
-        </a>
-
-        <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2flust.dev%2f2016%2f02%2f27%2fhosting-hugo-on-aws%2f"
-            onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
-            <i class="fa fa-facebook"></i>
-            <span class="hidden">Facebook</span>
-        </a>
-
-        <a class="icon-google-plus" href="https://plus.google.com/share?url=https%3a%2f%2flust.dev%2f2016%2f02%2f27%2fhosting-hugo-on-aws%2f"
-           onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
-           <i class="fa fa-google-plus"></i>
-            <span class="hidden">Google+</span>
-        </a>
-    </div>
-</footer>
-
-    </article>
-</div>
-
-            </div>
-        </div>
-
-        <footer class="footer">
-            <div class="container">
-                <div class="site-title-wrapper">
-                    <h1 class="site-title">
-                        <a title="lust.dev" href="https://lust.dev/">lust.dev</a>
-                    </h1>
-                    <a class="button-square button-jump-top js-jump-top" href="#">
-                        <i class="fa fa-angle-up"></i>
-                    </a>
-                </div>
-
-                <p class="footer-copyright">
-                    <span>&copy; 2009 - 2018 / Powered by <a href="http://gohugo.io/">Hugo</a></span>
-                </p>
-                <p class="footer-copyright">
-                    <span><a href="https://github.com/twistedpair/ghostwriter">Lustwriter theme</a> By J. Lust</span>
-                    <span>/ Forked from <a href="https://github.com/jbub/ghostwriter">Ghostwriter</a></span>
-                </p>
-            </div>
-        </footer>
-
-        <script src="https://lust.dev/js/jquery-1.11.3.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
-        <script src="https://lust.dev/js/jquery.fitvids.js"></script>
-        <script src="https://lust.dev/js/scripts.js"></script>
-    </body>
-</html>
-
+</code></pre><h2 id=deployment>Deployment</h2><p>Great job, you&rsquo;re an AWS API zen master now! That was <em>easy</em>, right? At least it will be easy to redo later or script with Ansible.</p><p>Note, because there are 54 edge nodes worldwide, it may <strong>take some time</strong> (i.e. 30min) for your distribtion to be complete. Go get a cup of coffee and let the interwebs stabalize.</p><p>See the next post to <a href=https://lust.dev/2016/02/28/deploy-hugo-files-to-s3/>Deploy Hugo Files to S3</a>.</p></div><footer class="post-footer clearfix"><p class=post-tags><span>Tagged:</span>
+<a href=../../../../tags/go/>Go</a>
+<a href=../../../../tags/cloudfront/>CloudFront</a>
+<a href=../../../../tags/aws/>AWS</a>
+<a href=../../../../tags/hugo/>Hugo</a>
+<a href=../../../../tags/s3/>S3</a>
+<a href=../../../../tags/>[all]</a></p><div class=share><a class=icon-twitter href="https://twitter.com/share?text=AWS%20Hugo%20Hosting%2c%20HowTo&url=https%3a%2f%2flust.dev%2f2016%2f02%2f27%2fhosting-hugo-on-aws%2f" onclick="window.open(this.href,'twitter-share','width=550,height=235');return false;"><i class="fa fa-twitter"></i><span class=hidden>Twitter</span></a>
+<a class=icon-facebook href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2flust.dev%2f2016%2f02%2f27%2fhosting-hugo-on-aws%2f" onclick="window.open(this.href,'facebook-share','width=580,height=296');return false;"><i class="fa fa-facebook"></i><span class=hidden>Facebook</span></a>
+<a class=icon-google-plus href="https://plus.google.com/share?url=https%3a%2f%2flust.dev%2f2016%2f02%2f27%2fhosting-hugo-on-aws%2f" onclick="window.open(this.href,'google-plus-share','width=490,height=530');return false;"><i class="fa fa-google-plus"></i><span class=hidden>Google+</span></a></div></footer><div class=comments><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return;}
+var d=document,s=d.createElement('script');s.async=true;s.src='//'+"lustforge"+'.disqus.com/embed.js';s.setAttribute('data-timestamp',+new Date());(d.head||d.body).appendChild(s);})();</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div></article></div></div></div><footer class=footer><div class=container><div class=site-title-wrapper><h1 class=site-title><a title=lust.dev href=https://lust.dev/>lust.dev</a></h1><a class="button-square button-jump-top js-jump-top" href=#><i class="fa fa-angle-up"></i></a></div><p class=footer-copyright><span>&copy; 2009 - 2018 / Powered by <a href=http://gohugo.io/>Hugo</a></span></p><p class=footer-copyright><span><a href=https://github.com/twistedpair/ghostwriter>Lustwriter theme</a> By J. Lust</span>
+<span>/ Forked from <a href=https://github.com/jbub/ghostwriter>Ghostwriter</a></span></p></div></footer><script src=https://lust.dev/js/jquery-1.11.3.min.js></script><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js></script><script src=https://lust.dev/js/jquery.fitvids.js></script><script src=https://lust.dev/js/scripts.js></script></body></html>

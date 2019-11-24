@@ -3,7 +3,7 @@ draft: false
 title: About the Lust
 author: Joseph Lust
 layout: post
-date: 2016-02-21
+date: 2010-01-01
 url: /about/
 tags:
 ---
@@ -22,5 +22,5 @@ Drop me a line if you’re a like minded soul.
  [1]: https://scholar.smu.edu/cgi/viewcontent.cgi?article=1305&context=jalc)
  [2]: https://www.meetup.com/GDGCloudBoston/
  [3]: https://mabl.com
- [^1]: Not to be confused with the _other_ [Joe Lust](http://www.josephlust.com)
+ [^1]: Not to be confused with the _other_ [Joseph Lust](http://www.josephlust.com)
  

@@ -10,7 +10,6 @@
 # Folders
 _obj
 _test
-public
 
 # Don't bring in large binaries
 static/downloads/

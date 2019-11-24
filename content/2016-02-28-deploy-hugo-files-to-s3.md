@@ -75,6 +75,6 @@ Alternatively, use unique asset names if they will change frequently, or [URL fi
  [5]: https://gohugo.io/
  [6]: https://aws.amazon.com/cloudfront/pricing/#Request_Pricing_for_All_HTTP_Methods_(per_10,000)
  [11]: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html
- [10]: {{< ref "post/2016-02-27-deploy-hugo-on-aws.md" >}} 
+ [10]: {{< ref "2016-02-27-deploy-hugo-on-aws.md" >}} 
  
  

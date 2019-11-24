@@ -27,7 +27,7 @@ Farewell WordPress. Hello, [Hugo][5].
  [3]: https://store.wordpress.com/plans/
  [4]: https://aws.amazon.com/s3/
  [5]: https://gohugo.io/
- [6]: {{< ref "post/2016-02-27-deploy-hugo-on-aws.md" >}}
+ [6]: {{< ref "2016-02-27-deploy-hugo-on-aws.md" >}}
  [7]: https://docs.google.com/spreadsheets/d/1-ymzKpTd6M1AYvTrfCGxEt5u6fr4zHim3tSqz1qk94c/edit?usp=sharing
 
  

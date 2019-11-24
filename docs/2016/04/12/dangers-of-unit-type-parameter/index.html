@@ -1,201 +1,6 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Dangers of the Unit Type Parameter &middot; Joseph Lust</title>
-        <meta name="description" content="drive to develop">
-        <meta name="HandheldFriendly" content="True">
-        <meta name="MobileOptimized" content="320">
-        <meta name="generator" content="Hugo 0.16-DEV" />
-        <meta name="robots" content="index,follow">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="shortcut icon" href="https://lust.dev/favicon.png">
-        <link rel="stylesheet" href="https://lust.dev/css/normalize.css">
-	<link rel="stylesheet" href="https://lust.dev/css/highlight/obsidian.css">
-        <link rel="stylesheet" href="https://lust.dev/css/style.css">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
-        
-        
-
-            
-            <meta property="og:type"   content="article" />
-            <meta property="og:url"    content="https://lust.dev/2016/04/12/dangers-of-unit-type-parameter/" />
-            <meta property="og:title"  content="Dangers of the Unit Type Parameter" />
-
-            <meta name="twitter:domain" value="lustforge.com" />
-            <meta name="twitter:card" content="summary_large_image" />
-            <meta name="twitter:title" value="Dangers of the Unit Type Parameter" />
-            
-             <meta name="twitter:description" value="Confusing misuses of Unit and the loss of type checking."/>
-            
-
-            
-            <meta name="twitter:url" value="https://lust.dev/2016/04/12/dangers-of-unit-type-parameter/"/>
-
-            
-            <meta property="og:image"  content="https://lust.dev/img/anti-unit.png">
-            <meta property="twitter:image"  content="https://lust.dev/img/anti-unit.png">
-            
-        
-        
-    </head>
-    <body>
-        
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-17498476-1', 'auto');
-ga('send', 'pageview');
-</script>
-
-
-        <div id="wrapper">
-            <header class="site-header">
-                <div class="container">
-                    <div class="site-title-wrapper">
-                        
-                            <h1 class="site-title">
-                                <a title="lust.dev" href="https://lust.dev/">lust.dev</a>
-                            </h1>
-                        
-			
-                        	<a class="button-square" href="https://lust.dev/index.xml"><i title="RSS Feed" class="fa fa-rss"></i></a>
-			
-                        
-                            <a class="button-square button-social hint--top" data-hint="Twitter" title="Twitter" href="https://twitter.com/lustcoder">
-                                <i class="fa fa-twitter"></i>
-                            </a>
-                        
-                        
-                            <a class="button-square button-social hint--top" data-hint="Github" title="Github" href="https://github.com/twistedpair">
-                                <i class="fa fa-github-alt"></i>
-                            </a>
-                        
-                        
-                            <a class="button-square button-social hint--top" data-hint="Stack Overflow" title="Stack Overflow" href="https://stackoverflow.com/users/564157/joseph-lust">
-                                <i class="fa fa-stack-overflow"></i>
-                            </a>
-                        
-                        
-                            <a class="button-square button-social hint--top" data-hint="LinkedIn" title="LinkedIn" href="https://www.linkedin.com/in/josephlust">
-                                <i class="fa fa-linkedin"></i>
-                            </a>
-                        
-                        
-			
-			<h1 class="site-title" style="margin-left:10px;">
-                            <a class="site-title" data-hint="Lust" title="Meet the groundskeeper" href="https://lust.dev/about/">J. Lust &#8250;</a>
-                        </h1>
-                    </div>
-
-                    <ul class="site-nav">
-                        
-                    </ul>
-                </div>
-            </header>
-
-            <div id="container">
-
-
-<div class="container">
-    <article class="post-container">
-        <header class="post-header">
-    <h1 class="post-title">Dangers of the Unit Type Parameter</h1>
-    
-</header>
-
-        
-<div class="post-content clearfix">
-
-        
-    
-    
-    <script type="application/ld+json">
-    {
-        "@context" : "http://schema.org",
-        "@type" : "BlogPosting",
-        "articleSection" : "post",
-        "name" : "Dangers of the Unit Type Parameter",
-        "headline" : "Dangers of the Unit Type Parameter",
-        "description" : "I ran into the following Scala pitfall when refactoring some code recently. The problem Futures sometimes execute in expected order, other times not. Testing with Await.result(f) didn\x26rsquo;t block. The world was no longer deterministic. Why? Unit. The code This was the code before: def makeFut1():Future[Int] = Future.successful( 1 \x2b 1) def makeFut2():Future[String] = Future.successful( \x26quot;foo\x26quot; \x2b \x26quot;bar\x26quot; ) def doSideEffect(a:Int,b:String):Unit = println(s\x26quot;[$a] [$b]\x26quot;) def doWork():Future[Unit] = for { futA \x26lt;- makeFut1() futB \x26lt;- makeFut2() } yield doSideEffect(futA,futB) Alas synchronous doSideEffect(...) method was refactored to be async, becoming: def doSideEffect(a:Int,b:String):Unit = Future { println(s\x26quot;[$a] [$b]\x26quot;) } What broke?",
-        "inLanguage" : "en-US",
-        "author" : "Joseph Lust",
-        "creator" : "Joseph Lust",
-        "accountablePerson" : "Joseph Lust",
-        "copyrightHolder" : "Joseph Lust",
-        "copyrightYear" : "2016",
-        "datePublished" : "",
-        "publisher": "LustForge.com",
-        "logo": "https:\/\/lust.dev\/favicon.png",
-        "url" : "https:\/\/lust.dev\/2016\/04\/12\/dangers-of-unit-type-parameter\/",
-        "wordCount" : "704",
-        "image" : "https:\/\/lust.dev\/img\/anti-unit.png",
-        "keywords" : [ "Futures, Scala" ]
-    }
-    </script>
-    
-    
-
-
-<div itemscope itemtype="http://schema.org/BlogPosting" style="display:none;">
-     <meta itemprop="mainEntityOfPage" content="https://lust.dev/2016/04/12/dangers-of-unit-type-parameter/" />
-     <meta itemprop="inLanguage" content="en-US" />
-     <h1 itemprop="headline">Dangers of the Unit Type Parameter</h1>
-     <meta itemprop="name" content="Dangers of the Unit Type Parameter" />
-     <meta itemprop="description" content="Confusing misuses of Unit and the loss of type checking." />
-     <meta itemprop="wordCount" content="704" />
-     <meta itemprop="keywords" content="Futures,Scala" />
-     
-     <meta itemprop="copyrightYear" content="2016" />
-    <div itemprop="copyrightHolder" itemscope itemtype="http://schema.org/Person">
-        <meta itemprop="name" content="Joseph Lust">
-    </div>
-    
-    
-     <div itemprop="image" itemscope itemtype="http://schema.org/ImageObject">
-         <img  itemprop="url" src="https://lust.dev/img/anti-unit.png" alt="thumbnail">
-         <meta itemprop="width" content="220" >
-         <meta itemprop="height" content="220" >
-    </div>
-    
-    <meta itemprop="datePublished" content="2016-04-12">
-    <meta itemprop="dateModified" content="2016-04-12">
-    <a itemprop="mainEntityOfPage" href="/ArticleLink"></a>
-    <div itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <meta itemprop="name" content="Joseph Lust">
-    </div>
-    <div itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lust.dev">
-      <a itemprop="url" href="/"> 
-      <span itemprop="logo" itemscope itemtype="http://schema.org/ImageObject"  >
-      <img itemprop="image" src="https://lust.dev/favicon.png" />
-      <link itemprop="url" href="https://lust.dev/favicon.png" />
-      </span>
-      </a>
-    </div>
-</div>
-
-    
-
-    
-
-<p>I ran into the following Scala pitfall when refactoring some code recently.</p>
-
-<h2 id="the-problem:0f7ca2f56d5a07b83a78e2aa186b1719">The problem</h2>
-
-<p><a href="http://docs.scala-lang.org/overviews/core/futures.html#futures">Futures</a> sometimes execute in expected order, other times not. Testing with <code>Await.result(f)</code> didn&rsquo;t block. The world was no longer deterministic. Why? Unit.</p>
-
-<h2 id="the-code:0f7ca2f56d5a07b83a78e2aa186b1719">The code</h2>
-
-<p>This was the code before:</p>
-
-<pre><code class="language-scala">def makeFut1():Future[Int] = Future.successful( 1 + 1) 
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Dangers of the Unit Type Parameter &middot; Joseph Lust</title><meta name=description content="drive to develop"><meta name=HandheldFriendly content="True"><meta name=MobileOptimized content="320"><meta name=generator content="Hugo 0.59.1"><meta name=robots content="index,follow"><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" href=https://lust.dev/favicon.png><link rel=stylesheet href=https://lust.dev/css/normalize.css><link rel=stylesheet href=https://lust.dev/css/highlight/obsidian.css><link rel=stylesheet href=https://lust.dev/css/style.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300&subset=latin,cyrillic-ext,latin-ext,cyrillic"><link rel=stylesheet href=https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css><meta property="og:type" content="article"><meta property="og:url" content="https://lust.dev/2016/04/12/dangers-of-unit-type-parameter/"><meta property="og:title" content="Dangers of the Unit Type Parameter"><meta name=twitter:domain value=lustforge.com><meta name=twitter:card content="summary_large_image"><meta name=twitter:title value="Dangers of the Unit Type Parameter"><meta name=twitter:description value="Confusing misuses of Unit and the loss of type checking."><meta name=twitter:url value=https://lust.dev/2016/04/12/dangers-of-unit-type-parameter/><meta property="og:image" content="https://lust.dev/img/anti-unit.png"><meta property="twitter:image" content="https://lust.dev/img/anti-unit.png"></head><body><script type=application/javascript>var doNotTrack=false;if(!doNotTrack){(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create','UA-17498476-1','auto');ga('send','pageview');}</script><div id=wrapper><header class=site-header><div class=container><div class=site-title-wrapper><h1 class=site-title><a title=lust.dev href=https://lust.dev/>lust.dev</a></h1><a class=button-square href=https://lust.dev/index.xml><i title="RSS Feed" class="fa fa-rss"></i></a><a class="button-square button-social hint--top" data-hint=Twitter title=Twitter href=https://twitter.com/lustcoder><i class="fa fa-twitter"></i></a><a class="button-square button-social hint--top" data-hint=Github title=Github href=https://github.com/twistedpair><i class="fa fa-github-alt"></i></a><a class="button-square button-social hint--top" data-hint="Stack Overflow" title="Stack Overflow" href=https://stackoverflow.com/users/564157/joseph-lust><i class="fa fa-stack-overflow"></i></a><a class="button-square button-social hint--top" data-hint=LinkedIn title=LinkedIn href=https://www.linkedin.com/in/josephlust><i class="fa fa-linkedin"></i></a><h1 class=site-title style=margin-left:10px><a class=site-title data-hint=Lust title="Meet the groundskeeper" href=https://lust.dev/about/>J. Lust &#8250;</a></h1></div><ul class=site-nav></ul></div></header><div id=container><div class=container><article class=post-container itemscope itemtype=http://schema.org/BlogPosting><header class=post-header><h1 class=post-title itemprop="name headline">Dangers of the Unit Type Parameter</h1><p class=post-date><span>Published <time datetime=2016-04-12 itemprop=datePublished>Tue, Apr 12, 2016</time></span>
+<span>by</span>
+<span itemscope itemprop=author itemtype=http://schema.org/Person><span itemprop=name><a href=https://stackoverflow.com/users/564157/joseph-lust itemprop=url rel=author>Joseph Lust</a></span></span></p></header><div class="post-content clearfix" itemprop=articleBody><img class=post-featured-image src=../../../../img/anti-unit.png><p>I ran into the following Scala pitfall when refactoring some code recently.</p><h2 id=the-problem>The problem</h2><p><a href=http://docs.scala-lang.org/overviews/core/futures.html#futures>Futures</a> sometimes execute in expected order, other times not. Testing with <code>Await.result(f)</code> didn&rsquo;t block. The world was no longer deterministic. Why? Unit.</p><h2 id=the-code>The code</h2><p>This was the code before:</p><pre><code class=language-scala>def makeFut1():Future[Int] = Future.successful( 1 + 1) 
 def makeFut2():Future[String] = Future.successful( &quot;foo&quot; + &quot;bar&quot; )
 def doSideEffect(a:Int,b:String):Unit = println(s&quot;[$a] [$b]&quot;)
 
@@ -204,45 +9,11 @@ def doWork():Future[Unit] =
     futA &lt;- makeFut1()
     futB &lt;- makeFut2()
   } yield doSideEffect(futA,futB)
-</code></pre>
-
-<p>Alas synchronous <code>doSideEffect(...)</code> method was refactored to be async, becoming:</p>
-
-<pre><code class="language-scala">def doSideEffect(a:Int,b:String):Unit = Future { println(s&quot;[$a] [$b]&quot;) }
-</code></pre>
-
-<p>What broke? Nothing. Scala compiled and ran it just fine. But, WFT? We&rsquo;re yielding a <code>Future[Unit]</code> not a <code>Unit</code>, shouldn&rsquo;t that make <code>doWork()</code> return a <code>Future[Future[Unit]]</code> and fail type checking?</p>
-
-<h2 id="unit-and-value-discarding:0f7ca2f56d5a07b83a78e2aa186b1719">Unit and Value Discarding</h2>
-
-<p>In short, the <a href="http://www.scala-lang.org/docu/files/ScalaReference.pdf">Scala Spec</a> section 6.26.1 says,</p>
-
-<blockquote>
-<p>If e has some value type and the expected type is Unit, e is converted
-to the expected type by embedding it in the term { e; () }.</p>
-</blockquote>
-
-<p>The following code would be transformed accordingly:</p>
-
-<pre><code class="language-scala">def intUnit(n:Int):Unit = n*2        // pre-compile
+</code></pre><p>Alas synchronous <code>doSideEffect(...)</code> method was refactored to be async, becoming:</p><pre><code class=language-scala>def doSideEffect(a:Int,b:String):Unit = Future { println(s&quot;[$a] [$b]&quot;) }
+</code></pre><p>What broke? Nothing. Scala compiled and ran it just fine. But, WFT? We&rsquo;re yielding a <code>Future[Unit]</code> not a <code>Unit</code>, shouldn&rsquo;t that make <code>doWork()</code> return a <code>Future[Future[Unit]]</code> and fail type checking?</p><h2 id=unit-and-value-discarding>Unit and Value Discarding</h2><p>In short, the <a href=http://www.scala-lang.org/docu/files/ScalaReference.pdf>Scala Spec</a> section 6.26.1 says,</p><blockquote><p>If e has some value type and the expected type is Unit, e is converted
+to the expected type by embedding it in the term { e; () }.</p></blockquote><p>The following code would be transformed accordingly:</p><pre><code class=language-scala>def intUnit(n:Int):Unit = n*2        // pre-compile
 def intUnit(n:Int):Unit = {n*2; ()}  // post-compile
-</code></pre>
-
-<p>This gets tricky with type parameters. If you returned <code>Future[Future[Unit]]</code>, you&rsquo;re really returning <code>Future[Unit]</code>.</p>
-
-<h2 id="compiler-don-t-care-bout-unit:0f7ca2f56d5a07b83a78e2aa186b1719">Compiler Don&rsquo;t Care `bout Unit</h2>
-
-<p>Thus, we see that by returning the Unit type, we&rsquo;re really returning Void, and lose any type checking of the return type at all. As such, the compiler doesn&rsquo;t give a damn<sup class="footnote-ref" id="fnref:0f7ca2f56d5a07b83a78e2aa186b1719:1"><a rel="footnote" href="#fn:0f7ca2f56d5a07b83a78e2aa186b1719:1">1</a></sup> what we return.  Any <code>Future</code> executed in said yield will probably be invoked, but not as this flatmapping chain of futures, and not in the order you&rsquo;d expect.</p>
-
-<p><code>doSideEffect(...)</code> is invoked, and it&rsquo;s Future created, but said Future isn&rsquo;t tied to this sequence of Futures. Thus, the Future returned by <code>doWork()</code> won&rsquo;t wait for it, returning <code>Unit</code> immeadiately.</p>
-
-<h2 id="don-t-return-unit:0f7ca2f56d5a07b83a78e2aa186b1719">Don&rsquo;t Return Unit</h2>
-
-<p>Only use return type Unit for Void functions (a.k.a. Procedures). Using Unit to parameterize a type effectively negates type checking on that type, and loses the guarantees you&rsquo;ve come to expect from the type system and compiler.</p>
-
-<p>An alternative to the above example, using a sealed algebra for return state, would be:</p>
-
-<pre><code class="language-scala">sealed trait Result
+</code></pre><p>This gets tricky with type parameters. If you returned <code>Future[Future[Unit]]</code>, you&rsquo;re really returning <code>Future[Unit]</code>.</p><h2 id=compiler-don-t-care-bout-unit>Compiler Don&rsquo;t Care `bout Unit</h2><p>Thus, we see that by returning the Unit type, we&rsquo;re really returning Void, and lose any type checking of the return type at all. As such, the compiler doesn&rsquo;t give a damn<sup class=footnote-ref id=fnref:1><a href=#fn:1>1</a></sup> what we return. Any <code>Future</code> executed in said yield will probably be invoked, but not as this flatmapping chain of futures, and not in the order you&rsquo;d expect.</p><p><code>doSideEffect(...)</code> is invoked, and it&rsquo;s Future created, but said Future isn&rsquo;t tied to this sequence of Futures. Thus, the Future returned by <code>doWork()</code> won&rsquo;t wait for it, returning <code>Unit</code> immeadiately.</p><h2 id=don-t-return-unit>Don&rsquo;t Return Unit</h2><p>Only use return type Unit for Void functions (a.k.a. Procedures). Using Unit to parameterize a type effectively negates type checking on that type, and loses the guarantees you&rsquo;ve come to expect from the type system and compiler.</p><p>An alternative to the above example, using a sealed algebra for return state, would be:</p><pre><code class=language-scala>sealed trait Result
 object Good extends Result
 object Bad extends Result
 
@@ -257,158 +28,37 @@ def doWork():Future[Result] = {
         futB &lt;- makeFut2()
     } yield doSideEffectB(futA,futB)
 }
-</code></pre>
-
-<p>And failed to compile, as we&rsquo;d hope!</p>
-
-<pre><code class="language-bash">Sample.scala:55: error: type mismatch;
+</code></pre><p>And failed to compile, as we&rsquo;d hope!</p><pre><code class=language-bash>Sample.scala:55: error: type mismatch;
  found   : scala.concurrent.Future[Result]
  required: Result
         } yield doSideEffectB(futA,futB)
                              ^
 one error found
-</code></pre>
-
-<p>Horay for types!</p>
-
-<h2 id="appendix-unit-type-and-void:0f7ca2f56d5a07b83a78e2aa186b1719">(Appendix) Unit Type and Void</h2>
-
-<p><a href="http://www.scala-lang.org/files/archive/nightly/docs/library/index.html#scala.Unit$">Unit</a> is a <a href="https://en.wikipedia.org/wiki/Unit_type">Unit Type</a> from Type Theory, meaning it&rsquo;s a universal singleton instance referenced by <code>()</code>, the zero tuple. Every <code>()</code> in your code points to the same Unit instance. Since all Scala value types can be converted to Unit, the compiler may change them to Unit as required for return signatures to match. Any <em>value type</em><sup class="footnote-ref" id="fnref:0f7ca2f56d5a07b83a78e2aa186b1719:2"><a rel="footnote" href="#fn:0f7ca2f56d5a07b83a78e2aa186b1719:2">2</a></sup> can be converted.</p>
-
-<p>Let&rsquo;s decompile the following functions to see what Scala does to Unit returns:</p>
-
-<pre><code class="language-scala">def intInt(n:Int):Int = n*2
+</code></pre><p>Horay for types!</p><h2 id=appendix-unit-type-and-void>(Appendix) Unit Type and Void</h2><p><a href=http://www.scala-lang.org/files/archive/nightly/docs/library/index.html#scala.Unit$>Unit</a> is a <a href=https://en.wikipedia.org/wiki/Unit_type>Unit Type</a> from Type Theory, meaning it&rsquo;s a universal singleton instance referenced by <code>()</code>, the zero tuple. Every <code>()</code> in your code points to the same Unit instance. Since all Scala value types can be converted to Unit, the compiler may change them to Unit as required for return signatures to match. Any <em>value type</em><sup class=footnote-ref id=fnref:2><a href=#fn:2>2</a></sup> can be converted.</p><p>Let&rsquo;s decompile the following functions to see what Scala does to Unit returns:</p><pre><code class=language-scala>def intInt(n:Int):Int = n*2
 def intUnit(n:Int):Unit = n*2
-</code></pre>
-
-<pre><code class="language-java">  public int intInt(int);
+</code></pre><pre><code class=language-java>  public int intInt(int);
     Code:
        0: iconst_2 // Load integer 2
        1: iload_1  // Load another int
        2: imul     // Multiply ints 
        3: ireturn  // return product
 
-</code></pre>
-
-<pre><code class="language-java">  public void intUnit(int);
+</code></pre><pre><code class=language-java>  public void intUnit(int);
     Code:
        0: iconst_2 // Load integer 2
        1: iload_1  // Load another int
        2: imul     // Multiply ints 
        3: pop      // Discard value
        4: return   // Return VOID
-</code></pre>
-
-<p>The <a href="https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings">byte code</a> shows Java does the math in both cases, but the Unit return <strong>discards all values and returns Void.</strong></p>
-
-<h2 id="appendix-incorrect-unit-use:0f7ca2f56d5a07b83a78e2aa186b1719">(Appendix) Incorrect Unit Use</h2>
-
-<p>Because Unit is converted from any other <em>value type</em>, <code>Unit</code> can be converted to <code>()</code>. That is, Unit can be converted from a type to an instance by the complier, sort of. This can lead to confusion in code.</p>
-
-<pre><code class="language-scala">def myProcedure(n:Int):Unit = {n * n; Unit}      // pre-compiled
+</code></pre><p>The <a href=https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings>byte code</a> shows Java does the math in both cases, but the Unit return <strong>discards all values and returns Void.</strong></p><h2 id=appendix-incorrect-unit-use>(Appendix) Incorrect Unit Use</h2><p>Because Unit is converted from any other <em>value type</em>, <code>Unit</code> can be converted to <code>()</code>. That is, Unit can be converted from a type to an instance by the complier, sort of. This can lead to confusion in code.</p><pre><code class=language-scala>def myProcedure(n:Int):Unit = {n * n; Unit}      // pre-compiled
 def myProcedure(n:Int):Unit = {n * n; Unit; ()}  // post-compiled
-</code></pre>
-
-<p>Developers may explicitly return <code>Unit</code>, but really they are returning the <em>Unit type</em>, not the singleton Unit reference, <code>()</code>. The reference to the actual type is being discarded.</p>
-<div class="footnotes">
-
-<hr />
-
-<ol>
-<li id="fn:0f7ca2f56d5a07b83a78e2aa186b1719:1">Set the <code>-Ywarn-value-discard</code> compiler flag to fail builds on Value Discarding
- <a class="footnote-return" href="#fnref:0f7ca2f56d5a07b83a78e2aa186b1719:1"><sup>[return]</sup></a></li>
-<li id="fn:0f7ca2f56d5a07b83a78e2aa186b1719:2">value type T , <code>scala.Nothing &lt;: T &lt;: scala.Any</code>
- <a class="footnote-return" href="#fnref:0f7ca2f56d5a07b83a78e2aa186b1719:2"><sup>[return]</sup></a></li>
-</ol>
-</div>
-
-</div>
-
-	
-    <div class="comments">
-        <div id="disqus_thread"></div>
-<script type="text/javascript">
-    var disqus_shortname = 'lustforge';
-    var disqus_identifier = 'https:\/\/lust.dev\/2016\/04\/12\/dangers-of-unit-type-parameter\/';
-    var disqus_title = 'Dangers of the Unit Type Parameter';
-    var disqus_url = 'https:\/\/lust.dev\/2016\/04\/12\/dangers-of-unit-type-parameter\/';
-
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    </div>
-
-
-        <footer class="post-footer clearfix">
-    
-        <p class="post-tags">
-            <span>Tagged:</span>
-            
-                 <a href="/tags/futures/">Futures</a>
-            
-                 <a href="/tags/scala/">Scala</a>
-            
-	    <a href="/tags/">[all]</a>
-        </p>
-    
-
-    <div class="share">
-        <a class="icon-twitter" href="https://twitter.com/share?text=Dangers%20of%20the%20Unit%20Type%20Parameter&url=https%3a%2f%2flust.dev%2f2016%2f04%2f12%2fdangers-of-unit-type-parameter%2f"
-            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
-            <i class="fa fa-twitter"></i>
-            <span class="hidden">Twitter</span>
-        </a>
-
-        <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2flust.dev%2f2016%2f04%2f12%2fdangers-of-unit-type-parameter%2f"
-            onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
-            <i class="fa fa-facebook"></i>
-            <span class="hidden">Facebook</span>
-        </a>
-
-        <a class="icon-google-plus" href="https://plus.google.com/share?url=https%3a%2f%2flust.dev%2f2016%2f04%2f12%2fdangers-of-unit-type-parameter%2f"
-           onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
-           <i class="fa fa-google-plus"></i>
-            <span class="hidden">Google+</span>
-        </a>
-    </div>
-</footer>
-
-    </article>
-</div>
-
-            </div>
-        </div>
-
-        <footer class="footer">
-            <div class="container">
-                <div class="site-title-wrapper">
-                    <h1 class="site-title">
-                        <a title="lust.dev" href="https://lust.dev/">lust.dev</a>
-                    </h1>
-                    <a class="button-square button-jump-top js-jump-top" href="#">
-                        <i class="fa fa-angle-up"></i>
-                    </a>
-                </div>
-
-                <p class="footer-copyright">
-                    <span>&copy; 2009 - 2018 / Powered by <a href="http://gohugo.io/">Hugo</a></span>
-                </p>
-                <p class="footer-copyright">
-                    <span><a href="https://github.com/twistedpair/ghostwriter">Lustwriter theme</a> By J. Lust</span>
-                    <span>/ Forked from <a href="https://github.com/jbub/ghostwriter">Ghostwriter</a></span>
-                </p>
-            </div>
-        </footer>
-
-        <script src="https://lust.dev/js/jquery-1.11.3.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script>
-        <script src="https://lust.dev/js/jquery.fitvids.js"></script>
-        <script src="https://lust.dev/js/scripts.js"></script>
-    </body>
-</html>
-
+</code></pre><p>Developers may explicitly return <code>Unit</code>, but really they are returning the <em>Unit type</em>, not the singleton Unit reference, <code>()</code>. The reference to the actual type is being discarded.</p><div class=footnotes><hr><ol><li id=fn:1>Set the <code>-Ywarn-value-discard</code> compiler flag to fail builds on Value Discarding
+<a class=footnote-return href=#fnref:1><sup>[return]</sup></a></li><li id=fn:2>value type T , <code>scala.Nothing &lt;: T &lt;: scala.Any</code>
+<a class=footnote-return href=#fnref:2><sup>[return]</sup></a></li></ol></div></div><footer class="post-footer clearfix"><p class=post-tags><span>Tagged:</span>
+<a href=../../../../tags/futures/>Futures</a>
+<a href=../../../../tags/scala/>Scala</a>
+<a href=../../../../tags/>[all]</a></p><div class=share><a class=icon-twitter href="https://twitter.com/share?text=Dangers%20of%20the%20Unit%20Type%20Parameter&url=https%3a%2f%2flust.dev%2f2016%2f04%2f12%2fdangers-of-unit-type-parameter%2f" onclick="window.open(this.href,'twitter-share','width=550,height=235');return false;"><i class="fa fa-twitter"></i><span class=hidden>Twitter</span></a>
+<a class=icon-facebook href="https://www.facebook.com/sharer/sharer.php?u=https%3a%2f%2flust.dev%2f2016%2f04%2f12%2fdangers-of-unit-type-parameter%2f" onclick="window.open(this.href,'facebook-share','width=580,height=296');return false;"><i class="fa fa-facebook"></i><span class=hidden>Facebook</span></a>
+<a class=icon-google-plus href="https://plus.google.com/share?url=https%3a%2f%2flust.dev%2f2016%2f04%2f12%2fdangers-of-unit-type-parameter%2f" onclick="window.open(this.href,'google-plus-share','width=490,height=530');return false;"><i class="fa fa-google-plus"></i><span class=hidden>Google+</span></a></div></footer><div class=comments><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return;}
+var d=document,s=d.createElement('script');s.async=true;s.src='//'+"lustforge"+'.disqus.com/embed.js';s.setAttribute('data-timestamp',+new Date());(d.head||d.body).appendChild(s);})();</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div></article></div></div></div><footer class=footer><div class=container><div class=site-title-wrapper><h1 class=site-title><a title=lust.dev href=https://lust.dev/>lust.dev</a></h1><a class="button-square button-jump-top js-jump-top" href=#><i class="fa fa-angle-up"></i></a></div><p class=footer-copyright><span>&copy; 2009 - 2018 / Powered by <a href=http://gohugo.io/>Hugo</a></span></p><p class=footer-copyright><span><a href=https://github.com/twistedpair/ghostwriter>Lustwriter theme</a> By J. Lust</span>
+<span>/ Forked from <a href=https://github.com/jbub/ghostwriter>Ghostwriter</a></span></p></div></footer><script src=https://lust.dev/js/jquery-1.11.3.min.js></script><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js></script><script src=https://lust.dev/js/jquery.fitvids.js></script><script src=https://lust.dev/js/scripts.js></script></body></html>
