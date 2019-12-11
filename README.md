@@ -1,5 +1,5 @@
-# lustforge.com
-Source for [LustForge.com](https://lustforge.com)
+# lust.dev
+Source for [lust.dev](https://lust.dev)
 
 I've been blogging on WordPress for 8 years now, unfortunately. I've found Wordpress incredibly slow, especially given the content can be made completely static. Luckily the world has taken notice, with the recent [explosion of static blogging frameworks](https://www.staticgen.com/). So, why pay $110/yr for a dedicated WP provider, when you can pay $1/yr to AWS S3?
 
