@@ -25,6 +25,6 @@ hugo server -D -w
 
 # Deployment
 
-This site uses [GitHub Actions](https://github.com/actions) to deploy. Just merge to `master` and it will be deployed to [GitHub Pages](https://pages.github.com/).
+This site uses [GitHub Actions](https://github.com/actions) to deploy. Just merge to `main` and it will be deployed to [GitHub Pages](https://pages.github.com/).
 
 Deployment workflow can be found [here](.github/workflows/build-deploy-site.yml)
