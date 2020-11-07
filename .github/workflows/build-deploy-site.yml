@@ -2,9 +2,6 @@ name: Build and Deploy Blog
 
 on:
   push:
-    # Ignore GH Pages updates (prevent actions recursion)
-    paths-ignore:
-      - 'docs/**'
     branches:
       - master
       - '!gh-pages'
@@ -26,8 +23,10 @@ jobs:
     - name: Build Site
       run: hugo --minify -v -d docs/
 
+    # Only deploy from default branch
     - name: Deploy GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
-      env:
+      if: github.ref == 'refs/heads/master'
+      with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs
