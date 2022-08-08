@@ -5,7 +5,6 @@ author: Joseph Lust
 layout: post
 date: 2010-01-01
 url: /about/
-tags:
 ---
 
 I’m Joseph Lust[^1] [^2].
@@ -21,7 +20,8 @@ Drop me a line if you’re a like minded soul.
 
  [^1]: Not to be confused with the _other_ [Joseph Lust](http://www.josephlust.com)
  [^2]: Did you know the name "Lust" is common in Germany? You were looking for an engineering blog, right?
- [0]: https://scholar.smu.edu/cgi/viewcontent.cgi?article=1305&context=jalc)
+
+ [0]: "https://scholar.smu.edu/cgi/viewcontent.cgi?article=1305&context=jalc"
  [1]: https://www.meetup.com/GDGCloudBoston/
  [2]: https://mabl.com
  
