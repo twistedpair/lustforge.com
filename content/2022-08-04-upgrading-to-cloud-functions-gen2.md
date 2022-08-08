@@ -4,8 +4,9 @@ title: "Upgrading to Google Cloud Functions Gen2"
 author: Joseph Lust
 layout: post
 date: 2022-08-04
-url: /2022/08/04/upgrading-cloud-functions-gen2/
+featured_image: /img/gcf_next_gen.jpeg
 image: /img/gcf_next_gen.jpeg
+url: /2022/08/04/upgrading-cloud-functions-gen2/
 summary: "Take the leap, upgreade your Google Cloud Functions to the Gen2 runtime!"
 tags:
   - cloud-functions
