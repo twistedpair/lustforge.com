@@ -1,0 +1,10 @@
+<span
+  class="fontawesome-inline-svg"
+  style="display:inline-block; height:0.9em; width:0.9em; top:0.1em; position:relative;"
+>
+  {{- $fname:=print "themes/ghostwriter/fontawesome/" . ".svg" -}}
+  {{- $svg := readFile $fname -}}
+  {{- $commentStrippedSvg := replaceRE "<!--[^>]*-->" "" $svg -}}
+  {{- $filledPathSvg := replace $commentStrippedSvg "<path" "<path fill='currentColor'" -}}
+  {{ $filledPathSvg | safeHTML }}
+</span>
