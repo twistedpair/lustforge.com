@@ -7,7 +7,7 @@ date: 2022-08-04
 featured_image: /img/gcf_next_gen.png
 image: /img/gcf_next_gen.png
 url: /2022/08/04/upgrading-cloud-functions-gen2/
-summary: "Take the leap, upgreade your Google Cloud Functions to the 2nd Gen runtime!"
+summary: "Take the leap, upgrade to 2nd Gen Google Cloud Functions!"
 tags:
   - cloud-functions
   - cloud-run 
@@ -62,9 +62,9 @@ We said earlier that GCF 2nd Gen runs on Cloud Run, “behind the scenes”. Unf
 
 Here are example names that you cannot use:
 - `myAwesomeFunction` - nope, has capital letters
-- `1-fist-2-fish-red-fish-blue_-ish` - nah, cannot start with a number
+- `1-fist-2-fish` - nah, cannot start with a number
 - `convert-base64` - nada, cannot end with a number
-- `snake_caser` - nyet, no underscores, only dashes (`-`)
+- `snake_cased` - nyet, no underscores, only dashes (`-`)
 - `google-cloud-function-that-does-amazing-stuff-with-cloud-capybara` - too long, must be ≤ 63 char
 
 This change is especially challenging for Java and similar languages that stardize on [camelCase][12] function names.
@@ -115,7 +115,7 @@ curl https://us-central1-lust-dev-demo.cloudfunctions.net/helloWorld
 ```
 > Hi, brave world!
 
-This took an average of 73s to deploy[^1], since Cloud Build needs to make a container image behind the scenes. This isn't as fast as AWS Lambda's 1s deploy, but in a CI/CD pipeline, this difference is trivial (and the GCP interface and UX sure are better).
+This took an average of 73s to deploy[^1], since Cloud Build needs to make a container image behind the scenes. This isn't as fast as AWS Lambda's couple second deploy, but in a CI/CD pipeline, this difference is trivial (and the GCP interface and UX sure are better). Add to that the extra work Cloud Run is doing, giving us full blown containers and traffic splitting.
 
 ## After: 2nd Gen GCF Deploy
 
@@ -191,7 +191,8 @@ Here's the difference in commands, visually:
 
 Finally, if cutting over existing code to 2nd Gen, I'd suggesting keeping up the 1st Gen functions, and deploying the 2nd Gen functions beside them in parallel. Once the 2nd Gen functions are clearly up and running well, take down the legacy 1st Gen deployments. Enjoy!
 
- [^0]: Story image backdrop courtesy of [Kelly Sikkema](https://unsplash.com/@kellysikkema)
+Story image backdrop courtesy of [Kelly Sikkema](https://unsplash.com/@kellysikkema)
+ 
  [^1]: 1st Gen sample deploys 1:23/1:01/1:10
  [^2]: 2nd Gen sample deploys 0:55/0:55/0:55/0:55 (very consistent!)
 
