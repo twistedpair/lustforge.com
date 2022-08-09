@@ -68,5 +68,5 @@ menu:
       url: /tags
       weight: 2
     - name: About J. Lust
-      url: /page/about/
+      url: /about
       weight: 3
