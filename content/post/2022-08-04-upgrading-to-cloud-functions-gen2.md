@@ -4,8 +4,8 @@ title: "Upgrading to Google Cloud Functions 2nd Gen"
 author: Joe Lust
 layout: post
 date: 2022-08-04
-featured_image: /img/gcf_next_gen.jpeg
-image: /img/gcf_next_gen.jpeg
+featured_image: /img/gcf_next_gen.png
+image: /img/gcf_next_gen.png
 url: /2022/08/04/upgrading-cloud-functions-gen2/
 summary: "Take the leap, upgrade to 2nd Gen Google Cloud Functions!"
 tags:
