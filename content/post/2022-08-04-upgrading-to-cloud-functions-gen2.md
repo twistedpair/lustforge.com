@@ -119,7 +119,7 @@ This took an average of 73s to deploy[^1], since Cloud Build needs to make a con
 
 ## After: 2nd Gen GCF Deploy
 
-We'll need to make several changes. The effective command is below. We'll walk through how we arrived at it next.
+We'll need to make several changes. The effective command is below for the simplest case. We'll walk through how we arrived at it next.
 
 ```bash
 gcloud functions deploy hello \
@@ -132,6 +132,11 @@ gcloud functions deploy hello \
   --region=us-central1
 ```
 
+Here's the difference in commands, visually:
+
+[{{< figure src="/img/command_compare.png">}}](/img/command_compare.png)
+
+
 Let's try deploying to 2nd Gen. Oh no, we got an error message:
 
 > API [artifactregistry.googleapis.com] not enabled on project [lust-dev-demo]. Would you like to enable and retry (this will take a few minutes)? (y/N)?
@@ -140,28 +145,25 @@ GCP is nudging us to use [Artifact Registry][7] (with [many new features][9]), r
 
 > ERROR: (gcloud.functions.deploy) INVALID_ARGUMENT: Could not create Cloud Run service helloWorld. metadata.name: Resource name must use only lowercase letters, numbers and '-'. Must begin with a letter and cannot end with a '-'. Maximum length is 63 characters.
 
-Darn, we got another error. `helloWorld` is an invalid name in Kubernetes land. We'll need to rename to `hello-world` (remember, `hello_world` is no bueno too). Let's try again.
+Darn, we got another error. `helloWorld` is an invalid name in Kubernetes land. What do we do now?
 
-> ERROR: (gcloud.functions.deploy) OperationError: code=7, message=Cloud Functions uses Artifact Registry to store function docker images. Artifact Registry API is not enabled in your project. To enable the API, visit https://console.cloud.google.com/marketplace/product/google/artifactregistry.googleapis.com or use the gcloud command 'gcloud services enable artifactregistry.googleapis.com'.
+### Updating your cloud functions signature
 
-Darn. gcloud just told me that the API is enabled... but seems we're still not enabled. Better head to the GCP web console to see what this fuss is about.
-
-[{{< figure src="/img/artifact_registry_enabled.png">}}](/img/artifact_registry_enabled.png)
-
-Interesting, web console (pictured) says it is enabled. This must be one of those [eventually consitent][10] parts of GCP. Let's give it a moment and try again.
+If you get the following errors, you need to update you function signature to a legal identifier[^3]:
 
 > ERROR: (gcloud.functions.deploy) OperationError: code=3, message=Could not create or update Cloud Run service hello-world, Container Healthcheck failed. Cloud Run error: The user-provided container failed to start and listen on the port defined provided by the PORT=8080 environment variable. Logs for this revision might contain more information.
-
-OK, we're getting closer. Why didn't our function "start" and listen? Geeze, the fact we're running on Cloud Run really is leaking through now. Let's check those linked Cloud Build logs:
 
 > Function 'hello-world' is not defined in the provided module.
 > Did you specify the correct target function to execute?
 
-💡We need to change our entry point. GCF is looking for a function named `hello-world`, but our Javascript method is named `helloWorld`. Maybe we can use the `--entry-point=helloWorld` argument to override this? 🤞 One more time!
 
-> ERROR: (gcloud.functions.deploy) OperationError: code=3, message=Could not create or update Cloud Run service hello-world, Container Healthcheck failed. Cloud Run error: The user-provided container failed to start and listen on the port defined provided by the PORT=8080 environment variable. Logs for this revision might contain more information.
+You've got two choices:
+1. Use a signature that is legal, and you won't need to import libraries. (e.g. `helloworld`)
+2. Use the new `@google-cloud/functions-framework` dependency to set your function name to a non RFC 1123 name.
 
-OK. Seems this doesn't work. Same error. Note: we cannot name the Javascript function `hello-world` because that's not a valid Javascript function name 🤦. 💡💡Final idea, just call this thing `hello` in the deployment command and in the Javascript. Here we go, pray for Mojo.
+### 1. The vanilla JS Option
+
+First let's do **option 1**, which is the example code above. It's vanilla JS, with no libraries needed. We'll rename our function and its signature to `hello`. Here goes:
 
 > Preparing function...done.                                                                                                                                      
 ✓ Deploying function...                                                                                                                                         
@@ -177,16 +179,54 @@ We made it! **Welcome to 2nd Gen!** 🎉 And checkout those faster deploy times[
 
 Note that now the URL to test is `https://hello-qfttn6wsxq-uc.a.run.app`. This is very different from the old GCF URL. You'll need to update anything that points to this, meaning you cannot move from 1st Gen to 2nd Gen while "online" and serving traffic. You'll need to cut over and rewire Pub/Sub subscriptions, webhooks, [Cloud Scheduler HTTP triggers][11], etc.
 
-Here's the difference in commands, visually:
+### 2. The Functions Framework Option
 
-[{{< figure src="/img/command_compare.png">}}](/img/command_compare.png)
+OK, now how about the extra libraries needed for **option 2**. We need to import the [Functions Framework][13] dependency, and pass it the name of the function we want to bind to, as a work aroud to Kubernetes not being able to use our function name directly.
+
+Let's install the package in your code directory:
+
+```bash
+npm i -S @google-cloud/functions-framework
+```
+
+And update the code:
+
+```javascript
+// index.js
+const functions = require('@google-cloud/functions-framework');
+
+// Note: rather than exporting a function, we now wrap the
+// function in the Functions Framework handler.
+functions.http('helloWorld', (req, resp) => {
+  resp.status(200).send('Hi, brave world!');
+});
+```
+
+OK, so now we can set the function name to `helloWorld`, but how do we tell Cloud Functions to call this name, since it's an illegal name in Kubernetes land? Easy, we will use the `--entry-point=helloWorld` gcloud override. This lets you call a function signature that doesn't match your Cloud Function's name.
+
+Pulling it all together now:
+
+```javascript
+gcloud functions deploy hello-world \
+  --project lust-dev-demo \
+  --trigger-http \
+  --allow-unauthenticated \
+  --run-service-account=gcf-no-privilege@lust-dev-demo.iam.gserviceaccount.com \
+  --runtime=nodejs16 \
+  --gen2 \
+  --entry-point=helloworld \
+  --region=us-central1
+```
+
+You'll notice this option has the same end result, but made us install libraries and change how we declare functions. This is easy to do if you're creating new functions from scratch, but more work than you might want to do if retrofitting an old 1st Gen function. Either way, **you'll need to rename your Cloud Function** (but not necessarily your exported method) to make it run on 2nd Gen.
 
 # Conclusions
 
 - Cloud Functions 2nd Gen offers many improvements over 1st Gen
 - 2nd Gen deploys ~25% faster than 1st Gen (non-scientic analysis)
 - Make sure you're running on Artifact Registry before moving to 2nd Gen
-- Be prepared to rename your functions in both code and deployment tooling
+- Be prepared to change the name of your deployed Cloud Function
+- Be prepared to install additional libraries and change your exported function signature
 - Be prepared to update everything that points HTTP functions as the URLs will change
 
 Finally, if cutting over existing code to 2nd Gen, I'd suggesting keeping up the 1st Gen functions, and deploying the 2nd Gen functions beside them in parallel. Once the 2nd Gen functions are clearly up and running well, take down the legacy 1st Gen deployments. Enjoy!
@@ -195,6 +235,7 @@ Story image backdrop courtesy of [Kelly Sikkema](https://unsplash.com/@kellysikk
  
  [^1]: 1st Gen sample deploys 1:23/1:01/1:10
  [^2]: 2nd Gen sample deploys 0:55/0:55/0:55/0:55 (very consistent!)
+ [^3]: If you thought you could point to a different function name with `--entry-point=helloWold`, nice try, but you'll need to use `option 2` for that.
 
  [0]: https://cloud.google.com/functions/docs/release-notes#August_03_2022
  [1]: https://cloud.google.com/functions/docs/concepts/version-comparison
@@ -209,3 +250,4 @@ Story image backdrop courtesy of [Kelly Sikkema](https://unsplash.com/@kellysikk
  [10]: https://en.wikipedia.org/wiki/Eventual_consistency
  [11]: https://cloud.google.com/scheduler/docs/creating
  [12]: https://en.wikipedia.org/wiki/Camel_case
+ [13]: https://cloud.google.com/functions/docs/functions-framework
