@@ -1,6 +1,6 @@
 ---
 draft: false 
-title: "Quick Upgrade Trick for App Engine Java 11/17"
+title: "Quick Upgrade Trick for App Engine Java 17"
 author: Joe Lust
 layout: post
 date: 2024-10-01
