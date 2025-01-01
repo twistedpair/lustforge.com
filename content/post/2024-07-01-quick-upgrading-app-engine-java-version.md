@@ -4,7 +4,7 @@ title: "Quick Upgrade Trick for App Engine Java 11/17"
 author: Joe Lust
 layout: post
 date: 2024-10-01
-featured_image: /img/gcf_next_gen.jpeg
+featured_image: /img/app-engine-turbo-jet.webp
 image: /img/java-17-upgrade.webp
 url: /2024/10/01/quick-upgrade-app-engine-java-17/
 summary: "Quickly modernize your App Engine Java 8 codebase to run on Java 17!"
