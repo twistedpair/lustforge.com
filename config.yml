@@ -6,9 +6,13 @@ title: lust.dev
 languageCode: en-us
 copyright: "Joe Lust"
 theme: ghostwriter
-googleAnalytics: "UA-17498476-1"
+googleAnalytics: "361208091"
+# TODO this is a dupe in Params
 disqusShortname: lustforge
 relativeURLs: true
+
+ignoreLogs:
+ - warning-goldmark-raw-html
 
 markup:
   highlight:
@@ -27,9 +31,6 @@ privacy:
     respectDoNotTrack: true
     useSessionStorage: false
 
-author:
-  name: "Joseph Lust"
-  profile: ""
 
 taxonomies:
   tag: tags
@@ -55,6 +56,10 @@ params:
   dateFormat: "2 Jan '06"
   readingTime: true
   readingTimeText: "⏰"
+  disqusShortName: "lustforge"
+  author:
+    name: "Joseph Lust"
+    profile: ""
 
 permalinks:
   post: "/:year/:month/:day/:filename/"
