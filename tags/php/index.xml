@@ -1,7 +1,50 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PHP on lust.dev</title><link>https://lust.dev/tags/php/</link><description>Recent content in PHP on lust.dev</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Joe Lust</copyright><lastBuildDate>Sat, 08 Oct 2011 00:00:00 +0000</lastBuildDate><atom:link href="https://lust.dev/tags/php/index.xml" rel="self" type="application/rss+xml"/><item><title>Password Hasher : Every Hash Under the Sun</title><link>https://lust.dev/2011/10/08/password-hasher-every-hash-under-the-sun/</link><pubDate>Sat, 08 Oct 2011 00:00:00 +0000</pubDate><guid>https://lust.dev/2011/10/08/password-hasher-every-hash-under-the-sun/</guid><description>Big helping of hash I got tired of having to find a place to run all my hashes frequently for random projects, so I through this together in a few lines. I hope it helps folks.
-The following hashes are provided: md2, md4, md5, sha1, sha224, sha256, sha384, sha512, ripemd128, ripemd160, ripemd256, ripemd320, whirlpool, tiger128,3, tiger160,3, tiger192,3, tiger128,4, tiger160,4, tiger192,4, snefru, snefru256, gost, adler32, crc32, crc32b, salsa10, salsa20, haval128,3, haval160,3, haval192,3, haval224,3, haval256,3, haval128,4, haval160,4, haval192,4, haval224,4, haval256,4, haval128,5, haval160,5, haval192,5, haval224,5, haval256,5.</description></item><item><title>Convert MySQL Dump to Routines Files [PHP script]</title><link>https://lust.dev/2010/11/06/convert-mysql-dump-to-routines-php-script/</link><pubDate>Sat, 06 Nov 2010 00:00:00 +0000</pubDate><guid>https://lust.dev/2010/11/06/convert-mysql-dump-to-routines-php-script/</guid><description>Perhaps you are like me and… well… didn&amp;rsquo;t get righteous about backuping up your MySQL routines to an SCM until your first database scare?
-If you did, you’d wish you could just take that database export script from PHPMyAdmin and parse / convert it to a bunch of tidy little Procedure, Function, and Trigger files. Why, that would be nice!
-The following PHP script (PHP 5+) will do the following:</description></item><item><title>Unittesting with PhpDesigner and SimpleTest</title><link>https://lust.dev/2010/11/01/unittesting-with-phpdesigner/</link><pubDate>Mon, 01 Nov 2010 00:00:00 +0000</pubDate><guid>https://lust.dev/2010/11/01/unittesting-with-phpdesigner/</guid><description>Here is how to unitest within PhpDesigner. The following was done on a Windows 7 machine with PhpDesigner 7.2.
-Install WAMP server on your Windows machine. This is needed because the default PhpDesigner PHP engine cannot connect to databases (i.e. MySQL). Just use the default installer setup and location We’ll assume your WAMP is installed in c:\wamp Now point your PhpDesigner at the WAMP. PhpDesigner &amp;gt; Tools &amp;gt; Preferences… Set the Debugger to use the PHP Interpreter your c:\wamp\bin\php\php5.</description></item><item><title>Cracking WordPress Hashcash</title><link>https://lust.dev/2010/07/17/cracking-wordpress-hashcash/</link><pubDate>Sat, 17 Jul 2010 00:00:00 +0000</pubDate><guid>https://lust.dev/2010/07/17/cracking-wordpress-hashcash/</guid><description>As many know, WordPress Hashcash is not a hashcash at all. This is more than merely semantics. A true hashcash would provide protections to blogs from spam bots, but WPHC does no such thing. Rather WPHC merely projects an aura of protection that even the most novitiate script kiddie can crack.
-According to the authors of WPHC:
-WP Hashcash is an antispam plugin that eradicates comment spam on WordPress blogs.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PHP on lust.dev</title><link>https://lust.dev/tags/php/</link><description>Recent content in PHP on lust.dev</description><generator>Hugo</generator><language>en-us</language><copyright>Joe Lust</copyright><lastBuildDate>Sat, 08 Oct 2011 00:00:00 +0000</lastBuildDate><atom:link href="https://lust.dev/tags/php/index.xml" rel="self" type="application/rss+xml"/><item><title>Password Hasher : Every Hash Under the Sun</title><link>https://lust.dev/2011/10/08/password-hasher-every-hash-under-the-sun/</link><pubDate>Sat, 08 Oct 2011 00:00:00 +0000</pubDate><guid>https://lust.dev/2011/10/08/password-hasher-every-hash-under-the-sun/</guid><description>&lt;!-- raw HTML omitted -->
+&lt;!-- raw HTML omitted -->
+&lt;!-- raw HTML omitted -->
+&lt;!-- raw HTML omitted -->
+&lt;figure>&lt;img src="../../img/cornedBeefHash.jpg">&lt;figcaption>
+ &lt;h4>Big helping of hash&lt;/h4>
+ &lt;/figcaption>
+&lt;/figure>
+
+&lt;p>I got tired of having to find a place to run all my hashes frequently for random projects, so I through this together in a few lines. I hope it helps folks.&lt;/p>
+&lt;p>The following hashes are provided: &lt;code>md2&lt;/code>, &lt;code>md4&lt;/code>, &lt;code>md5&lt;/code>, &lt;code>sha1&lt;/code>, &lt;code>sha224&lt;/code>, &lt;code>sha256&lt;/code>, &lt;code>sha384&lt;/code>, &lt;code>sha512&lt;/code>, &lt;code>ripemd128&lt;/code>, &lt;code>ripemd160&lt;/code>, &lt;code>ripemd256&lt;/code>, &lt;code>ripemd320&lt;/code>, &lt;code>whirlpool&lt;/code>, &lt;code>tiger128,3&lt;/code>, &lt;code>tiger160,3&lt;/code>, &lt;code>tiger192,3&lt;/code>, &lt;code>tiger128,4&lt;/code>, &lt;code>tiger160,4&lt;/code>, &lt;code>tiger192,4&lt;/code>, &lt;code>snefru&lt;/code>, &lt;code>snefru256&lt;/code>, &lt;code>gost&lt;/code>, &lt;code>adler32&lt;/code>, &lt;code>crc32&lt;/code>, &lt;code>crc32b&lt;/code>, &lt;code>salsa10&lt;/code>, &lt;code>salsa20&lt;/code>, &lt;code>haval128,3&lt;/code>, &lt;code>haval160,3&lt;/code>, &lt;code>haval192,3&lt;/code>, &lt;code>haval224,3&lt;/code>, &lt;code>haval256,3&lt;/code>, &lt;code>haval128,4&lt;/code>, &lt;code>haval160,4, haval192,4, haval224,4, haval256,4, haval128,5, haval160,5, haval192,5, haval224,5, haval256,5&lt;/code>.&lt;/p></description></item><item><title>Convert MySQL Dump to Routines Files [PHP script]</title><link>https://lust.dev/2010/11/06/convert-mysql-dump-to-routines-php-script/</link><pubDate>Sat, 06 Nov 2010 00:00:00 +0000</pubDate><guid>https://lust.dev/2010/11/06/convert-mysql-dump-to-routines-php-script/</guid><description>&lt;p>Perhaps you are like me and… well… didn&amp;rsquo;t get righteous about backuping up your MySQL routines to an SCM until your first database scare?&lt;/p>
+&lt;p>If you did, you’d wish you could just take that database export script from &lt;a href="https://www.phpmyadmin.net">PHPMyAdmin&lt;/a> and parse / convert it to a bunch of tidy little Procedure, Function, and Trigger files. Why, that would be nice!&lt;/p>
+&lt;p>The following PHP script (PHP 5+) will do the following:&lt;/p>
+&lt;ul>
+&lt;li>Breakout procedure/function/trigger as &lt;code>[type\_name]/[routine\_name].sql&lt;/code> files&lt;/li>
+&lt;li>Strip off those pesky &lt;code>DEFINER&lt;/code> statements that cause nothing but trouble&lt;/li>
+&lt;li>Add &lt;code>DROP ``` &lt;/code>X&lt;code> ``` IF EXISTS&lt;/code> before &lt;code>CREATE&lt;/code> statements, for easier editing&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>Note&lt;/strong>: script will create &lt;code>procedures/&lt;/code>, &lt;code>functions/&lt;/code>, and &lt;code>triggers/&lt;/code> directories where you specify.&lt;/p></description></item><item><title>Unittesting with PhpDesigner and SimpleTest</title><link>https://lust.dev/2010/11/01/unittesting-with-phpdesigner/</link><pubDate>Mon, 01 Nov 2010 00:00:00 +0000</pubDate><guid>https://lust.dev/2010/11/01/unittesting-with-phpdesigner/</guid><description>&lt;p>Here is how to unitest within &lt;a href="http://www.mpsoftware.dk/phpdesigner.php">PhpDesigner&lt;/a>. The following was done on a Windows 7 machine with PhpDesigner 7.2.&lt;/p>
+&lt;ol>
+&lt;li>Install &lt;!-- raw HTML omitted -->WAMP server&lt;!-- raw HTML omitted --> on your Windows machine. This is needed because the default PhpDesigner PHP engine cannot connect to databases (i.e. MySQL).&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>Just use the default installer setup and location&lt;/li>
+&lt;li>We’ll assume your WAMP is installed in &lt;code>c:\wamp&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;ol start="2">
+&lt;li>Now point your PhpDesigner at the WAMP.&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>&lt;strong>PhpDesigner&lt;/strong> &amp;gt; &lt;strong>Tools&lt;/strong> &amp;gt; &lt;strong>Preferences…&lt;/strong>&lt;/li>
+&lt;li>Set the &lt;em>Debugger&lt;/em> to use the &lt;em>PHP Interpreter&lt;/em> your &lt;code>c:\wamp\bin\php\php5.3.0\php-cgi.exe&lt;/code> and the init file &lt;code>c:\WAMP\bin\php\php5.3.0\php.ini&lt;/code>&lt;/li>
+&lt;li>Set the &lt;em>Syntax Checker&lt;/em> to use the above values too&lt;/li>
+&lt;li>Set &lt;em>Run&lt;/em> to use the above values too&lt;/li>
+&lt;li>Point your &lt;em>Localhost&lt;/em> folder to the WAMP localhost &lt;code>c:\wamp\www\&lt;/code>&lt;/li>
+&lt;li>Restart your PhpDesigner installation&lt;/li>
+&lt;/ul>
+&lt;ol start="3">
+&lt;li>Now download and install the &lt;!-- raw HTML omitted -->SimpleTest &lt;!-- raw HTML omitted -->unittesting framework&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>Just download the files (&lt;strong>1.0.1 recommended&lt;/strong>, I could not get 1.1 released 2 days ago to run)&lt;/li>
+&lt;li>Unzip the files to the location of your PHP project&lt;/li>
+&lt;/ul>
+&lt;ol start="4">
+&lt;li>
+&lt;p>Create a helloworld test and run it from the comfort of PhpDesginer!&lt;/p></description></item><item><title>Cracking WordPress Hashcash</title><link>https://lust.dev/2010/07/17/cracking-wordpress-hashcash/</link><pubDate>Sat, 17 Jul 2010 00:00:00 +0000</pubDate><guid>https://lust.dev/2010/07/17/cracking-wordpress-hashcash/</guid><description>&lt;p>As many know, &lt;a href="https://wordpress.org/plugins/hashcash/">WordPress Hashcash&lt;/a> is not a &lt;a href="http://en.wikipedia.org/wiki/Hashcash">hashcash&lt;/a> at all. This is more than merely semantics. A true hashcash would provide protections to blogs from spam bots, but WPHC does no such thing. Rather WPHC merely projects an aura of protection that even the most novitiate script kiddie can crack.&lt;/p>
+&lt;p>According to the &lt;!-- raw HTML omitted -->authors of WPHC&lt;!-- raw HTML omitted -->:&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;em>WP Hashcash is an antispam plugin that eradicates comment spam on WordPress blogs.&lt;/em>&lt;/p></description></item></channel></rss>
