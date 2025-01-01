@@ -6,7 +6,7 @@ layout: post
 date: 2024-10-01
 featured_image: /img/gcf_next_gen.jpeg
 image: /img/java-17-upgrade.webp
-url: /2024/0/01/quick-upgrade-app-engine-java-11-17/
+url: /2024/10/01/quick-upgrade-app-engine-java-11-17/
 summary: "Quickly modernize your App Engine Java 8 codebase to run on Java 11 & 17!"
 tags:
   - app-engine 
