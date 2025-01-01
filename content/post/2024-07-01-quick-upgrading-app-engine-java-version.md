@@ -6,8 +6,8 @@ layout: post
 date: 2024-10-01
 featured_image: /img/gcf_next_gen.jpeg
 image: /img/java-17-upgrade.webp
-url: /2024/10/01/quick-upgrade-app-engine-java-11-17/
-summary: "Quickly modernize your App Engine Java 8 codebase to run on Java 11 & 17!"
+url: /2024/10/01/quick-upgrade-app-engine-java-17/
+summary: "Quickly modernize your App Engine Java 8 codebase to run on Java 17!"
 tags:
   - app-engine 
   - app-engine-flex 
@@ -21,7 +21,7 @@ tags:
   - java-17
 ---
 
-Java modernization is sweeping over Google Cloud App Engine 🎉. While Java 8 support dates back to [circa 2015][0], after many [+1 votes][1] the feature was delivered to App Engine Flex [in 2022][2]. Now however comes the deprecation reckoning. Java 8 must go.
+Java modernization is sweeping over Google Cloud App Engine 🎉. While Java 8 support dates back to [circa 2015][0], after many [+1 votes][1] the feature was delivered to App Engine Flex [in 2022][2]. Now however comes the deprecation reckoning. Java 8 must go, as well as Java 11 shortly thereafter.
 
 If you've seen this error message, this article is for you:
 
