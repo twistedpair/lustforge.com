@@ -10,18 +10,18 @@ jobs:
   build-deploy:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@main
+    - uses: actions/checkout@v4
       with:
         submodules: true
 
     - name: Setup Hugo
       uses: peaceiris/actions-hugo@v2
       with:
-        hugo-version: '0.101.0'
+        hugo-version: '0.140.2'
         extended: true
 
     - name: Build Site
-      run: hugo --minify -v -d docs/
+      run: hugo --minify --logLevel info -d docs/
 
     # Only deploy from default branch
     - name: Deploy GitHub Pages
