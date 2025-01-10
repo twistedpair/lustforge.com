@@ -46,7 +46,7 @@ params:
   github: "https://github.com/twistedpair"
 #  gitlab: "https://gitlab.com/XXX"
   linkedin: "https://linkedin.com/in/josephlust"
-  twitter: "https://twitter.com/lustcoder"
+  bluesky: "https://bsky.app/profile/lust.dev"
   stackoverflow: "https://stackoverflow.com/users/564157/joseph-lust"
   opengraph: true
   shareTwitter: true
