@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500">
+  <defs>
+    <linearGradient id="gcp-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4285F4"/>
+      <stop offset="100%" style="stop-color:#34A853"/>
+    </linearGradient>
+    <linearGradient id="okta-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00297A"/>
+      <stop offset="100%" style="stop-color:#0066CC"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="500" fill="#f8fafc"/>
+
+  <!-- GCP Region Box -->
+  <rect x="250" y="30" width="620" height="440" rx="12" fill="none" stroke="#4285F4" stroke-width="2" stroke-dasharray="8,4"/>
+  <text x="270" y="58" font-family="system-ui, sans-serif" font-size="14" fill="#4285F4" font-weight="600">Google Cloud Platform</text>
+
+  <!-- Okta Box -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="180" width="160" height="90" rx="8" fill="url(#okta-gradient)"/>
+    <text x="110" y="220" font-family="system-ui, sans-serif" font-size="14" fill="white" text-anchor="middle" font-weight="600">Okta</text>
+    <text x="110" y="242" font-family="system-ui, sans-serif" font-size="12" fill="#cce0ff" text-anchor="middle">System Log API</text>
+  </g>
+
+  <!-- Cloud Scheduler -->
+  <g filter="url(#shadow)">
+    <rect x="280" y="70" width="140" height="70" rx="8" fill="#4285F4"/>
+    <text x="350" y="102" font-family="system-ui, sans-serif" font-size="13" fill="white" text-anchor="middle" font-weight="600">Cloud Scheduler</text>
+    <text x="350" y="122" font-family="system-ui, sans-serif" font-size="11" fill="#cce0ff" text-anchor="middle">*/5 * * * *</text>
+  </g>
+
+  <!-- Cloud Run Job -->
+  <g filter="url(#shadow)">
+    <rect x="280" y="180" width="140" height="90" rx="8" fill="#4285F4"/>
+    <text x="350" y="215" font-family="system-ui, sans-serif" font-size="13" fill="white" text-anchor="middle" font-weight="600">Cloud Run Job</text>
+    <text x="350" y="237" font-family="system-ui, sans-serif" font-size="11" fill="#cce0ff" text-anchor="middle">Node 22 + TypeScript</text>
+    <text x="350" y="255" font-family="system-ui, sans-serif" font-size="11" fill="#cce0ff" text-anchor="middle">Polling &amp; Transform</text>
+  </g>
+
+  <!-- GCS -->
+  <g filter="url(#shadow)">
+    <rect x="280" y="320" width="140" height="70" rx="8" fill="#34A853"/>
+    <text x="350" y="352" font-family="system-ui, sans-serif" font-size="13" fill="white" text-anchor="middle" font-weight="600">Cloud Storage</text>
+    <text x="350" y="372" font-family="system-ui, sans-serif" font-size="11" fill="#c8f0c8" text-anchor="middle">Cursor State</text>
+  </g>
+
+  <!-- Cloud Logging -->
+  <g filter="url(#shadow)">
+    <rect x="500" y="180" width="140" height="90" rx="8" fill="#FBBC04"/>
+    <text x="570" y="215" font-family="system-ui, sans-serif" font-size="13" fill="#1a1a1a" text-anchor="middle" font-weight="600">Cloud Logging</text>
+    <text x="570" y="237" font-family="system-ui, sans-serif" font-size="11" fill="#664d00" text-anchor="middle">Query &amp; Search</text>
+    <text x="570" y="255" font-family="system-ui, sans-serif" font-size="11" fill="#664d00" text-anchor="middle">Metrics &amp; Alerts</text>
+  </g>
+
+  <!-- Log Sink -->
+  <g filter="url(#shadow)">
+    <rect x="500" y="320" width="140" height="70" rx="8" fill="#EA4335"/>
+    <text x="570" y="352" font-family="system-ui, sans-serif" font-size="13" fill="white" text-anchor="middle" font-weight="600">Log Sink</text>
+    <text x="570" y="372" font-family="system-ui, sans-serif" font-size="11" fill="#ffd0d0" text-anchor="middle">Route to BigQuery</text>
+  </g>
+
+  <!-- BigQuery -->
+  <g filter="url(#shadow)">
+    <rect x="710" y="180" width="140" height="90" rx="8" fill="#4285F4"/>
+    <text x="780" y="215" font-family="system-ui, sans-serif" font-size="13" fill="white" text-anchor="middle" font-weight="600">BigQuery</text>
+    <text x="780" y="237" font-family="system-ui, sans-serif" font-size="11" fill="#cce0ff" text-anchor="middle">2yr Retention</text>
+    <text x="780" y="255" font-family="system-ui, sans-serif" font-size="11" fill="#cce0ff" text-anchor="middle">Immutable Archive</text>
+  </g>
+
+  <!-- Arrows -->
+  <!-- Scheduler to Cloud Run -->
+  <line x1="350" y1="140" x2="350" y2="175" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Cloud Run polls Okta -->
+  <path d="M 275 225 L 195 225" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+  <!-- Cloud Run to GCS (bidirectional) -->
+  <line x1="330" y1="270" x2="330" y2="315" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="370" y1="315" x2="370" y2="270" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Cloud Run to Cloud Logging -->
+  <line x1="420" y1="225" x2="495" y2="225" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Cloud Logging to Log Sink -->
+  <line x1="570" y1="270" x2="570" y2="315" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- Log Sink to BigQuery -->
+  <path d="M 640 355 Q 675 355 675 270 Q 675 225 705 225" stroke="#666" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+  <!-- Arrowhead marker -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+  </defs>
+
+  <!-- Labels on arrows -->
+  <text x="358" y="162" font-family="system-ui, sans-serif" font-size="10" fill="#666">trigger</text>
+  <text x="232" y="215" font-family="system-ui, sans-serif" font-size="10" fill="#666">poll</text>
+  <text x="455" y="215" font-family="system-ui, sans-serif" font-size="10" fill="#666">emit</text>
+  <text x="305" y="297" font-family="system-ui, sans-serif" font-size="10" fill="#666">r/w</text>
+</svg>
