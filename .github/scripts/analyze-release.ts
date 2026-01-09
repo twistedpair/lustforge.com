@@ -20,10 +20,14 @@ function isValidFilePath(path: string): boolean {
   // Only allow alphanumeric, underscores, hyphens, dots, slashes, and colons (for line numbers)
   // Reject path traversal attempts and suspicious patterns
   if (!path || path.length > 500) return false;
+  if (path.length < 5) return false; // Too short to be a real path
   if (path.includes("..")) return false;
   if (/[<>"'`|;&$(){}[\]\\]/.test(path)) return false;
   if (path.toLowerCase().startsWith("javascript:")) return false;
   if (path.toLowerCase().startsWith("data:")) return false;
+  // Reject placeholder values
+  if (/^n\/?a$/i.test(path)) return false;
+  if (/^(none|null|undefined|unknown)$/i.test(path)) return false;
   return /^[\w\-./:#]+$/.test(path);
 }
 
@@ -69,42 +73,42 @@ const AnalysisSchema = z.object({
   breakingChanges: z.array(
     z.object({
       description: z.string(),
-      filePath: z.string().optional(),
+      filePath: z.string().nullish(),
     })
   ),
   securityUpdates: z.array(
     z.object({
       description: z.string(),
-      filePath: z.string().optional(),
-      severity: z.enum(["low", "medium", "high"]).optional(),
+      filePath: z.string().nullish(),
+      severity: z.enum(["low", "medium", "high"]).nullish(),
     })
   ),
   newFeatures: z.array(
     z.object({
       service: z.string(),
       description: z.string(),
-      flags: z.array(z.string()).optional(),
-      filePath: z.string().optional(),
+      flags: z.array(z.string()).nullish(),
+      filePath: z.string().nullish(),
     })
   ),
   credentialChanges: z.array(
     z.object({
       description: z.string(),
-      filePath: z.string().optional(),
+      filePath: z.string().nullish(),
     })
   ),
   apiChanges: z.array(
     z.object({
       service: z.string(),
       description: z.string(),
-      filePath: z.string().optional(),
+      filePath: z.string().nullish(),
     })
   ),
   unannouncedChanges: z.array(
     z.object({
       description: z.string(),
-      category: z.string().optional(),
-      filePath: z.string().optional(),
+      category: z.string().nullish(),
+      filePath: z.string().nullish(),
     })
   ),
   summary: z.string(),
