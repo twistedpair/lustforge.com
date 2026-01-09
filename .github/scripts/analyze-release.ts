@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 
 const MAX_DIFF_SIZE = 100_000;
@@ -63,10 +63,10 @@ function parseArgs(): Args {
 }
 
 const PRIORITY_PATHS = [
-  "lib/googlecloudsdk/command_lib/",
-  "lib/googlecloudsdk/api_lib/",
-  "lib/googlecloudsdk/core/",
-  "lib/googlecloudsdk/calliope/",
+  "google-cloud-sdk/lib/googlecloudsdk/command_lib/",
+  "google-cloud-sdk/lib/googlecloudsdk/api_lib/",
+  "google-cloud-sdk/lib/googlecloudsdk/core/",
+  "google-cloud-sdk/lib/googlecloudsdk/calliope/",
 ];
 
 const AnalysisSchema = z.object({
@@ -138,7 +138,6 @@ function getPreviousTag(repoPath: string, currentTag: string): string | null {
 }
 
 function getTagDiff(repoPath: string, previousTag: string, currentTag: string): string {
-  const diff = git(repoPath, `diff ${previousTag}..${currentTag} --stat`);
   const fullDiff = git(repoPath, `diff ${previousTag}..${currentTag}`);
 
   if (fullDiff.length <= MAX_DIFF_SIZE) {
@@ -149,24 +148,20 @@ function getTagDiff(repoPath: string, previousTag: string, currentTag: string): 
     `Diff too large (${fullDiff.length} bytes), prioritizing important paths...`
   );
 
-  let prioritizedDiff = `# Diff Statistics\n${diff}\n\n# Priority Path Changes\n`;
-
+  // Get priority paths first
+  let priorityDiff = "";
   for (const path of PRIORITY_PATHS) {
     const pathDiff = git(
       repoPath,
-      `diff ${previousTag}..${currentTag} -- "google-cloud-sdk/${path}"`
+      `diff ${previousTag}..${currentTag} -- "${path}"`
     );
-    if (pathDiff.trim()) {
-      prioritizedDiff += `\n## ${path}\n${pathDiff}`;
-    }
-
-    if (prioritizedDiff.length > MAX_DIFF_SIZE) {
-      prioritizedDiff += "\n\n[TRUNCATED - diff exceeded size limit]";
-      break;
+    if (priorityDiff.length + pathDiff.length < MAX_DIFF_SIZE) {
+      priorityDiff += pathDiff;
     }
   }
 
-  return prioritizedDiff;
+  console.error(`Diff size: ${priorityDiff.length} bytes`);
+  return priorityDiff;
 }
 
 interface ReleaseNotesResult {
@@ -228,12 +223,11 @@ async function analyzeWithGemini(
     throw new Error("GEMINI_API_KEY environment variable is required");
   }
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+  const ai = new GoogleGenAI({ apiKey });
 
   const prompt = `You are analyzing changes in Google Cloud SDK version ${version}.
 
-## Official Release Analysis
+## Official Release Notes
 ${releaseNotes || "No official release notes available."}
 
 ## Git Diff
@@ -257,19 +251,31 @@ Guidelines:
 - Identify any security-relevant changes (path traversal fixes, auth changes, etc.)
 - Note any removed functionality or deprecated features as breaking changes
 - For credential/auth changes, focus on changes to authentication flow or credential handling
-- For unannouncedChanges, look for changes NOT mentioned in the official release notes:
-  - feature_flag: New flags marked as hidden=True or gated behind feature flags
-  - groundwork: Infrastructure/plumbing for features not yet exposed (new API clients, message types)
-  - refactoring: Internal restructuring that may signal future changes
-  - hidden_feature: Functionality added but not documented in release notes
 - Be concise but specific
+- IMPORTANT: In descriptions, always use backticks (\`) around flags (e.g., \`--flag-name\`), filenames, function names, and other code elements for consistent formatting
+
+CRITICAL - unannouncedChanges section:
+You MUST carefully compare the git diff against the official release notes and identify ALL changes in the code that are NOT mentioned in the release notes. This is the most important part of the analysis. Look for:
+- feature_flag: Flags with hidden=True, feature gates, or experimental markers
+- groundwork: New API clients, message types, resource definitions not exposed yet
+- refactoring: Internal restructuring, module reorganization, deprecation prep
+- hidden_feature: New functionality (flags, commands, options) not in release notes
+
+Scan the diff thoroughly for AddArgument calls with hidden=True, new *_client.py files, new command groups, and infrastructure changes. There are almost always unannounced changes in every release.
 
 Respond with ONLY valid JSON, no markdown code blocks.`;
 
-  const result = await model.generateContent(prompt);
-  const response = result.response.text();
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: prompt,
+  });
 
-  const jsonMatch = response.match(/\{[\s\S]*\}/);
+  const responseText = response.text;
+  if (!responseText) {
+    throw new Error("No response text from Gemini");
+  }
+
+  const jsonMatch = responseText.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
     throw new Error("Failed to parse JSON from Gemini response");
   }
@@ -384,7 +390,12 @@ ${tags.map((t) => `  - ${t}`).join("\n")}
 
   sections.push(`${escapeHtml(analysis.summary)}\n`);
 
-  sections.push("**Jump to:** [Annotated Release Notes](#breaking-changes) | [Unannounced Changes 🕵️](#unannounced-changes) | [Stats 📊](#stats)\n");
+  const jumpLinks = ["[Annotated Release Notes](#breaking-changes)"];
+  if (analysis.unannouncedChanges.length > 0) {
+    jumpLinks.push("[Unannounced Changes 🕵️](#unannounced-changes)");
+  }
+  jumpLinks.push("[Stats 📊](#stats)");
+  sections.push(`**Jump to:** ${jumpLinks.join(" | ")}\n`);
 
   sections.push("<!--more-->\n");
 
@@ -530,6 +541,7 @@ ${tags.map((t) => `  - ${t}`).join("\n")}
 }
 
 async function main(): Promise<void> {
+  console.time("Total runtime");
   const { version, outputDir, repoPath } = parseArgs();
 
   if (!version) {
@@ -568,6 +580,7 @@ async function main(): Promise<void> {
   writeFileSync(outputPath, hugoPost.content);
 
   console.log(outputPath);
+  console.timeEnd("Total runtime");
 }
 
 main().catch((error) => {
