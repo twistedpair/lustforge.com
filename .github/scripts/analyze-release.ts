@@ -428,9 +428,9 @@ ${tags.map((t) => `  - ${t}`).join("\n")}
   }
 
   sections.push("## Stats\n");
-  sections.push(`- Files changed: ${stats.filesChanged.toLocaleString()}`);
-  sections.push(`- Inserted lines: ${stats.insertions.toLocaleString()}`);
-  sections.push(`- Deleted lines: ${stats.deletions.toLocaleString()}`);
+  sections.push(`- Files changed: {{< color "#fff" "#b45309" >}}${stats.filesChanged.toLocaleString()}{{< /color >}}`);
+  sections.push(`- Inserted lines: {{< color "#fff" "#166534" >}}+${stats.insertions.toLocaleString()}{{< /color >}}`);
+  sections.push(`- Deleted lines: {{< color "#fff" "#991b1b" >}}-${stats.deletions.toLocaleString()}{{< /color >}}`);
   sections.push("");
 
   sections.push("---");
