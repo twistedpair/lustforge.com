@@ -1,10 +1,35 @@
 import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { z } from "zod";
 
 const MAX_DIFF_SIZE = 100_000;
+
+interface Args {
+  version: string;
+  outputDir: string;
+  repoPath: string;
+}
+
+function parseArgs(): Args {
+  const args = process.argv.slice(2);
+  let version = process.env.GITHUB_REF_NAME || "";
+  let outputDir = process.env.OUTPUT_DIR || "content/gcloud";
+  let repoPath = ".";
+
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--repo" && args[i + 1]) {
+      repoPath = args[++i];
+    } else if (args[i] === "--output" && args[i + 1]) {
+      outputDir = args[++i];
+    } else if (!args[i].startsWith("-")) {
+      version = args[i];
+    }
+  }
+
+  return { version, outputDir, repoPath: resolve(repoPath) };
+}
 
 const PRIORITY_PATHS = [
   "lib/googlecloudsdk/command_lib/",
@@ -51,7 +76,7 @@ const AnalysisSchema = z.object({
   unannouncedChanges: z.array(
     z.object({
       description: z.string(),
-      category: z.enum(["feature_flag", "groundwork", "refactoring", "hidden_feature"]).optional(),
+      category: z.string().optional(),
       filePath: z.string().optional(),
     })
   ),
@@ -60,12 +85,15 @@ const AnalysisSchema = z.object({
 
 type Analysis = z.infer<typeof AnalysisSchema>;
 
-function exec(command: string): string {
-  return execSync(command, { encoding: "utf-8", maxBuffer: 50 * 1024 * 1024 });
+function git(repoPath: string, command: string): string {
+  return execSync(`git -C "${repoPath}" ${command}`, {
+    encoding: "utf-8",
+    maxBuffer: 50 * 1024 * 1024,
+  });
 }
 
-function getPreviousTag(currentTag: string): string | null {
-  const tags = exec("git tag --sort=-version:refname")
+function getPreviousTag(repoPath: string, currentTag: string): string | null {
+  const tags = git(repoPath, "tag --sort=-version:refname")
     .trim()
     .split("\n")
     .filter((t) => /^\d+\.\d+\.\d+/.test(t));
@@ -78,9 +106,9 @@ function getPreviousTag(currentTag: string): string | null {
   return tags[currentIndex + 1];
 }
 
-function getTagDiff(previousTag: string, currentTag: string): string {
-  const diff = exec(`git diff ${previousTag}..${currentTag} --stat`);
-  const fullDiff = exec(`git diff ${previousTag}..${currentTag}`);
+function getTagDiff(repoPath: string, previousTag: string, currentTag: string): string {
+  const diff = git(repoPath, `diff ${previousTag}..${currentTag} --stat`);
+  const fullDiff = git(repoPath, `diff ${previousTag}..${currentTag}`);
 
   if (fullDiff.length <= MAX_DIFF_SIZE) {
     return fullDiff;
@@ -93,8 +121,9 @@ function getTagDiff(previousTag: string, currentTag: string): string {
   let prioritizedDiff = `# Diff Statistics\n${diff}\n\n# Priority Path Changes\n`;
 
   for (const path of PRIORITY_PATHS) {
-    const pathDiff = exec(
-      `git diff ${previousTag}..${currentTag} -- "google-cloud-sdk/${path}" 2>/dev/null || true`
+    const pathDiff = git(
+      repoPath,
+      `diff ${previousTag}..${currentTag} -- "google-cloud-sdk/${path}"`
     );
     if (pathDiff.trim()) {
       prioritizedDiff += `\n## ${path}\n${pathDiff}`;
@@ -114,8 +143,8 @@ interface ReleaseNotesResult {
   date: string;
 }
 
-function extractReleaseNotes(version: string): ReleaseNotesResult {
-  const releaseNotesPath = "google-cloud-sdk/RELEASE_NOTES";
+function extractReleaseNotes(repoPath: string, version: string): ReleaseNotesResult {
+  const releaseNotesPath = join(repoPath, "google-cloud-sdk/RELEASE_NOTES");
 
   try {
     const content = readFileSync(releaseNotesPath, "utf-8");
@@ -138,11 +167,13 @@ function extractReleaseNotes(version: string): ReleaseNotesResult {
 }
 
 function getDiffStats(
+  repoPath: string,
   previousTag: string,
   currentTag: string
 ): { filesChanged: number; insertions: number; deletions: number } {
-  const statLine = exec(
-    `git diff ${previousTag}..${currentTag} --shortstat`
+  const statLine = git(
+    repoPath,
+    `diff ${previousTag}..${currentTag} --shortstat`
   ).trim();
 
   const filesMatch = statLine.match(/(\d+) files? changed/);
@@ -167,7 +198,7 @@ async function analyzeWithGemini(
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
   const prompt = `You are analyzing changes in Google Cloud SDK version ${version}.
 
@@ -392,18 +423,18 @@ ${tags.map((t) => `  - ${t}`).join("\n")}
 }
 
 async function main(): Promise<void> {
-  const version = process.argv[2] || process.env.GITHUB_REF_NAME;
-  const outputDir = process.argv[3] || process.env.OUTPUT_DIR || "content/gcloud";
+  const { version, outputDir, repoPath } = parseArgs();
 
   if (!version) {
-    console.error("Usage: tsx analyze-release.ts <version> [output-dir]");
+    console.error("Usage: tsx analyze-release.ts <version> [--repo <path>] [--output <dir>]");
     console.error("Or set GITHUB_REF_NAME and OUTPUT_DIR environment variables");
     process.exit(1);
   }
 
   console.error(`Analyzing release ${version}...`);
+  console.error(`Repo path: ${repoPath}`);
 
-  const previousTag = getPreviousTag(version);
+  const previousTag = getPreviousTag(repoPath, version);
   if (!previousTag) {
     console.error(`No previous tag found for ${version}, skipping analysis`);
     process.exit(0);
@@ -411,9 +442,9 @@ async function main(): Promise<void> {
 
   console.error(`Comparing ${previousTag} -> ${version}`);
 
-  const diff = getTagDiff(previousTag, version);
-  const releaseNotes = extractReleaseNotes(version);
-  const stats = getDiffStats(previousTag, version);
+  const diff = getTagDiff(repoPath, previousTag, version);
+  const releaseNotes = extractReleaseNotes(repoPath, version);
+  const stats = getDiffStats(repoPath, previousTag, version);
 
   console.error(`Diff size: ${diff.length} bytes`);
   console.error(`Release notes: ${releaseNotes.content.length} bytes`);

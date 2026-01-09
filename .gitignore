@@ -30,3 +30,4 @@ _testmain.go
 *.exe
 *.test
 *.prof
+.github/scripts/node_modules/
