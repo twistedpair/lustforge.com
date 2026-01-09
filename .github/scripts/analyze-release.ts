@@ -281,6 +281,44 @@ interface HugoPost {
 
 const GITHUB_REPO = "twistedpair/google-cloud-sdk";
 
+function normalizeSdkPath(path: string): string {
+  // Normalize various path formats Gemini might return to the correct repo structure:
+  // google-cloud-sdk/lib/googlecloudsdk/...
+
+  // Already fully correct
+  if (path.startsWith("google-cloud-sdk/lib/")) {
+    return path;
+  }
+
+  // Has google-cloud-sdk/ but missing lib/ (e.g., google-cloud-sdk/googlecloudsdk/...)
+  if (path.startsWith("google-cloud-sdk/googlecloudsdk/")) {
+    return path.replace("google-cloud-sdk/googlecloudsdk/", "google-cloud-sdk/lib/googlecloudsdk/");
+  }
+
+  // Has google-cloud-sdk/ prefix but path continues differently
+  if (path.startsWith("google-cloud-sdk/")) {
+    return path;
+  }
+
+  // Starts with lib/ - just prepend google-cloud-sdk/
+  if (path.startsWith("lib/")) {
+    return `google-cloud-sdk/${path}`;
+  }
+
+  // Starts with googlecloudsdk/ - prepend google-cloud-sdk/lib/
+  if (path.startsWith("googlecloudsdk/")) {
+    return `google-cloud-sdk/lib/${path}`;
+  }
+
+  // Starts with generated_clients/ - prepend full path
+  if (path.startsWith("generated_clients/")) {
+    return `google-cloud-sdk/lib/googlecloudsdk/${path}`;
+  }
+
+  // Default: assume it's under lib/ and prepend
+  return `google-cloud-sdk/${path}`;
+}
+
 function formatFileLink(filePath: string, version: string): string | null {
   // Validate file path to prevent XSS
   const sanitized = sanitizeFilePath(filePath);
@@ -292,11 +330,7 @@ function formatFileLink(filePath: string, version: string): string | null {
 
   const [, path, lineNum] = match;
 
-  // Handle paths that may or may not include google-cloud-sdk prefix
-  const normalizedPath = path.startsWith("google-cloud-sdk/")
-    ? path
-    : `google-cloud-sdk/${path}`;
-
+  const normalizedPath = normalizeSdkPath(path);
   const lineAnchor = lineNum ? `#L${lineNum}` : "";
   const url = `https://github.com/${GITHUB_REPO}/blob/${version}/${normalizedPath}${lineAnchor}`;
 
