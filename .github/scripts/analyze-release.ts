@@ -6,6 +6,33 @@ import { z } from "zod";
 
 const MAX_DIFF_SIZE = 100_000;
 
+// XSS prevention utilities
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function isValidFilePath(path: string): boolean {
+  // Only allow alphanumeric, underscores, hyphens, dots, slashes, and colons (for line numbers)
+  // Reject path traversal attempts and suspicious patterns
+  if (!path || path.length > 500) return false;
+  if (path.includes("..")) return false;
+  if (/[<>"'`|;&$(){}[\]\\]/.test(path)) return false;
+  if (path.toLowerCase().startsWith("javascript:")) return false;
+  if (path.toLowerCase().startsWith("data:")) return false;
+  return /^[\w\-./:#]+$/.test(path);
+}
+
+function sanitizeFilePath(path: string | undefined): string | null {
+  if (!path) return null;
+  const trimmed = path.trim();
+  return isValidFilePath(trimmed) ? trimmed : null;
+}
+
 interface Args {
   version: string;
   outputDir: string;
@@ -254,10 +281,14 @@ interface HugoPost {
 
 const GITHUB_REPO = "twistedpair/google-cloud-sdk";
 
-function formatFileLink(filePath: string, version: string): string {
+function formatFileLink(filePath: string, version: string): string | null {
+  // Validate file path to prevent XSS
+  const sanitized = sanitizeFilePath(filePath);
+  if (!sanitized) return null;
+
   // Parse path and optional line number (e.g., "lib/foo/bar.py:123")
-  const match = filePath.match(/^(.+?)(?::(\d+))?$/);
-  if (!match) return `\`${filePath}\``;
+  const match = sanitized.match(/^(.+?)(?::(\d+))?$/);
+  if (!match) return null;
 
   const [, path, lineNum] = match;
 
@@ -270,7 +301,7 @@ function formatFileLink(filePath: string, version: string): string {
   const url = `https://github.com/${GITHUB_REPO}/blob/${version}/${normalizedPath}${lineAnchor}`;
 
   // Display just the filename and line for brevity
-  const displayName = path.split("/").pop() + (lineNum ? `:${lineNum}` : "");
+  const displayName = escapeHtml(path.split("/").pop() + (lineNum ? `:${lineNum}` : ""));
 
   return `[${displayName}](${url})`;
 }
@@ -285,14 +316,19 @@ function formatHugoPost(
   const slug = `gcloud-sdk-${version.replace(/\./g, "-")}-release-analysis`;
   const filename = `${releaseDate}-${slug}.md`;
 
+  // Sanitize service names for tags (only allow alphanumeric and hyphens)
   const services = [...new Set(analysis.newFeatures.map((f) => f.service))];
+  const sanitizeTag = (s: string) => s.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-");
   const tags = [
     "gcloud",
     "google-cloud-platform",
     "release-analysis",
     "gcp",
-    ...services.map((s) => s.toLowerCase().replace(/\s+/g, "-")),
+    ...services.map(sanitizeTag).filter((t) => t.length > 0),
   ];
+
+  // Escape summary for front matter (YAML) and HTML
+  const safeSummary = escapeHtml(analysis.summary).replace(/"/g, '\\"');
 
   const frontMatter = `---
 draft: false
@@ -301,14 +337,14 @@ author: Joe Lust
 layout: post
 date: ${releaseDate}
 url: /gcloud/${slug}/
-summary: "${analysis.summary.replace(/"/g, '\\"')}"
+summary: "${safeSummary}"
 tags:
 ${tags.map((t) => `  - ${t}`).join("\n")}
 ---`;
 
   const sections: string[] = [frontMatter, ""];
 
-  sections.push(`${analysis.summary}\n`);
+  sections.push(`${escapeHtml(analysis.summary)}\n`);
 
   sections.push("**Jump to:** [Annotated Release Notes](#breaking-changes) | [Unannounced Changes 🕵️](#unannounced-changes) | [Stats 📊](#stats)\n");
 
@@ -317,9 +353,10 @@ ${tags.map((t) => `  - ${t}`).join("\n")}
   if (analysis.breakingChanges.length > 0) {
     sections.push("## Breaking Changes\n");
     for (const change of analysis.breakingChanges) {
-      sections.push(`- ${change.description}`);
-      if (change.filePath) {
-        sections.push(`  - File: ${formatFileLink(change.filePath, version)}`);
+      sections.push(`- ${escapeHtml(change.description)}`);
+      const fileLink = formatFileLink(change.filePath || "", version);
+      if (fileLink) {
+        sections.push(`  - File: ${fileLink}`);
       }
     }
     sections.push("");
@@ -328,10 +365,11 @@ ${tags.map((t) => `  - ${t}`).join("\n")}
   if (analysis.securityUpdates.length > 0) {
     sections.push("## Security Updates\n");
     for (const update of analysis.securityUpdates) {
-      const severity = update.severity ? ` [${update.severity.toUpperCase()}]` : "";
-      sections.push(`- ${update.description}${severity}`);
-      if (update.filePath) {
-        sections.push(`  - File: ${formatFileLink(update.filePath, version)}`);
+      const severity = update.severity ? ` [${escapeHtml(update.severity.toUpperCase())}]` : "";
+      sections.push(`- ${escapeHtml(update.description)}${severity}`);
+      const fileLink = formatFileLink(update.filePath || "", version);
+      if (fileLink) {
+        sections.push(`  - File: ${fileLink}`);
       }
     }
     sections.push("");
@@ -348,14 +386,15 @@ ${tags.map((t) => `  - ${t}`).join("\n")}
     }
 
     for (const [service, features] of byService) {
-      sections.push(`### ${service}\n`);
+      sections.push(`### ${escapeHtml(service)}\n`);
       for (const feature of features) {
-        sections.push(`- ${feature.description}`);
+        sections.push(`- ${escapeHtml(feature.description)}`);
         if (feature.flags && feature.flags.length > 0) {
-          sections.push(`  - Flags: \`${feature.flags.join("`, `")}\``);
+          sections.push(`  - Flags: \`${feature.flags.map(escapeHtml).join("`, `")}\``);
         }
-        if (feature.filePath) {
-          sections.push(`  - File: ${formatFileLink(feature.filePath, version)}`);
+        const fileLink = formatFileLink(feature.filePath || "", version);
+        if (fileLink) {
+          sections.push(`  - File: ${fileLink}`);
         }
       }
       sections.push("");
@@ -365,9 +404,10 @@ ${tags.map((t) => `  - ${t}`).join("\n")}
   if (analysis.credentialChanges.length > 0) {
     sections.push("## Credential & Auth Changes\n");
     for (const change of analysis.credentialChanges) {
-      sections.push(`- ${change.description}`);
-      if (change.filePath) {
-        sections.push(`  - File: ${formatFileLink(change.filePath, version)}`);
+      sections.push(`- ${escapeHtml(change.description)}`);
+      const fileLink = formatFileLink(change.filePath || "", version);
+      if (fileLink) {
+        sections.push(`  - File: ${fileLink}`);
       }
     }
     sections.push("");
@@ -384,11 +424,12 @@ ${tags.map((t) => `  - ${t}`).join("\n")}
     }
 
     for (const [service, changes] of byService) {
-      sections.push(`### ${service}\n`);
+      sections.push(`### ${escapeHtml(service)}\n`);
       for (const change of changes) {
-        sections.push(`- ${change.description}`);
-        if (change.filePath) {
-          sections.push(`  - File: ${formatFileLink(change.filePath, version)}`);
+        sections.push(`- ${escapeHtml(change.description)}`);
+        const fileLink = formatFileLink(change.filePath || "", version);
+        if (fileLink) {
+          sections.push(`  - File: ${fileLink}`);
         }
       }
       sections.push("");
@@ -416,11 +457,12 @@ ${tags.map((t) => `  - ${t}`).join("\n")}
 
     for (const [category, changes] of byCategory) {
       const label = categoryLabels[category] || "Other";
-      sections.push(`### ${label}\n`);
+      sections.push(`### ${escapeHtml(label)}\n`);
       for (const change of changes) {
-        sections.push(`- ${change.description}`);
-        if (change.filePath) {
-          sections.push(`  - File: ${formatFileLink(change.filePath, version)}`);
+        sections.push(`- ${escapeHtml(change.description)}`);
+        const fileLink = formatFileLink(change.filePath || "", version);
+        if (fileLink) {
+          sections.push(`  - File: ${fileLink}`);
         }
       }
       sections.push("");
