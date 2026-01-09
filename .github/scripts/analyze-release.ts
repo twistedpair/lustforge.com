@@ -1,0 +1,438 @@
+import { execSync } from "node:child_process";
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { z } from "zod";
+
+const MAX_DIFF_SIZE = 100_000;
+
+const PRIORITY_PATHS = [
+  "lib/googlecloudsdk/command_lib/",
+  "lib/googlecloudsdk/api_lib/",
+  "lib/googlecloudsdk/core/",
+  "lib/googlecloudsdk/calliope/",
+];
+
+const AnalysisSchema = z.object({
+  breakingChanges: z.array(
+    z.object({
+      description: z.string(),
+      filePath: z.string().optional(),
+    })
+  ),
+  securityUpdates: z.array(
+    z.object({
+      description: z.string(),
+      filePath: z.string().optional(),
+      severity: z.enum(["low", "medium", "high"]).optional(),
+    })
+  ),
+  newFeatures: z.array(
+    z.object({
+      service: z.string(),
+      description: z.string(),
+      flags: z.array(z.string()).optional(),
+      filePath: z.string().optional(),
+    })
+  ),
+  credentialChanges: z.array(
+    z.object({
+      description: z.string(),
+      filePath: z.string().optional(),
+    })
+  ),
+  apiChanges: z.array(
+    z.object({
+      service: z.string(),
+      description: z.string(),
+      filePath: z.string().optional(),
+    })
+  ),
+  unannouncedChanges: z.array(
+    z.object({
+      description: z.string(),
+      category: z.enum(["feature_flag", "groundwork", "refactoring", "hidden_feature"]).optional(),
+      filePath: z.string().optional(),
+    })
+  ),
+  summary: z.string(),
+});
+
+type Analysis = z.infer<typeof AnalysisSchema>;
+
+function exec(command: string): string {
+  return execSync(command, { encoding: "utf-8", maxBuffer: 50 * 1024 * 1024 });
+}
+
+function getPreviousTag(currentTag: string): string | null {
+  const tags = exec("git tag --sort=-version:refname")
+    .trim()
+    .split("\n")
+    .filter((t) => /^\d+\.\d+\.\d+/.test(t));
+
+  const currentIndex = tags.indexOf(currentTag);
+  if (currentIndex === -1 || currentIndex === tags.length - 1) {
+    return null;
+  }
+
+  return tags[currentIndex + 1];
+}
+
+function getTagDiff(previousTag: string, currentTag: string): string {
+  const diff = exec(`git diff ${previousTag}..${currentTag} --stat`);
+  const fullDiff = exec(`git diff ${previousTag}..${currentTag}`);
+
+  if (fullDiff.length <= MAX_DIFF_SIZE) {
+    return fullDiff;
+  }
+
+  console.error(
+    `Diff too large (${fullDiff.length} bytes), prioritizing important paths...`
+  );
+
+  let prioritizedDiff = `# Diff Statistics\n${diff}\n\n# Priority Path Changes\n`;
+
+  for (const path of PRIORITY_PATHS) {
+    const pathDiff = exec(
+      `git diff ${previousTag}..${currentTag} -- "google-cloud-sdk/${path}" 2>/dev/null || true`
+    );
+    if (pathDiff.trim()) {
+      prioritizedDiff += `\n## ${path}\n${pathDiff}`;
+    }
+
+    if (prioritizedDiff.length > MAX_DIFF_SIZE) {
+      prioritizedDiff += "\n\n[TRUNCATED - diff exceeded size limit]";
+      break;
+    }
+  }
+
+  return prioritizedDiff;
+}
+
+interface ReleaseNotesResult {
+  content: string;
+  date: string;
+}
+
+function extractReleaseNotes(version: string): ReleaseNotesResult {
+  const releaseNotesPath = "google-cloud-sdk/RELEASE_NOTES";
+
+  try {
+    const content = readFileSync(releaseNotesPath, "utf-8");
+    const versionPattern = new RegExp(
+      `## ${version.replace(/\./g, "\\.")} \\((\\d{4}-\\d{2}-\\d{2})\\)([\\s\\S]*?)(?=## \\d+\\.\\d+\\.\\d+|$)`
+    );
+
+    const match = content.match(versionPattern);
+    if (match) {
+      return {
+        content: match[0].trim(),
+        date: match[1],
+      };
+    }
+  } catch {
+    console.error(`Could not read release notes from ${releaseNotesPath}`);
+  }
+
+  return { content: "", date: new Date().toISOString().split("T")[0] };
+}
+
+function getDiffStats(
+  previousTag: string,
+  currentTag: string
+): { filesChanged: number; insertions: number; deletions: number } {
+  const statLine = exec(
+    `git diff ${previousTag}..${currentTag} --shortstat`
+  ).trim();
+
+  const filesMatch = statLine.match(/(\d+) files? changed/);
+  const insertionsMatch = statLine.match(/(\d+) insertions?/);
+  const deletionsMatch = statLine.match(/(\d+) deletions?/);
+
+  return {
+    filesChanged: filesMatch ? parseInt(filesMatch[1], 10) : 0,
+    insertions: insertionsMatch ? parseInt(insertionsMatch[1], 10) : 0,
+    deletions: deletionsMatch ? parseInt(deletionsMatch[1], 10) : 0,
+  };
+}
+
+async function analyzeWithGemini(
+  diff: string,
+  releaseNotes: string,
+  version: string
+): Promise<Analysis> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY environment variable is required");
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({ model: "gemini-3.0-flash" });
+
+  const prompt = `You are analyzing changes in Google Cloud SDK version ${version}.
+
+## Official Release Analysis
+${releaseNotes || "No official release notes available."}
+
+## Git Diff
+${diff}
+
+Analyze these changes and provide a structured JSON response with the following schema:
+
+{
+  "breakingChanges": [{ "description": "...", "filePath": "..." }],
+  "securityUpdates": [{ "description": "...", "filePath": "...", "severity": "low|medium|high" }],
+  "newFeatures": [{ "service": "...", "description": "...", "flags": ["--flag-name"], "filePath": "..." }],
+  "credentialChanges": [{ "description": "...", "filePath": "..." }],
+  "apiChanges": [{ "service": "...", "description": "...", "filePath": "..." }],
+  "unannouncedChanges": [{ "description": "...", "category": "feature_flag|groundwork|refactoring|hidden_feature", "filePath": "..." }],
+  "summary": "A 2-3 sentence high-level summary of the most important changes"
+}
+
+Guidelines:
+- For filePath, use the format: lib/googlecloudsdk/path/to/file.py:lineNumber
+- Group new features by GCP service (e.g., "Kubernetes Engine", "Cloud Run", "Cloud Storage")
+- Identify any security-relevant changes (path traversal fixes, auth changes, etc.)
+- Note any removed functionality or deprecated features as breaking changes
+- For credential/auth changes, focus on changes to authentication flow or credential handling
+- For unannouncedChanges, look for changes NOT mentioned in the official release notes:
+  - feature_flag: New flags marked as hidden=True or gated behind feature flags
+  - groundwork: Infrastructure/plumbing for features not yet exposed (new API clients, message types)
+  - refactoring: Internal restructuring that may signal future changes
+  - hidden_feature: Functionality added but not documented in release notes
+- Be concise but specific
+
+Respond with ONLY valid JSON, no markdown code blocks.`;
+
+  const result = await model.generateContent(prompt);
+  const response = result.response.text();
+
+  const jsonMatch = response.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error("Failed to parse JSON from Gemini response");
+  }
+
+  const parsed = JSON.parse(jsonMatch[0]);
+  return AnalysisSchema.parse(parsed);
+}
+
+interface HugoPost {
+  filename: string;
+  content: string;
+}
+
+function formatHugoPost(
+  analysis: Analysis,
+  version: string,
+  releaseDate: string,
+  stats: { filesChanged: number; insertions: number; deletions: number },
+  previousTag: string | null
+): HugoPost {
+  const slug = `gcloud-sdk-${version.replace(/\./g, "-")}-release-analysis`;
+  const filename = `${releaseDate}-${slug}.md`;
+
+  const services = [...new Set(analysis.newFeatures.map((f) => f.service))];
+  const tags = [
+    "gcloud",
+    "google-cloud-platform",
+    "release-analysis",
+    "gcp",
+    ...services.map((s) => s.toLowerCase().replace(/\s+/g, "-")),
+  ];
+
+  const frontMatter = `---
+draft: false
+title: "gcloud SDK ${version} Release Analysis"
+author: Joe Lust
+layout: post
+date: ${releaseDate}
+url: /gcloud/${slug}/
+summary: "${analysis.summary.replace(/"/g, '\\"')}"
+tags:
+${tags.map((t) => `  - ${t}`).join("\n")}
+---`;
+
+  const sections: string[] = [frontMatter, ""];
+
+  sections.push(`${analysis.summary}\n`);
+
+  sections.push("<!--more-->\n");
+
+  if (analysis.breakingChanges.length > 0) {
+    sections.push("## Breaking Changes\n");
+    for (const change of analysis.breakingChanges) {
+      sections.push(`- ${change.description}`);
+      if (change.filePath) {
+        sections.push(`  - File: \`${change.filePath}\``);
+      }
+    }
+    sections.push("");
+  }
+
+  if (analysis.securityUpdates.length > 0) {
+    sections.push("## Security Updates\n");
+    for (const update of analysis.securityUpdates) {
+      const severity = update.severity ? ` [${update.severity.toUpperCase()}]` : "";
+      sections.push(`- ${update.description}${severity}`);
+      if (update.filePath) {
+        sections.push(`  - File: \`${update.filePath}\``);
+      }
+    }
+    sections.push("");
+  }
+
+  if (analysis.newFeatures.length > 0) {
+    sections.push("## New Features by Service\n");
+
+    const byService = new Map<string, typeof analysis.newFeatures>();
+    for (const feature of analysis.newFeatures) {
+      const existing = byService.get(feature.service) || [];
+      existing.push(feature);
+      byService.set(feature.service, existing);
+    }
+
+    for (const [service, features] of byService) {
+      sections.push(`### ${service}\n`);
+      for (const feature of features) {
+        sections.push(`- ${feature.description}`);
+        if (feature.flags && feature.flags.length > 0) {
+          sections.push(`  - Flags: \`${feature.flags.join("`, `")}\``);
+        }
+        if (feature.filePath) {
+          sections.push(`  - File: \`${feature.filePath}\``);
+        }
+      }
+      sections.push("");
+    }
+  }
+
+  if (analysis.credentialChanges.length > 0) {
+    sections.push("## Credential & Auth Changes\n");
+    for (const change of analysis.credentialChanges) {
+      sections.push(`- ${change.description}`);
+      if (change.filePath) {
+        sections.push(`  - File: \`${change.filePath}\``);
+      }
+    }
+    sections.push("");
+  }
+
+  if (analysis.apiChanges.length > 0) {
+    sections.push("## API Changes\n");
+
+    const byService = new Map<string, typeof analysis.apiChanges>();
+    for (const change of analysis.apiChanges) {
+      const existing = byService.get(change.service) || [];
+      existing.push(change);
+      byService.set(change.service, existing);
+    }
+
+    for (const [service, changes] of byService) {
+      sections.push(`### ${service}\n`);
+      for (const change of changes) {
+        sections.push(`- ${change.description}`);
+        if (change.filePath) {
+          sections.push(`  - File: \`${change.filePath}\``);
+        }
+      }
+      sections.push("");
+    }
+  }
+
+  if (analysis.unannouncedChanges.length > 0) {
+    sections.push("## Unannounced Changes\n");
+    sections.push("*Changes found in code but not mentioned in official release notes:*\n");
+
+    const categoryLabels: Record<string, string> = {
+      feature_flag: "Feature Flag",
+      groundwork: "Groundwork",
+      refactoring: "Refactoring",
+      hidden_feature: "Hidden Feature",
+    };
+
+    const byCategory = new Map<string, typeof analysis.unannouncedChanges>();
+    for (const change of analysis.unannouncedChanges) {
+      const cat = change.category || "other";
+      const existing = byCategory.get(cat) || [];
+      existing.push(change);
+      byCategory.set(cat, existing);
+    }
+
+    for (const [category, changes] of byCategory) {
+      const label = categoryLabels[category] || "Other";
+      sections.push(`### ${label}\n`);
+      for (const change of changes) {
+        sections.push(`- ${change.description}`);
+        if (change.filePath) {
+          sections.push(`  - File: \`${change.filePath}\``);
+        }
+      }
+      sections.push("");
+    }
+  }
+
+  sections.push("## Stats\n");
+  sections.push(`- Files changed: ${stats.filesChanged.toLocaleString()}`);
+  sections.push(`- Insertions: ${stats.insertions.toLocaleString()}`);
+  sections.push(`- Deletions: ${stats.deletions.toLocaleString()}`);
+  sections.push("");
+
+  sections.push("---");
+  sections.push("*Generated by Gemini 3*");
+  if (previousTag) {
+    sections.push(
+      `*[View full diff](https://github.com/twistedpair/google-cloud-sdk/compare/${previousTag}...${version})*`
+    );
+  }
+
+  return {
+    filename,
+    content: sections.join("\n"),
+  };
+}
+
+async function main(): Promise<void> {
+  const version = process.argv[2] || process.env.GITHUB_REF_NAME;
+  const outputDir = process.argv[3] || process.env.OUTPUT_DIR || "content/gcloud";
+
+  if (!version) {
+    console.error("Usage: tsx analyze-release.ts <version> [output-dir]");
+    console.error("Or set GITHUB_REF_NAME and OUTPUT_DIR environment variables");
+    process.exit(1);
+  }
+
+  console.error(`Analyzing release ${version}...`);
+
+  const previousTag = getPreviousTag(version);
+  if (!previousTag) {
+    console.error(`No previous tag found for ${version}, skipping analysis`);
+    process.exit(0);
+  }
+
+  console.error(`Comparing ${previousTag} -> ${version}`);
+
+  const diff = getTagDiff(previousTag, version);
+  const releaseNotes = extractReleaseNotes(version);
+  const stats = getDiffStats(previousTag, version);
+
+  console.error(`Diff size: ${diff.length} bytes`);
+  console.error(`Release notes: ${releaseNotes.content.length} bytes`);
+  console.error(`Release date: ${releaseNotes.date}`);
+  console.error(
+    `Stats: ${stats.filesChanged} files, +${stats.insertions}/-${stats.deletions}`
+  );
+
+  const analysis = await analyzeWithGemini(diff, releaseNotes.content, version);
+  const hugoPost = formatHugoPost(analysis, version, releaseNotes.date, stats, previousTag);
+
+  const outputPath = join(outputDir, hugoPost.filename);
+  mkdirSync(dirname(outputPath), { recursive: true });
+  writeFileSync(outputPath, hugoPost.content);
+
+  console.log(outputPath);
+}
+
+main().catch((error) => {
+  console.error("Error:", error);
+  process.exit(1);
+});

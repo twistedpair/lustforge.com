@@ -25,6 +25,10 @@ markup:
     noClasses: true
     tabWidth: 2
 
+services:
+  disqus:
+    shortname: lustforge
+
 privacy:
   googleAnalytics:
     anonymizeIP: true
@@ -40,6 +44,7 @@ contentDir: content
 params:
   mainSections:
     - post
+    - gcloud
   intro: true
   headline: lust.dev
   description: "a cloud engineering blog"
@@ -69,9 +74,12 @@ menu:
     - name: Blog
       url: /
       weight: 1
+    - name: gcloud
+      url: /gcloud
+      weight: 2
     - name: Tags
       url: /tags
-      weight: 2
+      weight: 3
     - name: About J. Lust
       url: /about
-      weight: 3
+      weight: 4
