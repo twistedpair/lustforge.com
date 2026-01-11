@@ -31,3 +31,6 @@ _testmain.go
 *.test
 *.prof
 .github/scripts/node_modules/
+.claude
+local/
+.hugo_build.lock
