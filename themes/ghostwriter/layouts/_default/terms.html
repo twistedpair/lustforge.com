@@ -1,0 +1,36 @@
+{{ partial "header.html" . }}
+
+<div id="post-index" class="container">
+    {{ partial "intro.html" . }}
+
+    <style>
+        .tag-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            padding: 1rem 0;
+        }
+        .tag-item {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #f0f0f0;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            transition: background 0.2s;
+        }
+        .tag-item:hover {
+            background: #e0e0e0;
+        }
+    </style>
+
+    <div class="tag-cloud">
+        {{ range .Data.Terms.Alphabetical }}
+            <a href="{{ .Page.Permalink }}" class="tag-item" style="font-size: {{ add 100 (mul .Count 10) }}%;">
+                {{ .Page.Title }} ({{ .Count }})
+            </a>
+        {{ end }}
+    </div>
+</div>
+
+{{ partial "footer.html" . }}

@@ -1,0 +1,80 @@
+name: On gcloud Release
+
+on:
+  repository_dispatch:
+    types: [gcloud-release]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag to analyze (e.g., 551.0.0)'
+        required: true
+        type: string
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout blog repo
+        uses: actions/checkout@v6
+
+      - name: Checkout gcloud SDK repo
+        uses: actions/checkout@v6
+        with:
+          repository: twistedpair/google-cloud-sdk
+          path: google-cloud-sdk
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+        with:
+          version: 10.27.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+          cache-dependency-path: .github/scripts/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: .github/scripts
+        run: pnpm install --frozen-lockfile
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            echo "tag=${{ inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${{ github.event.client_payload.version }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Analyze release and generate blog post
+        id: analyze
+        working-directory: google-cloud-sdk
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OUTPUT_DIR: ../content/gcloud
+        run: |
+          OUTPUT_FILE=$(pnpm tsx ../.github/scripts/analyze-release.ts "${{ steps.version.outputs.tag }}")
+          echo "output_file=$OUTPUT_FILE" >> $GITHUB_OUTPUT
+          echo "Generated blog post: $OUTPUT_FILE"
+          cat "$OUTPUT_FILE"
+
+      - name: Commit and push blog post
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add content/gcloud/
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Add gcloud SDK ${{ steps.version.outputs.tag }} release analysis"
+            git push
+          fi
