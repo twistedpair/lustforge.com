@@ -551,13 +551,32 @@ ${tags.map((t) => `  - ${t}`).join("\n")}
   };
 }
 
+function printUsage(): void {
+  console.log("Usage: tsx analyze-release.ts <version> [--repo <path>] [--output <dir>]");
+  console.log("");
+  console.log("Arguments:");
+  console.log("  <version>        SDK version to analyze (e.g., 551.0.0)");
+  console.log("  --repo <path>    Path to the gcloud SDK git repository (default: .)");
+  console.log("  --output <dir>   Output directory for generated posts (default: content/gcloud)");
+  console.log("  --help           Show this help message");
+  console.log("");
+  console.log("Environment variables:");
+  console.log("  GITHUB_REF_NAME  Version (alternative to positional argument)");
+  console.log("  OUTPUT_DIR       Output directory");
+  console.log("  GEMINI_API_KEY   Required API key for Gemini");
+}
+
 async function main(): Promise<void> {
+  if (process.argv.includes("--help") || process.argv.includes("-h")) {
+    printUsage();
+    process.exit(0);
+  }
+
   console.time("Total runtime");
   const { version, outputDir, repoPath } = parseArgs();
 
   if (!version) {
-    console.error("Usage: tsx analyze-release.ts <version> [--repo <path>] [--output <dir>]");
-    console.error("Or set GITHUB_REF_NAME and OUTPUT_DIR environment variables");
+    printUsage();
     process.exit(1);
   }
 
