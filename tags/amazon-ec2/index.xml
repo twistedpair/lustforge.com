@@ -1,17 +1,17 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Amazon EC2 on lust.dev</title><link>https://lust.dev/tags/amazon-ec2/</link><description>Recent content in Amazon EC2 on lust.dev</description><generator>Hugo</generator><language>en-us</language><copyright>Joe Lust</copyright><lastBuildDate>Sat, 16 Nov 2013 00:00:00 +0000</lastBuildDate><atom:link href="https://lust.dev/tags/amazon-ec2/index.xml" rel="self" type="application/rss+xml"/><item><title>AWS EC2 Spot Market Volatility</title><link>https://lust.dev/2013/11/16/aws-ec2-spot-market-volatility/</link><pubDate>Sat, 16 Nov 2013 00:00:00 +0000</pubDate><guid>https://lust.dev/2013/11/16/aws-ec2-spot-market-volatility/</guid><description>&lt;p>The spot instance market does not often make sense. You first learn of it and think “Wow! Why did I waste that money on a reserved instance when I can get the same price on demand?!?!?!” Then you see pricing curves like this:&lt;/p>
-&lt;figure>&lt;img src="../../img/aws_price_curve.png">
-&lt;/figure>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Amazon EC2 on lust.dev</title><link>https://lust.dev/tags/amazon-ec2/</link><description>Recent content in Amazon EC2 on lust.dev</description><generator>Hugo</generator><language>en-us</language><copyright>Joe Lust</copyright><lastBuildDate>Sat, 16 Nov 2013 00:00:00 +0000</lastBuildDate><atom:link href="https://lust.dev/tags/amazon-ec2/index.xml" rel="self" type="application/rss+xml"/><item><title>AWS EC2 Spot Market Volatility</title><link>https://lust.dev/2013/11/16/aws-ec2-spot-market-volatility/</link><pubDate>Sat, 16 Nov 2013 00:00:00 +0000</pubDate><guid>https://lust.dev/2013/11/16/aws-ec2-spot-market-volatility/</guid><description>&lt;p&gt;The spot instance market does not often make sense. You first learn of it and think “Wow! Why did I waste that money on a reserved instance when I can get the same price on demand?!?!?!” Then you see pricing curves like this:&lt;/p&gt;
+&lt;figure&gt;&lt;img src="../../img/aws_price_curve.png"&gt;
+&lt;/figure&gt;
 
-&lt;p>$6/hr for an instance!? &lt;strong>5000% markup!&lt;/strong> That is stultifying. This &lt;code>m1.medium&lt;/code> is a perfectly fungible resource. You can:&lt;/p>
-&lt;ul>
-&lt;li>Pay on-demand rate of &lt;strong>$0.12/hr&lt;/strong>&lt;/li>
-&lt;li>Reserve it for 3 years and pay a combined rate (amortizing down payment) of &lt;strong>$0.042/hr&lt;/strong>&lt;/li>
-&lt;li>Rent it at the median Spot Market rate of &lt;strong>$0.013/hr&lt;/strong>&lt;/li>
-&lt;/ul>
-&lt;p>$6/hr is 30% more than that most expensive instance AWS sells (&lt;code>hs1.8xlarge&lt;/code>, $4.60/hr), and this instance is puny by comparison.&lt;/p></description></item><item><title>LogRotate Apache Logs to Amazon S3</title><link>https://lust.dev/2012/07/15/logrotate-apache-logs-to-amazon-s3/</link><pubDate>Sun, 15 Jul 2012 00:00:00 +0000</pubDate><guid>https://lust.dev/2012/07/15/logrotate-apache-logs-to-amazon-s3/</guid><description>&lt;figure>&lt;img src="../../img/logrotate.png">&lt;figcaption>
- &lt;h4>Legacy Log Rotation before gzip &amp;amp; scp&lt;/h4>
- &lt;/figcaption>
-&lt;/figure>
+&lt;p&gt;$6/hr for an instance!? &lt;strong&gt;5000% markup!&lt;/strong&gt; That is stultifying. This &lt;code&gt;m1.medium&lt;/code&gt; is a perfectly fungible resource. You can:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Pay on-demand rate of &lt;strong&gt;$0.12/hr&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Reserve it for 3 years and pay a combined rate (amortizing down payment) of &lt;strong&gt;$0.042/hr&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Rent it at the median Spot Market rate of &lt;strong&gt;$0.013/hr&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;$6/hr is 30% more than that most expensive instance AWS sells (&lt;code&gt;hs1.8xlarge&lt;/code&gt;, $4.60/hr), and this instance is puny by comparison.&lt;/p&gt;</description></item><item><title>LogRotate Apache Logs to Amazon S3</title><link>https://lust.dev/2012/07/15/logrotate-apache-logs-to-amazon-s3/</link><pubDate>Sun, 15 Jul 2012 00:00:00 +0000</pubDate><guid>https://lust.dev/2012/07/15/logrotate-apache-logs-to-amazon-s3/</guid><description>&lt;figure&gt;&lt;img src="../../img/logrotate.png"&gt;&lt;figcaption&gt;
+ &lt;h4&gt;Legacy Log Rotation before gzip &amp;amp; scp&lt;/h4&gt;
+ &lt;/figcaption&gt;
+&lt;/figure&gt;
 
-&lt;p>I recently moved my site &lt;a href="www.runpartner.com">RunPartner&lt;/a> to Amazon Web Services (AWS) from DreamHost because for just a few more peanuts a month I got a ton of enterprise grade services, and the server does not crash randomly any more. 😊&lt;/p>
-&lt;p>I’m loving AWS, but one thing I wanted to do was consolidate all logs to S3. Let’s say your site gets SlashDotted or Pinned. One of the first failure modes is that your logs swell up, and you’re out of disk space. Since my EC2 instance has just 8GB, this is possible. But why not use that infinite storage pool in the sky, S3? Perfect.&lt;/p></description></item></channel></rss>
+&lt;p&gt;I recently moved my site &lt;a href="www.runpartner.com"&gt;RunPartner&lt;/a&gt; to Amazon Web Services (AWS) from DreamHost because for just a few more peanuts a month I got a ton of enterprise grade services, and the server does not crash randomly any more. 😊&lt;/p&gt;
+&lt;p&gt;I’m loving AWS, but one thing I wanted to do was consolidate all logs to S3. Let’s say your site gets SlashDotted or Pinned. One of the first failure modes is that your logs swell up, and you’re out of disk space. Since my EC2 instance has just 8GB, this is possible. But why not use that infinite storage pool in the sky, S3? Perfect.&lt;/p&gt;</description></item></channel></rss>
