@@ -388,7 +388,14 @@ ${tags.map((t) => `  - ${t}`).join("\n")}
 
   const sections: string[] = [frontMatter, ""];
 
-  sections.push(`${escapeHtml(analysis.summary)}\n`);
+  // Make version bold in summary
+  const summaryWithBoldVersion = escapeHtml(analysis.summary).replace(
+    new RegExp(version.replace(/\./g, "\\."), "g"),
+    `**${version}**`
+  );
+  sections.push(`${summaryWithBoldVersion}\n`);
+
+  sections.push(`**Release date:** ${releaseDate}\n`);
 
   const jumpLinks = ["[Annotated Release Notes](#breaking-changes)"];
   if (analysis.unannouncedChanges.length > 0) {
