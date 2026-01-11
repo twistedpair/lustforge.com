@@ -37,6 +37,10 @@ function sanitizeFilePath(path: string | undefined): string | null {
   return isValidFilePath(trimmed) ? trimmed : null;
 }
 
+function isValidVersion(version: string): boolean {
+  return /^\d+\.\d+\.\d+$/.test(version);
+}
+
 interface Args {
   version: string;
   outputDir: string;
@@ -554,6 +558,11 @@ async function main(): Promise<void> {
   if (!version) {
     console.error("Usage: tsx analyze-release.ts <version> [--repo <path>] [--output <dir>]");
     console.error("Or set GITHUB_REF_NAME and OUTPUT_DIR environment variables");
+    process.exit(1);
+  }
+
+  if (!isValidVersion(version)) {
+    console.error(`Invalid version format: ${version}. Must match X.Y.Z (e.g., 551.0.0)`);
     process.exit(1);
   }
 
