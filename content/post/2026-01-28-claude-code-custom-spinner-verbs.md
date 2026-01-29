@@ -3,18 +3,19 @@ draft: false
 title: "Claude Code Custom Spinner Verbs"
 author: Joe Lust
 layout: post
-date: 2026-07-28
-url: /2026/07/28/claude-code-custom-spinner-verbs/
+date: 2026-01-28
+url: /2026/01/28/claude-code-custom-spinner-verbs/
 summary: "Claude Code now lets you customize the spinner verbs shown while the agent works. Here's how to configure them."
+image: /img/bacon_spot.png
 tags:
   - claude-code
   - cli
   - claude.ai
 ---
 
-Who doesn't love burnishing their diction with Claude Code gems like `bloviating...` and `cogitating...`? But what if you could use even more esoteric (or explicit 🤫) gerundives as you wait for Claude to do your job? Your bordom is over!
+Who doesn't love burnishing their diction with Claude Code gems like `bloviating...` and `cogitating...`? But what if you could use even more esoteric (or explicit 🤫) gerundives as you wait for Claude to burn your cash? Your boredom is over!
 
-On 28 Jul 2026, Claude Code [v2.1.23](https://github.com/anthropics/claude-code/releases/tag/v2.1.23) introduced the ability to customize the spinner verbs displayed while the agent is working. While this feature remains undocumented, we figured it out through trial and error (and just asking Claude to guess).
+On 28 Jan 2026, Claude Code [v2.1.23](https://github.com/anthropics/claude-code/releases/tag/v2.1.23) introduced the ability to customize the spinner verbs displayed while the agent is working. While this feature remains undocumented, we figured it out through trial and error (and just asking Claude to guess).
 
 ## Configuration
 Add the `spinnerVerbs` configuration to your `~/.claude/settings.json`:
@@ -47,15 +48,15 @@ Replace the default spinner verbs entirely with your own set:
     "mode": "replace",
     "verbs": [
       "WTFing",
-      "Hallucinating"
+      "Hallucinating",
       "Cursing",
-      "Conflating",
+      "Bankrupting"
     ]
   }
 }
 ```
 
-With this configuration, Claude Code will only cycle through your custom verbs, showing messages like "Hacking...", "Compiling...", etc.
+With this configuration, Claude Code will only cycle through your custom verbs, showing messages like "WTFing...", "Cursing...", etc.
 
 ### Append Mode
 
@@ -66,9 +67,9 @@ Keep the defaults and add your own verbs to the rotation:
   "spinnerVerbs": {
     "mode": "append",
     "verbs": [
-      "Synergizing",
-      "Disrupting",
-      "Pivoting"
+      "Obviating",
+      "Tokenburning",
+      "Reverting"
     ]
   }
 }
