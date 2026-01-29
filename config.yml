@@ -67,7 +67,8 @@ params:
     profile: ""
 
 permalinks:
-  post: "/:year/:month/:day/:contentbasename/"
+  post: "/:year/:month/:day/:filename/"
+  gcloud: "/gcloud/:filename/"
 
 menu:
   main:
