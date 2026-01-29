@@ -12,12 +12,11 @@ tags:
   - claude.ai
 ---
 
-Who doesn't love burnishing their diction with Claude Code's gems like `bloviating...` and `cogitating...`? But what if you could use even more esoteric (or explicit 🤫) gerundives as you wait for Claude to do your job? Your wait is over!
+Who doesn't love burnishing their diction with Claude Code gems like `bloviating...` and `cogitating...`? But what if you could use even more esoteric (or explicit 🤫) gerundives as you wait for Claude to do your job? Your bordom is over!
 
 On 28 Jul 2026, Claude Code [v2.1.23](https://github.com/anthropics/claude-code/releases/tag/v2.1.23) introduced the ability to customize the spinner verbs displayed while the agent is working. While this feature remains undocumented, we figured it out through trial and error (and just asking Claude to guess).
 
 ## Configuration
-
 Add the `spinnerVerbs` configuration to your `~/.claude/settings.json`:
 
 ```json
@@ -48,12 +47,9 @@ Replace the default spinner verbs entirely with your own set:
     "mode": "replace",
     "verbs": [
       "WTFing",
+      "Hallucinating"
       "Cursing",
-      "Hacking",
-      "Compiling",
-      "Deploying",
-      "Caffeinating",
-      "Screwuping"
+      "Conflating",
     ]
   }
 }
